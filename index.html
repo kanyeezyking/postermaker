@@ -97,7 +97,7 @@ Track Nine Title
 Track Ten Title</textarea>
         </div>
 
-        <button id="downloadBtn">Download A2 Poster</button>
+        <button id="downloadBtn">Download A2 Poster (PNG)</button>
     </div>
 
     <div id="preview-container">
@@ -118,7 +118,7 @@ Track Ten Title</textarea>
               
               <!-- Slightly Smaller Centered Square Album Cover -->
               <rect x="120" y="175" width="950" height="950" fill="#E0E0E0" stroke="#CCCCCC" stroke-width="2"/>
-              <image x="120" y="175" width="950" height="950" href="{{ARTWORK_URL}}" preserveAspectRatio="xMidYMid slice" />
+              <image x="120" y="175" width="950" height="950" href="{{ARTWORK_URL}}" preserveAspectRatio="xMidYMid slice" crossorigin="anonymous" />
               
               <!-- Dynamic Stacked Tracklist Grid (Bigger Text, Auto-scaled) -->
               {{DYNAMIC_SIDES}}
@@ -134,7 +134,7 @@ Track Ten Title</textarea>
               <!-- Uploaded Spotify Code Image (No Text Label) -->
               <g transform="translate(830, 1466)">
                 <rect width="280" height="60" fill="#EAEAEA" rx="6"/>
-                <image width="280" height="60" href="{{SPOTIFY_CODE_URL}}" preserveAspectRatio="xMidYMid contain" />
+                <image width="280" height="60" href="{{SPOTIFY_CODE_URL}}" preserveAspectRatio="xMidYMid contain" crossorigin="anonymous" />
               </g>
 
               <line x1="80" y1="1560" x2="1110" y2="1560" stroke="#CCCCCC" stroke-width="2"/>
@@ -143,17 +143,24 @@ Track Ten Title</textarea>
 
             2: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1190 1684" width="100%" height="100%">
               <rect width="1190" height="1684" fill="#0A0A0C"/>
-              <rect x="100" y="100" width="990" height="800" fill="#1A1A24" stroke="#00FFCC" stroke-width="4"/>
-              <image x="100" y="100" width="990" height="800" href="{{ARTWORK_URL}}" preserveAspectRatio="xMidYMid slice" />
-              <text x="100" y="980" font-family="'Impact', sans-serif" font-size="72" fill="#FFFFFF" letter-spacing="4">{{ARTIST_NAME}}</text>
-              <text x="100" y="1050" font-family="'Courier New', monospace" font-size="36" fill="#00FFCC">{{ALBUM_TITLE}}</text>
-              <text x="100" y="1130" font-family="'Courier New', monospace" font-size="20" fill="#888888">TRACKLIST</text>
+              <rect x="100" y="80" width="990" height="740" fill="#1A1A24" stroke="#00FFCC" stroke-width="4"/>
+              <image x="100" y="80" width="990" height="740" href="{{ARTWORK_URL}}" preserveAspectRatio="xMidYMid slice" crossorigin="anonymous" />
+              <text x="100" y="870" font-family="'Impact', sans-serif" font-size="64" fill="#FFFFFF" letter-spacing="4">{{ARTIST_NAME}}</text>
+              <text x="100" y="930" font-family="'Courier New', monospace" font-size="32" fill="#00FFCC">{{ALBUM_TITLE}}</text>
+              
+              <!-- Dynamic Tracklist for Template 2 -->
               {{TRACKLIST_SVG_GRID_2}}
-              <rect x="100" y="1500" width="180" height="100" fill="#FFFFFF"/>
-              <text x="190" y="1544" font-family="Impact, sans-serif" font-size="20" fill="#000000" text-anchor="middle">PARENTAL</text>
-              <text x="190" y="1570" font-family="Impact, sans-serif" font-size="20" fill="#000000" text-anchor="middle">ADVISORY</text>
-              <text x="190" y="1588" font-family="Arial, sans-serif" font-size="10" fill="#000000" text-anchor="middle">EXPLICIT CONTENT</text>
-              <image x="850" y="1500" width="240" height="100" href="{{SPOTIFY_CODE_URL}}" preserveAspectRatio="xMidYMid contain" />
+
+              <!-- Vector Parental Advisory Badge -->
+              <g transform="translate(100, 1500)">
+                <rect width="200" height="100" fill="#FFFFFF" stroke="#000000" stroke-width="4"/>
+                <text x="100" y="32" font-family="Impact, sans-serif" font-size="24" fill="#000000" text-anchor="middle" letter-spacing="1">PARENTAL</text>
+                <text x="100" y="62" font-family="Impact, sans-serif" font-size="26" fill="#000000" text-anchor="middle" letter-spacing="1">ADVISORY</text>
+                <line x1="12" y1="73" x2="188" y2="73" stroke="#000000" stroke-width="3"/>
+                <text x="100" y="91" font-family="Arial, sans-serif" font-size="13" font-weight="bold" fill="#000000" text-anchor="middle" letter-spacing="0.5">EXPLICIT CONTENT</text>
+              </g>
+
+              <image x="810" y="1500" width="280" height="100" href="{{SPOTIFY_CODE_URL}}" preserveAspectRatio="xMidYMid contain" crossorigin="anonymous" />
             </svg>`
         };
 
@@ -184,7 +191,7 @@ Track Ten Title</textarea>
                         let a = imgData[i+3];
                         
                         if (a < 128) continue;
-                        if (r > 215 && g > 215 && b > 215) continue; // Exclude white
+                        if (r > 215 && g > 215 && b > 215) continue;
                         
                         colors.push({ r, g, b });
                     }
@@ -227,7 +234,7 @@ Track Ten Title</textarea>
             extractPaletteFromImage(artworkUrl, (palette) => {
                 let code = templates[templateId] || templates[1];
 
-                // Parse Multi-Sides for Stacked Row Grid (Side C underneath Side A)
+                // Parse Multi-Sides for Stacked Row Grid
                 let sides = [];
                 let currentSide = { title: "SIDE A", tracks: [] };
                 lines.forEach(line => {
@@ -244,7 +251,7 @@ Track Ten Title</textarea>
                 });
                 sides.push(currentSide);
 
-                // Dynamic sizing with bigger base font sizes and auto-scaling
+                // Template 1 Sizing
                 let numRows = Math.ceil(sides.length / 2);
                 let maxTracks = Math.max(...sides.map(s => s.tracks.length), 1);
                 
@@ -269,9 +276,9 @@ Track Ten Title</textarea>
                 }
 
                 let dynamicSidesSvg = '';
-                let col0X = 80;   // Left column X matching left alignment
-                let col1X = 630;  // Right column X
-                let currentY = 1175; // Directly beneath smaller album cover (175 + 950 = 1125)
+                let col0X = 80;
+                let col1X = 630;
+                let currentY = 1175;
 
                 for (let i = 0; i < sides.length; i += 2) {
                     let sideLeft = sides[i];
@@ -302,22 +309,26 @@ Track Ten Title</textarea>
                     currentY += lineGap + (maxT * lineGap) + rowGap;
                 }
 
+                // Template 2 Dynamic Tracklist Generation
                 let allTracks = [];
                 lines.forEach(l => {
                     let t = l.trim();
-                    if (t && !t.toUpperCase().startsWith("SIDE") && !t.toUpperCase().startsWith("VOL")) {
+                    if (t && !t.toUpperCase().startsWith("SIDE") && !t.toUpperCase().startsWith("VOL") && !t.toUpperCase().startsWith("PART")) {
                         allTracks.push(t);
                     }
                 });
 
                 let svgGrid2 = '';
+                let t2YStart = 980;
+                let t2ColHeight = Math.ceil(allTracks.length / 2);
+                
                 allTracks.forEach((t, i) => {
                     let num = (i + 1).toString().padStart(2, '0');
-                    if (i < 8) {
-                        let x = i < 4 ? 100 : 600;
-                        let y = 1180 + ((i % 4) * 44);
-                        svgGrid2 += `<text x="${x}" y="${y}" font-family="'Courier New', monospace" font-size="20" fill="#FFFFFF">${num}. ${t}</text>\n`;
-                    }
+                    let col = i >= t2ColHeight ? 1 : 0;
+                    let rowIndex = i >= t2ColHeight ? i - t2ColHeight : i;
+                    let x = col === 0 ? 100 : 640;
+                    let y = t2YStart + (rowIndex * 38);
+                    svgGrid2 += `<text x="${x}" y="${y}" font-family="'Courier New', monospace" font-size="18" fill="#FFFFFF">${num}. ${t}</text>\n`;
                 });
 
                 code = code
@@ -336,15 +347,7 @@ Track Ten Title</textarea>
                     .replace(/{{TRACKLIST_SVG_GRID_2}}/g, svgGrid2);
 
                 const wrapper = document.getElementById('canvas-wrapper');
-                if (code.includes('<svg')) {
-                    wrapper.innerHTML = code;
-                } else {
-                    wrapper.innerHTML = '<iframe></iframe>';
-                    const iframe = wrapper.querySelector('iframe');
-                    iframe.contentWindow.document.open();
-                    iframe.contentWindow.document.write(code);
-                    iframe.contentWindow.document.close();
-                }
+                wrapper.innerHTML = code;
             });
         }
 
@@ -374,21 +377,39 @@ Track Ten Title</textarea>
             }
         });
 
+        // High-Resolution PNG Export via Canvas to preserve exact fonts and images
         document.getElementById('downloadBtn').addEventListener('click', () => {
             const wrapper = document.getElementById('canvas-wrapper');
-            let filename = document.getElementById('albumTitle').value.toLowerCase().replace(/[^a-z0-9]/g, '_') + '_a2_poster';
+            let filename = document.getElementById('albumTitle').value.toLowerCase().replace(/[^a-z0-9]/g, '_') + '_a2_poster.png';
             
-            if (wrapper.querySelector('svg')) {
-                const svgData = wrapper.innerHTML;
-                const blob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
-                const url = URL.createObjectURL(blob);
+            const svgElement = wrapper.querySelector('svg');
+            if (!svgElement) return;
+
+            const svgString = new XMLSerializer().serializeToString(svgElement);
+            const svgBlob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
+            const DOMURL = window.URL || window.webkitURL || window;
+            const url = DOMURL.createObjectURL(svgBlob);
+
+            const img = new Image();
+            img.onload = function() {
+                const canvas = document.createElement('canvas');
+                canvas.width = 1190;
+                canvas.height = 1684;
+                const ctx = canvas.getContext('2d');
+                ctx.fillStyle = '#ffffff';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.drawImage(img, 0, 0);
+                DOMURL.revokeObjectURL(url);
+
+                const pngUrl = canvas.toDataURL('image/png');
                 const a = document.createElement('a');
-                a.href = url;
-                a.download = filename + '.svg';
+                a.href = pngUrl;
+                a.download = filename;
                 document.body.appendChild(a);
                 a.click();
                 document.body.removeChild(a);
-            }
+            };
+            img.src = url;
         });
 
         document.querySelectorAll('#sidebar input, #sidebar textarea, #sidebar select').forEach(el => {
