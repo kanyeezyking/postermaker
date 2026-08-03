@@ -109,7 +109,7 @@ Track Ten Title</textarea>
         let uploadedSpotifyCodeUrl = '';
 
         const templates = {
-            // 1. Swiss / Minimalist (Customized: smaller cover, bigger text)
+            // 1. Swiss / Minimalist
             1: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1190 1684" width="100%" height="100%">
               <rect width="1190" height="1684" fill="#F4F4F0"/>
               <text x="80" y="95" font-family="Helvetica, Arial, sans-serif" font-size="52" font-weight="bold" fill="#111111">{{ALBUM_TITLE}}</text>
@@ -243,7 +243,7 @@ Track Ten Title</textarea>
             </svg>`
         };
 
-        // Extract palette excluding white and near-white pixels
+        // Extract color palette excluding near-white pixels
         function extractPaletteFromImage(imgUrl, callback) {
             const defaultPalette = ['#2b2b2b', '#555555', '#888888', '#aaaaaa'];
             if (!imgUrl) {
@@ -296,7 +296,7 @@ Track Ten Title</textarea>
             };
         }
 
-        // Convert external image URLs to Base64 Data URLs to prevent tainted canvas issues on PNG export
+        // Convert external images to Base64 to prevent tainted canvas issues and enable Drive previews
         function prepareImageUrl(url, callback) {
             if (!url || url.startsWith('data:') || url.startsWith('blob:')) {
                 callback(url);
@@ -313,7 +313,6 @@ Track Ten Title</textarea>
                     ctx.drawImage(img, 0, 0);
                     callback(canvas.toDataURL('image/png'));
                 } catch (e) {
-                    // CORS proxy fallback
                     const proxyUrl = 'https://images.weserv.nl/?url=' + encodeURIComponent(url);
                     const proxyImg = new Image();
                     proxyImg.crossOrigin = 'anonymous';
@@ -515,7 +514,7 @@ Track Ten Title</textarea>
             }
         });
 
-        // High-Resolution PNG Export that preserves images & works great in Google Drive
+        // High-Resolution PNG Export with Fully Embedded Base64 Images
         document.getElementById('downloadBtn').addEventListener('click', () => {
             const wrapper = document.getElementById('canvas-wrapper');
             let filename = document.getElementById('albumTitle').value.toLowerCase().replace(/[^a-z0-9]/g, '_') + '_a2_poster.png';
