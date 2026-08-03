@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Poster Generator Template</title>
+    <style>
+        * { box-sizing: border-box; }
+        body { margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; display: flex; height: 100vh; background: #2c2c2c; color: #fff; }
+        
+        /* Sidebar Controls */
+        #sidebar { width: 350px; background: #1a1a1a; padding: 20px; overflow-y: auto; border-right: 1px solid #444; }
+        #sidebar h2 { margin-top: 0; font-size: 1.2rem; border-bottom: 1px solid #444; padding-bottom: 10px; }
+        .input-group { margin-bottom: 15px; }
+        .input-group label { display: block; font-size: 0.85rem; margin-bottom: 5px; color: #aaa; text-transform: uppercase; letter-spacing: 1px; }
+        .input-group input, .input-group select, .input-group textarea { width: 100%; padding: 10px; background: #333; border: 1px solid #555; color: #fff; border-radius: 4px; font-family: inherit; }
+        .input-group textarea { resize: vertical; min-height: 100px; }
+        .input-group input:focus, .input-group select:focus, .input-group textarea:focus { outline: none; border-color: #00ffcc; }
+        
+        /* Preview Area */
+        #preview-container { flex-grow: 1; display: flex; justify-content: center; align-items: center; padding: 40px; overflow-y: auto; }
+        #canvas-wrapper { width: 595px; height: 842px; background: #fff; box-shadow: 0 10px 30px rgba(0,0,0,0.5); overflow: hidden; position: relative; }
+        #canvas-wrapper svg, #canvas-wrapper iframe { width: 100%; height: 100%; border: none; }
+    </style>
+</head>
+<body>
+
+    <!-- CONTROL PANEL -->
+    <div id="sidebar">
+        <h2>Poster Variables</h2>
+        
+        <div class="input-group">
+            <label for="templateSelect">Select Template</label>
+            <select id="templateSelect">
+                <option value="1">Template 1: Minimalist (SVG)</option>
+                <option value="6">Template 6: MPC Sampler (HTML)</option>
+                <!-- Add options for 2-5 and 7-10 here as you paste them into the JS -->
+            </select>
+        </div>
+
+        <div class="input-group">
+            <label for="artistName">Artist Name</label>
+            <input type="text" id="artistName" value="KANYE WEST">
+        </div>
+
+        <div class="input-group">
+            <label for="albumTitle">Album Title</label>
+            <input type="text" id="albumTitle" value="THE COLLEGE DROPOUT">
+        </div>
+
+        <div class="input-group">
+            <label for="producerName">Producer</label>
+            <input type="text" id="producerName" value="KANYE WEST">
+        </div>
+
+        <div class="input-group">
+            <label for="artworkUrl">Artwork Image URL</label>
+            <input type="text" id="artworkUrl" value="https://via.placeholder.com/500" placeholder="Paste an image URL here">
+        </div>
+
+        <div class="input-group">
+            <label for="tracklist">Tracklist (One per line)</label>
+            <textarea id="tracklist">We Don't Care
+Graduation Day
+All Falls Down
+I'll Fly Away
+Spaceship
+Jesus Walks
+Never Let Me Down
+Get Em High</textarea>
+        </div>
+    </div>
+
+    <!-- LIVE PREVIEW -->
+    <div id="preview-container">
+        <div id="canvas-wrapper">
+            <!-- Template injects here -->
+        </div>
+    </div>
+
+    <!-- GENERATOR ENGINE -->
+    <script>
+        // 1. STORE TEMPLATES HERE
+        // Use backticks (`) to store the raw code for each template.
+        const templates = {
+            
+            // Template 1 (SVG)
+            1: `
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 595 842" width="100%" height="100%">
+  <rect width="595" height="842" fill="#F4F4F0"/>
+  <text x="40" y="60" font-family="Helvetica, Arial, sans-serif" font-size="28" font-weight="bold" fill="#111111">{{ALBUM_TITLE}}</text>
+  <text x="40" y="85" font-family="Helvetica, Arial, sans-serif" font-size="16" fill="#666666">{{ARTIST_NAME}} • 2026</text>
+  
+  <rect x="40" y="110" width="515" height="515" fill="#E0E0E0" stroke="#CCCCCC" stroke-width="2"/>
+  <image x="40" y="110" width="515" height="515" href="{{ARTWORK_URL}}" preserveAspectRatio="xMidYMid slice" />
+  
+  <text x="40" y="650" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="bold" fill="#111111">SIDE A / SIDE B</text>
+  {{TRACKLIST_SVG_COLUMN}}
+  
+  <text x="400" y="650" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="bold" fill="#111111">PALETTE</text>
+  <circle cx="408" cy="670" r="8" fill="#333"/><circle cx="430" cy="670" r="8" fill="#666"/><circle cx="452" cy="670" r="8" fill="#999"/><circle cx="474" cy="670" r="8" fill="#CCC"/>
+  <rect x="400" y="695" width="155" height="35" rx="4" fill="#000000"/>
+  <text x="477" y="717" font-family="Helvetica, Arial, sans-serif" font-size="10" fill="#FFFFFF" text-anchor="middle">[ SPOTIFY CODE ]</text>
+  <line x1="40" y1="780" x2="555" y2="780" stroke="#CCCCCC" stroke-width="1"/>
+  <text x="40" y="800" font-family="Helvetica, Arial, sans-serif" font-size="8" fill="#888888">PRODUCED BY {{PRODUCER}} • CATALOG NO. 0001</text>
+</svg>
+            `,
+
+            // Template 6 (HTML)
+            6: `
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+* { box-sizing: border-box; }
+body { margin: 0; padding: 20mm; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; color: #111; background-color: #f8f8f8; height: 842px; width: 595px; }
+.advisory { border: 2px solid #111; display: inline-block; padding: 2px 8px; font-weight: 900; font-size: 10px; letter-spacing: 1px; }
+.grid { width: 100%; height: 200px; display: block; margin-top: 10mm; position: relative; }
+.pad { width: 45%; height: 45%; background: #e0e0e0; position: absolute; border: 2px solid #111; box-shadow: 4px 4px 0px #111; background-size: cover; background-position: center; }
+.pad-1 { top: 0; left: 0; background-image: url('{{ARTWORK_URL}}'); }
+.pad-2 { top: 0; right: 0; background: #ff4444; }
+.pad-3 { bottom: 0; left: 0; }
+.pad-4 { bottom: 0; right: 0; }
+.title { font-size: 40pt; font-weight: 900; text-transform: uppercase; margin: 0; line-height: 1; letter-spacing: -2px; }
+.artist { font-size: 24pt; font-weight: bold; margin-bottom: 20px; }
+.tracklist { margin-top: 20mm; font-size: 11pt; font-weight: bold; line-height: 1.6; }
+</style>
+</head>
+<body>
+    <div class="advisory">PARENTAL ADVISORY EXPLICIT CONTENT</div>
+    <h2 class="artist" style="margin-top: 15mm;">{{ARTIST_NAME}}</h2>
+    <h1 class="title">{{ALBUM_TITLE}}</h1>
+    <div class="grid">
+        <div class="pad pad-1"></div><div class="pad pad-2"></div><div class="pad pad-3"></div><div class="pad pad-4"></div>
+    </div>
+    <div class="tracklist">
+        {{TRACKLIST_HTML_LIST}}
+    </div>
+</body>
+</html>
+            `
+            // PASTE TEMPLATES 2-5 AND 7-10 HERE using the same syntax. 
+            // Just replace the static text in the raw code with variables like {{ARTIST_NAME}}.
+        };
+
+        // 2. ENGINE LOGIC
+        function generatePoster() {
+            // Get values from sidebar
+            const templateId = document.getElementById('templateSelect').value;
+            const artist = document.getElementById('artistName').value || 'UNKNOWN ARTIST';
+            const title = document.getElementById('albumTitle').value || 'UNKNOWN ALBUM';
+            const producer = document.getElementById('producerName').value || 'UNKNOWN PRODUCER';
+            const artworkUrl = document.getElementById('artworkUrl').value;
+            const rawTracks = document.getElementById('tracklist').value.split('\\n').filter(t => t.trim() !== '');
+
+            let templateCode = templates[templateId];
+
+            // Build Tracklists dynamically based on the type of template
+            let svgTracks = '';
+            let htmlTracks = '';
+            
+            rawTracks.forEach((track, index) => {
+                let trackNum = (index + 1).toString().padStart(2, '0');
+                
+                // For SVG templates (positions text elements vertically)
+                let yPos = 670 + (index * 18);
+                svgTracks += \`<text x="40" y="\${yPos}" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#444444">\${trackNum}. \${track}</text>\\n\`;
+                
+                // For HTML templates (standard breaks)
+                htmlTracks += \`\${trackNum}. \${track} <br>\`;
+            });
+
+            // Swap out the variables in the raw code
+            templateCode = templateCode
+                .replace(/{{ARTIST_NAME}}/g, artist)
+                .replace(/{{ALBUM_TITLE}}/g, title)
+                .replace(/{{PRODUCER}}/g, producer)
+                .replace(/{{ARTWORK_URL}}/g, artworkUrl)
+                .replace(/{{TRACKLIST_SVG_COLUMN}}/g, svgTracks)
+                .replace(/{{TRACKLIST_HTML_LIST}}/g, htmlTracks);
+
+            // Render to Preview Screen
+            const wrapper = document.getElementById('canvas-wrapper');
+            
+            if (templateCode.includes('xmlns="http://www.w3.org/2000/svg"')) {
+                // Render SVG directly
+                wrapper.innerHTML = templateCode;
+            } else {
+                // Render HTML via iframe
+                const iframe = document.createElement('iframe');
+                wrapper.innerHTML = '';
+                wrapper.appendChild(iframe);
+                iframe.contentWindow.document.open();
+                iframe.contentWindow.document.write(templateCode);
+                iframe.contentWindow.document.close();
+            }
+        }
+
+        // 3. EVENT LISTENERS
+        // Re-generate poster whenever an input changes
+        document.querySelectorAll('#sidebar input, #sidebar textarea, #sidebar select').forEach(element => {
+            element.addEventListener('input', generatePoster);
+        });
+
+        // Generate on first load
+        window.onload = generatePoster;
+
+    </script>
+</body>
+</html>
