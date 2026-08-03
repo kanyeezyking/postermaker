@@ -29,7 +29,7 @@
         <div class="input-group">
             <label for="templateSelect">Select Template</label>
             <select id="templateSelect">
-                <option value="1">Template 1: Swiss / Minimalist (Centered Grid)</option>
+                <option value="1">Template 1: Swiss / Minimalist (Left Aligned)</option>
                 <option value="2">Template 2: Y2K / Cyber Streetwear</option>
                 <option value="3">Template 3: Vintage Vinyl Frame</option>
                 <option value="4">Template 4: Editorial / Magazine Style</option>
@@ -112,19 +112,19 @@ Track Ten Title</textarea>
             1: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1190 1684" width="100%" height="100%">
               <rect width="1190" height="1684" fill="#F4F4F0"/>
               
-              <!-- Centered Header -->
-              <text x="595" y="90" font-family="Helvetica, Arial, sans-serif" font-size="52" font-weight="bold" fill="#111111" text-anchor="middle">{{ALBUM_TITLE}}</text>
-              <text x="595" y="135" font-family="Helvetica, Arial, sans-serif" font-size="26" fill="#666666" text-anchor="middle">{{ARTIST_NAME}} • {{RELEASE_YEAR}}</text>
+              <!-- Left-Aligned Header -->
+              <text x="80" y="95" font-family="Helvetica, Arial, sans-serif" font-size="52" font-weight="bold" fill="#111111">{{ALBUM_TITLE}}</text>
+              <text x="80" y="140" font-family="Helvetica, Arial, sans-serif" font-size="26" fill="#666666">{{ARTIST_NAME}} • {{RELEASE_YEAR}}</text>
               
-              <!-- Centered Square Album Cover -->
-              <rect x="195" y="170" width="800" height="800" fill="#E0E0E0" stroke="#CCCCCC" stroke-width="2"/>
-              <image x="195" y="170" width="800" height="800" href="{{ARTWORK_URL}}" preserveAspectRatio="xMidYMid slice" />
+              <!-- Square Album Cover -->
+              <rect x="80" y="175" width="1030" height="1030" fill="#E0E0E0" stroke="#CCCCCC" stroke-width="2"/>
+              <image x="80" y="175" width="1030" height="1030" href="{{ARTWORK_URL}}" preserveAspectRatio="xMidYMid slice" />
               
               <!-- Dynamic Stacked Tracklist Grid (Auto-scaled to fill space) -->
               {{DYNAMIC_SIDES}}
 
-              <!-- Dominant Palette Circles (No Text Label) -->
-              <g transform="translate(195, 1490)">
+              <!-- Dominant Palette Circles (No Text Label, Excludes White) -->
+              <g transform="translate(80, 1480)">
                 <circle cx="14" cy="14" r="14" fill="{{PALETTE_1}}"/>
                 <circle cx="54" cy="14" r="14" fill="{{PALETTE_2}}"/>
                 <circle cx="94" cy="14" r="14" fill="{{PALETTE_3}}"/>
@@ -132,13 +132,13 @@ Track Ten Title</textarea>
               </g>
               
               <!-- Uploaded Spotify Code Image (No Text Label) -->
-              <g transform="translate(745, 1476)">
-                <rect width="250" height="60" fill="#EAEAEA" rx="6"/>
-                <image width="250" height="60" href="{{SPOTIFY_CODE_URL}}" preserveAspectRatio="xMidYMid contain" />
+              <g transform="translate(830, 1466)">
+                <rect width="280" height="60" fill="#EAEAEA" rx="6"/>
+                <image width="280" height="60" href="{{SPOTIFY_CODE_URL}}" preserveAspectRatio="xMidYMid contain" />
               </g>
 
-              <line x1="195" y1="1560" x2="995" y2="1560" stroke="#CCCCCC" stroke-width="2"/>
-              <text x="595" y="1605" font-family="Helvetica, Arial, sans-serif" font-size="16" fill="#888888" text-anchor="middle">PRODUCED BY {{PRODUCER}} • CATALOG NO. {{CATALOG_NO}}</text>
+              <line x1="80" y1="1560" x2="1110" y2="1560" stroke="#CCCCCC" stroke-width="2"/>
+              <text x="80" y="1605" font-family="Helvetica, Arial, sans-serif" font-size="16" fill="#888888">PRODUCED BY {{PRODUCER}} • CATALOG NO. {{CATALOG_NO}}</text>
             </svg>`,
 
             2: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1190 1684" width="100%" height="100%">
@@ -244,29 +244,34 @@ Track Ten Title</textarea>
                 });
                 sides.push(currentSide);
 
-                // Auto-scale font size and spacing based on row count & track counts to perfectly fill space
+                // Dynamic sizing & scaling to perfectly fill space based on row count & track counts
                 let numRows = Math.ceil(sides.length / 2);
                 let maxTracks = Math.max(...sides.map(s => s.tracks.length), 1);
                 
-                let fontSize = 17;
-                let lineGap = 24;
-                let rowGap = 30;
+                let fontSize = 16;
+                let lineGap = 22;
+                let rowGap = 24;
                 
-                if (numRows >= 3 || maxTracks > 7) {
+                if (numRows >= 2 || maxTracks > 6) {
                     fontSize = 13;
                     lineGap = 18;
-                    rowGap = 22;
+                    rowGap = 20;
                 }
-                if (numRows >= 4 || maxTracks > 11) {
-                    fontSize = 10;
-                    lineGap = 14;
-                    rowGap = 18;
+                if (numRows >= 3 || maxTracks > 9) {
+                    fontSize = 11;
+                    lineGap = 15;
+                    rowGap = 16;
+                }
+                if (numRows >= 4 || maxTracks > 12) {
+                    fontSize = 9;
+                    lineGap = 12;
+                    rowGap = 13;
                 }
 
                 let dynamicSidesSvg = '';
-                let col0X = 195; // Left column matching artwork alignment
-                let col1X = 600; // Right column
-                let currentY = 1010;
+                let col0X = 80;   // Left column X matching artwork left edge
+                let col1X = 600;  // Right column X
+                let currentY = 1245; // Directly beneath artwork (175 + 1030 = 1205)
 
                 for (let i = 0; i < sides.length; i += 2) {
                     let sideLeft = sides[i];
