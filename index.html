@@ -116,11 +116,11 @@ Track Ten Title</textarea>
               <text x="80" y="95" font-family="Helvetica, Arial, sans-serif" font-size="52" font-weight="bold" fill="#111111">{{ALBUM_TITLE}}</text>
               <text x="80" y="140" font-family="Helvetica, Arial, sans-serif" font-size="26" fill="#666666">{{ARTIST_NAME}} • {{RELEASE_YEAR}}</text>
               
-              <!-- Square Album Cover -->
-              <rect x="80" y="175" width="1030" height="1030" fill="#E0E0E0" stroke="#CCCCCC" stroke-width="2"/>
-              <image x="80" y="175" width="1030" height="1030" href="{{ARTWORK_URL}}" preserveAspectRatio="xMidYMid slice" />
+              <!-- Slightly Smaller Centered Square Album Cover -->
+              <rect x="120" y="175" width="950" height="950" fill="#E0E0E0" stroke="#CCCCCC" stroke-width="2"/>
+              <image x="120" y="175" width="950" height="950" href="{{ARTWORK_URL}}" preserveAspectRatio="xMidYMid slice" />
               
-              <!-- Dynamic Stacked Tracklist Grid (Auto-scaled to fill space) -->
+              <!-- Dynamic Stacked Tracklist Grid (Bigger Text, Auto-scaled) -->
               {{DYNAMIC_SIDES}}
 
               <!-- Dominant Palette Circles (No Text Label, Excludes White) -->
@@ -244,34 +244,34 @@ Track Ten Title</textarea>
                 });
                 sides.push(currentSide);
 
-                // Dynamic sizing & scaling to perfectly fill space based on row count & track counts
+                // Dynamic sizing with bigger base font sizes and auto-scaling
                 let numRows = Math.ceil(sides.length / 2);
                 let maxTracks = Math.max(...sides.map(s => s.tracks.length), 1);
                 
-                let fontSize = 16;
-                let lineGap = 22;
-                let rowGap = 24;
+                let fontSize = 19;
+                let lineGap = 26;
+                let rowGap = 26;
                 
                 if (numRows >= 2 || maxTracks > 6) {
-                    fontSize = 13;
-                    lineGap = 18;
-                    rowGap = 20;
+                    fontSize = 15;
+                    lineGap = 21;
+                    rowGap = 21;
                 }
                 if (numRows >= 3 || maxTracks > 9) {
-                    fontSize = 11;
-                    lineGap = 15;
-                    rowGap = 16;
+                    fontSize = 13;
+                    lineGap = 18;
+                    rowGap = 18;
                 }
                 if (numRows >= 4 || maxTracks > 12) {
-                    fontSize = 9;
-                    lineGap = 12;
-                    rowGap = 13;
+                    fontSize = 11;
+                    lineGap = 15;
+                    rowGap = 15;
                 }
 
                 let dynamicSidesSvg = '';
-                let col0X = 80;   // Left column X matching artwork left edge
-                let col1X = 600;  // Right column X
-                let currentY = 1245; // Directly beneath artwork (175 + 1030 = 1205)
+                let col0X = 80;   // Left column X matching left alignment
+                let col1X = 630;  // Right column X
+                let currentY = 1175; // Directly beneath smaller album cover (175 + 950 = 1125)
 
                 for (let i = 0; i < sides.length; i += 2) {
                     let sideLeft = sides[i];
