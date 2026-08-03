@@ -14,10 +14,11 @@
         .input-group input, .input-group select, .input-group textarea { width: 100%; padding: 10px; background: #2a2a2a; border: 1px solid #444; color: #fff; border-radius: 4px; font-family: inherit; }
         .input-group textarea { resize: vertical; min-height: 120px; }
         .input-group input:focus, .input-group select:focus, .input-group textarea:focus { outline: none; border-color: #00ffcc; }
+        .file-input { padding: 5px !important; margin-top: 5px; font-size: 0.8rem; }
         #downloadBtn { width: 100%; padding: 12px; background: #00ffcc; color: #000; border: none; font-weight: bold; border-radius: 4px; cursor: pointer; margin-top: 10px; text-transform: uppercase; letter-spacing: 1px; }
         #downloadBtn:hover { background: #00cca3; }
-        #preview-container { flex-grow: 1; display: flex; justify-content: center; align-items: center; padding: 30px; overflow: auto; background: #111; }
-        #canvas-wrapper { width: 1190px; height: 1684px; background: #fff; box-shadow: 0 10px 30px rgba(0,0,0,0.8); flex-shrink: 0; position: relative; overflow: hidden; transform-origin: top center; }
+        #preview-container { flex-grow: 1; display: flex; justify-content: center; align-items: center; padding: 30px; overflow: hidden; background: #111; }
+        #canvas-wrapper { width: 1190px; height: 1684px; background: #fff; box-shadow: 0 10px 30px rgba(0,0,0,0.8); flex-shrink: 0; position: relative; overflow: hidden; transform-origin: center center; }
         iframe { width: 100%; height: 100%; border: none; }
     </style>
 </head>
@@ -28,7 +29,7 @@
         <div class="input-group">
             <label for="templateSelect">Select Template</label>
             <select id="templateSelect">
-                <option value="1">Template 1: Swiss / Minimalist (Multi-Side)</option>
+                <option value="1">Template 1: Swiss / Minimalist (Multi-Side Grid)</option>
                 <option value="2">Template 2: Y2K / Cyber Streetwear</option>
                 <option value="3">Template 3: Vintage Vinyl Frame</option>
                 <option value="4">Template 4: Editorial / Magazine Style</option>
@@ -67,17 +68,19 @@
         </div>
 
         <div class="input-group">
-            <label for="spotifyCode">Spotify Code Text</label>
-            <input type="text" id="spotifyCode" value="SPOTIFY CODE">
-        </div>
-
-        <div class="input-group">
-            <label for="artworkUrl">Artwork Image URL</label>
+            <label for="artworkUrl">Album Artwork (URL or Upload)</label>
             <input type="text" id="artworkUrl" placeholder="https://example.com/image.jpg">
+            <input type="file" id="artworkFile" accept="image/*" class="file-input">
         </div>
 
         <div class="input-group">
-            <label for="tracklist">Tracklist (Type SIDE A, SIDE B, etc. for columns)</label>
+            <label for="spotifyCodeUrl">Spotify Code Image (URL or Upload)</label>
+            <input type="text" id="spotifyCodeUrl" placeholder="https://example.com/spotify_code.png">
+            <input type="file" id="spotifyCodeFile" accept="image/*" class="file-input">
+        </div>
+
+        <div class="input-group">
+            <label for="tracklist">Tracklist (Type SIDE A, SIDE B, SIDE C, etc.)</label>
             <textarea id="tracklist">SIDE A
 Track One Title
 Track Two Title
@@ -85,7 +88,10 @@ Track Three Title
 SIDE B
 Track Four Title
 Track Five Title
-Track Six Title</textarea>
+Track Six Title
+SIDE C
+Track Seven Title
+Track Eight Title</textarea>
         </div>
 
         <button id="downloadBtn">Download A2 Poster</button>
@@ -96,44 +102,36 @@ Track Six Title</textarea>
     </div>
 
     <script>
+        let uploadedArtworkUrl = '';
+        let uploadedSpotifyCodeUrl = '';
+
         const templates = {
             1: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1190 1684" width="100%" height="100%">
               <rect width="1190" height="1684" fill="#F4F4F0"/>
-              <text x="80" y="100" font-family="Helvetica, Arial, sans-serif" font-size="52" font-weight="bold" fill="#111111">{{ALBUM_TITLE}}</text>
-              <text x="80" y="144" font-family="Helvetica, Arial, sans-serif" font-size="28" fill="#666666">{{ARTIST_NAME}} • {{RELEASE_YEAR}}</text>
+              <text x="80" y="95" font-family="Helvetica, Arial, sans-serif" font-size="52" font-weight="bold" fill="#111111">{{ALBUM_TITLE}}</text>
+              <text x="80" y="140" font-family="Helvetica, Arial, sans-serif" font-size="26" fill="#666666">{{ARTIST_NAME}} • {{RELEASE_YEAR}}</text>
               
-              <!-- Square Album Cover (A2 Scale) -->
-              <rect x="80" y="180" width="1030" height="1030" fill="#E0E0E0" stroke="#CCCCCC" stroke-width="4"/>
-              <image x="80" y="180" width="1030" height="1030" href="{{ARTWORK_URL}}" preserveAspectRatio="xMidYMid slice" />
+              <!-- Square Album Cover (A2 Proportionate Scale) -->
+              <rect x="80" y="175" width="860" height="860" fill="#E0E0E0" stroke="#CCCCCC" stroke-width="2"/>
+              <image x="80" y="175" width="860" height="860" href="{{ARTWORK_URL}}" preserveAspectRatio="xMidYMid slice" />
               
+              <!-- Tracklist Multi-Side Columns -->
               {{DYNAMIC_SIDES}}
 
-              <text x="780" y="1260" font-family="Helvetica, Arial, sans-serif" font-size="18" font-weight="bold" fill="#111111">DOMINANT PALETTE</text>
-              <circle cx="796" cy="1296" r="14" fill="{{PALETTE_1}}"/><circle cx="836" cy="1296" r="14" fill="{{PALETTE_2}}"/><circle cx="876" cy="1296" r="14" fill="{{PALETTE_3}}"/><circle cx="916" cy="1296" r="14" fill="{{PALETTE_4}}"/>
+              <!-- Dominant Palette (Excludes White) -->
+              <text x="860" y="1070" font-family="Helvetica, Arial, sans-serif" font-size="18" font-weight="bold" fill="#111111">COLOR PALETTE</text>
+              <circle cx="876" cy="1106" r="14" fill="{{PALETTE_1}}"/>
+              <circle cx="916" cy="1106" r="14" fill="{{PALETTE_2}}"/>
+              <circle cx="956" cy="1106" r="14" fill="{{PALETTE_3}}"/>
+              <circle cx="996" cy="1106" r="14" fill="{{PALETTE_4}}"/>
               
-              <!-- True Spotify Code Graphic (Scaled x2) -->
-              <g transform="translate(780, 1330) scale(2)">
-                <rect width="165" height="36" rx="6" fill="#000000"/>
-                <circle cx="18" cy="18" r="8" fill="#1DB954"/>
-                <path d="M14 13 C16 15, 16 21, 14 23" stroke="#000" stroke-width="1.5" fill="none"/>
-                <rect x="32" y="10" width="2.5" height="16" fill="#FFFFFF" rx="1"/>
-                <rect x="37" y="7" width="3.5" height="22" fill="#FFFFFF" rx="1.5"/>
-                <rect x="43" y="12" width="2" height="12" fill="#FFFFFF" rx="0.8"/>
-                <rect x="47" y="9" width="4" height="18" fill="#FFFFFF" rx="1.5"/>
-                <rect x="53" y="11" width="2.5" height="14" fill="#FFFFFF" rx="1"/>
-                <rect x="58" y="8" width="3.5" height="20" fill="#FFFFFF" rx="1.5"/>
-                <rect x="64" y="13" width="2" height="10" fill="#FFFFFF" rx="0.8"/>
-                <rect x="68" y="10" width="4" height="16" fill="#FFFFFF" rx="1.5"/>
-                <rect x="74" y="12" width="2.5" height="12" fill="#FFFFFF" rx="1"/>
-                <rect x="79" y="7" width="4" height="22" fill="#FFFFFF" rx="1.5"/>
-                <rect x="85" y="11" width="2.5" height="14" fill="#FFFFFF" rx="1"/>
-                <rect x="90" y="9" width="3.5" height="18" fill="#FFFFFF" rx="1.5"/>
-                <rect x="96" y="12" width="2.5" height="12" fill="#FFFFFF" rx="1"/>
-                <text x="110" y="22" font-family="Arial" font-size="9" fill="#1DB954">▶</text>
-              </g>
+              <!-- Uploaded Spotify Code Image -->
+              <text x="860" y="1170" font-family="Helvetica, Arial, sans-serif" font-size="18" font-weight="bold" fill="#111111">SPOTIFY CODE</text>
+              <rect x="860" y="1190" width="250" height="80" fill="#EAEAEA" rx="6"/>
+              <image x="860" y="1190" width="250" height="80" href="{{SPOTIFY_CODE_URL}}" preserveAspectRatio="xMinYMin contain" />
 
-              <line x1="80" y1="1570" x2="1110" y2="1570" stroke="#CCCCCC" stroke-width="2"/>
-              <text x="80" y="1610" font-family="Helvetica, Arial, sans-serif" font-size="16" fill="#888888">PRODUCED BY {{PRODUCER}} • CATALOG NO. {{CATALOG_NO}}</text>
+              <line x1="80" y1="1560" x2="1110" y2="1560" stroke="#CCCCCC" stroke-width="2"/>
+              <text x="80" y="1605" font-family="Helvetica, Arial, sans-serif" font-size="18" fill="#888888">PRODUCED BY {{PRODUCER}} • CATALOG NO. {{CATALOG_NO}}</text>
             </svg>`,
 
             2: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1190 1684" width="100%" height="100%">
@@ -148,170 +146,15 @@ Track Six Title</textarea>
               <text x="190" y="1544" font-family="Impact, sans-serif" font-size="20" fill="#000000" text-anchor="middle">PARENTAL</text>
               <text x="190" y="1570" font-family="Impact, sans-serif" font-size="20" fill="#000000" text-anchor="middle">ADVISORY</text>
               <text x="190" y="1588" font-family="Arial, sans-serif" font-size="10" fill="#000000" text-anchor="middle">EXPLICIT CONTENT</text>
-              <rect x="850" y="1500" width="240" height="100" fill="#1A1A24" stroke="#333344" stroke-width="2"/>
-              <text x="970" y="1560" font-family="'Courier New', monospace" font-size="18" fill="#888888" text-anchor="middle">[{{SPOTIFY_CODE}}]</text>
-            </svg>`,
-
-            3: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1190 1684" width="100%" height="100%">
-              <rect width="1190" height="1684" fill="#EFE8DB"/>
-              <rect x="50" y="50" width="1090" height="1584" fill="none" stroke="#2C221E" stroke-width="4"/>
-              <text x="595" y="130" font-family="'Times New Roman', Georgia, serif" font-size="56" font-weight="bold" fill="#2C221E" text-anchor="middle">{{ALBUM_TITLE}}</text>
-              <text x="595" y="176" font-family="'Times New Roman', Georgia, serif" font-size="26" font-style="italic" fill="#55423B" text-anchor="middle">LP Record by {{ARTIST_NAME}} ({{RELEASE_YEAR}})</text>
-              <rect x="295" y="220" width="600" height="600" fill="#DFD7C8" stroke="#2C221E" stroke-width="3"/>
-              <image x="295" y="220" width="600" height="600" href="{{ARTWORK_URL}}" preserveAspectRatio="xMidYMid slice" />
-              <text x="595" y="890" font-family="'Times New Roman', serif" font-size="22" font-weight="bold" fill="#2C221E" text-anchor="middle">— TRACK LISTING —</text>
-              {{TRACKLIST_SVG_CENTER}}
-              <text x="595" y="1580" font-family="'Times New Roman', serif" font-size="18" fill="#55423B" text-anchor="middle">PRODUCED BY {{PRODUCER}} • CAT: {{CATALOG_NO}}</text>
-            </svg>`,
-
-            4: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1190 1684" width="100%" height="100%">
-              <rect width="1190" height="1684" fill="#121212"/>
-              <rect x="0" y="0" width="560" height="1684" fill="#222222"/>
-              <image x="0" y="0" width="560" height="1684" href="{{ARTWORK_URL}}" preserveAspectRatio="xMidYMid slice" />
-              <text x="620" y="120" font-family="Georgia, serif" font-size="22" fill="#FF4500" letter-spacing="6">FEATURED ALBUM ({{RELEASE_YEAR}})</text>
-              <text x="620" y="210" font-family="Helvetica, Arial, sans-serif" font-size="60" font-weight="900" fill="#FFFFFF">{{ALBUM_TITLE}}</text>
-              <text x="620" y="270" font-family="Helvetica, Arial, sans-serif" font-size="32" fill="#AAAAAA">{{ARTIST_NAME}}</text>
-              <line x1="620" y1="320" x2="1110" y2="320" stroke="#333333" stroke-width="2"/>
-              <text x="620" y="370" font-family="Helvetica, Arial, sans-serif" font-size="20" font-weight="bold" fill="#FFFFFF">TRACKS</text>
-              {{TRACKLIST_SVG_EDITORIAL}}
-              <rect x="620" y="1480" width="330" height="80" fill="#222222" rx="8" stroke="#444" stroke-width="2"/>
-              <text x="785" y="1528" font-family="sans-serif" font-size="18" fill="#888888" text-anchor="middle">[{{SPOTIFY_CODE}}]</text>
-            </svg>`,
-
-            5: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1190 1684" width="100%" height="100%">
-              <rect width="1190" height="1684" fill="#FFF066"/>
-              <rect x="40" y="40" width="1110" height="1604" fill="none" stroke="#000000" stroke-width="10"/>
-              <line x1="40" y1="220" x2="1150" y2="220" stroke="#000000" stroke-width="8"/>
-              <text x="80" y="130" font-family="'Arial Black', sans-serif" font-size="56" fill="#000000">{{ARTIST_NAME}}</text>
-              <text x="80" y="184" font-family="'Arial Black', sans-serif" font-size="32" fill="#000000">{{ALBUM_TITLE}} ({{RELEASE_YEAR}})</text>
-              <rect x="80" y="260" width="520" height="520" fill="#FFFFFF" stroke="#000000" stroke-width="8"/>
-              <image x="80" y="260" width="520" height="520" href="{{ARTWORK_URL}}" preserveAspectRatio="xMidYMid slice" />
-              <line x1="640" y1="220" x2="640" y2="1644" stroke="#000000" stroke-width="8"/>
-              <text x="680" y="290" font-family="sans-serif" font-weight="900" font-size="24" fill="#000000">SPECS & TRACKS</text>
-              <text x="680" y="340" font-family="Courier, monospace" font-size="20" fill="#000000">PROD: {{PRODUCER}}</text>
-              {{TRACKLIST_SVG_BRUTALIST}}
-            </svg>`,
-
-            6: `<!DOCTYPE html>
-            <html><head><style>
-            * { box-sizing: border-box; }
-            body { margin: 0; padding: 30mm; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; color: #111; background-color: #f8f8f8; height: 1684px; width: 1190px; }
-            .advisory { border: 4px solid #111; display: inline-block; padding: 6px 16px; font-weight: 900; font-size: 20px; letter-spacing: 2px; }
-            .grid { width: 100%; height: 320px; display: block; margin-top: 16mm; position: relative; }
-            .pad { width: 45%; height: 45%; background: #e0e0e0; position: absolute; border: 4px solid #111; box-shadow: 6px 6px 0px #111; background-size: cover; background-position: center; }
-            .pad-1 { top: 0; left: 0; background-image: url('{{ARTWORK_URL}}'); }
-            .pad-2 { top: 0; right: 0; background: #ff4444; }
-            .pad-3 { bottom: 0; left: 0; }
-            .pad-4 { bottom: 0; right: 0; }
-            .title { font-size: 64pt; font-weight: 900; text-transform: uppercase; margin: 0; line-height: 1; letter-spacing: -2px; }
-            .artist { font-size: 40pt; font-weight: bold; margin-bottom: 20px; }
-            .tracklist { margin-top: 20mm; font-size: 20pt; font-weight: bold; line-height: 1.5; columns: 2; column-gap: 40px; max-height: 200mm; overflow: hidden; }
-            </style></head>
-            <body>
-                <div class="advisory">PARENTAL ADVISORY EXPLICIT CONTENT</div>
-                <div class="artist" style="margin-top: 20mm;">{{ARTIST_NAME}} ({{RELEASE_YEAR}})</div>
-                <div class="title">{{ALBUM_TITLE}}</div>
-                <div class="grid">
-                    <div class="pad pad-1"></div><div class="pad pad-2"></div><div class="pad pad-3"></div><div class="pad pad-4"></div>
-                </div>
-                <div class="tracklist">{{TRACKLIST_HTML}}</div>
-            </body></html>`,
-
-            7: `<!DOCTYPE html>
-            <html><head><style>
-            * { box-sizing: border-box; }
-            body { margin: 0; padding: 30mm; font-family: 'Courier New', Courier, monospace; color: #eee; background-color: #1a1a1a; height: 1684px; width: 1190px; }
-            .header { text-align: center; border-bottom: 4px solid #555; padding-bottom: 20px; margin-bottom: 30px; }
-            .header h1 { font-size: 44pt; margin: 0; letter-spacing: 4px; text-transform: uppercase; color: #fff; }
-            .header p { font-size: 18pt; margin: 10px 0 0 0; color: #aaa; }
-            .storyboard { width: 100%; position: relative; }
-            .frame { width: 100%; height: 44mm; border: 2px solid #444; margin-bottom: 12px; position: relative; background: #000; box-sizing: border-box; }
-            .frame-number { position: absolute; top: 8px; left: 12px; font-size: 16px; color: #ff3333; font-weight: bold; }
-            .frame-lyric { position: absolute; bottom: 8px; left: 12px; font-size: 20px; font-style: italic; color: #ccc; }
-            .frame-image { position: absolute; top: 0; right: 0; width: 80mm; height: 100%; background: #2a2a2a url('{{ARTWORK_URL}}') center/cover; border-left: 2px solid #444; }
-            .footer { margin-top: 10mm; font-size: 16pt; color: #888; }
-            </style></head>
-            <body>
-                <div class="header">
-                    <h1>{{ALBUM_TITLE}}</h1>
-                    <p>{{ARTIST_NAME}} | {{RELEASE_YEAR}} | DIR. CUT</p>
-                </div>
-                <div class="storyboard">
-                    {{STORYBOARD_FRAMES}}
-                </div>
-                <div class="footer">PRODUCER: {{PRODUCER}} | CAT: {{CATALOG_NO}}</div>
-            </body></html>`,
-
-            8: `<!DOCTYPE html>
-            <html><head><style>
-            * { box-sizing: border-box; }
-            body { margin: 0; padding: 0; font-family: 'Georgia', serif; color: #3b2a1a; background-color: #dcb37b; height: 1684px; width: 1190px; }
-            .border { border: 8px solid #3b2a1a; margin: 30mm; padding: 16mm; height: 474mm; position: relative; }
-            .title { font-size: 68pt; text-align: center; margin: 0; font-style: italic; line-height: 1.1; }
-            .subtitle { text-align: center; font-size: 22pt; letter-spacing: 4px; margin-top: 8mm; text-transform: uppercase; }
-            .art-box { width: 170mm; height: 170mm; border: 4px solid #3b2a1a; margin: 12mm auto; background: #f4e3c5 url('{{ARTWORK_URL}}') center/cover; border-radius: 50%; position: relative; display: block; }
-            .hole { width: 14mm; height: 14mm; background: #dcb37b; border-radius: 50%; border: 4px solid #3b2a1a; position: absolute; top: 74mm; left: 74mm; }
-            .tracklist-container { width: 100%; position: absolute; bottom: 8mm; left: 0; text-align: center; }
-            .tracklist { font-size: 16pt; line-height: 1.4; font-family: sans-serif; text-transform: uppercase; font-weight: bold; columns: 2; column-gap: 30px; padding: 0 20mm; }
-            </style></head>
-            <body>
-                <div class="border">
-                    <div class="title">{{ALBUM_TITLE}}</div>
-                    <div class="subtitle">{{ARTIST_NAME}} — {{RELEASE_YEAR}}</div>
-                    <div class="art-box"><div class="hole"></div></div>
-                    <div class="tracklist-container">
-                        <div class="tracklist">{{TRACKLIST_HTML}}</div>
-                    </div>
-                </div>
-            </body></html>`,
-
-            9: `<!DOCTYPE html>
-            <html><head><style>
-            * { box-sizing: border-box; }
-            body { margin: 0; padding: 0; font-family: 'Helvetica', sans-serif; color: #000; background-color: #fff; height: 1684px; width: 1190px; overflow: hidden; position: relative; }
-            .massive-text { font-size: 180pt; font-weight: 900; line-height: 0.8; letter-spacing: -8px; position: absolute; top: -8mm; left: -8mm; width: 460mm; z-index: 1; text-transform: uppercase; color: #111; }
-            .content-box { position: absolute; top: 70mm; right: 20mm; width: 260mm; background: #ff0000; color: #fff; z-index: 2; padding: 16mm; border: 8px solid #000; max-height: 220mm; overflow: hidden; }
-            .content-box h2 { margin: 0 0 8mm 0; font-size: 32pt; font-weight: 900; }
-            .track { border-bottom: 2px solid #fff; padding: 6px 0; font-size: 18pt; font-weight: bold; }
-            .art-placeholder { position: absolute; bottom: 30mm; left: 30mm; width: 180mm; height: 220mm; background: #000 url('{{ARTWORK_URL}}') center/cover; border: 8px solid #000; z-index: 3; }
-            </style></head>
-            <body>
-                <div class="massive-text">{{ARTIST_NAME}}</div>
-                <div class="content-box">
-                    <h2>{{ALBUM_TITLE}} ({{RELEASE_YEAR}})</h2>
-                    {{TRACKLIST_HTML_BRUTALIST}}
-                </div>
-                <div class="art-placeholder"></div>
-            </body></html>`,
-
-            10: `<!DOCTYPE html>
-            <html><head><style>
-            * { box-sizing: border-box; }
-            body { margin: 0; padding: 30mm; font-family: 'Times New Roman', serif; color: #e6e6fa; background-color: #0d0d2b; height: 1684px; width: 1190px; position: relative; }
-            .lyrics-bg { position: absolute; top: 30mm; left: 30mm; right: 30mm; bottom: 30mm; font-size: 20pt; line-height: 1.2; color: rgba(230, 230, 250, 0.12); z-index: 1; overflow: hidden; }
-            .center-piece { position: absolute; top: 110mm; left: 50%; transform: translate(-50%, 0); z-index: 2; width: 260mm; background: #e6e6fa; padding: 12mm; text-align: center; color: #0d0d2b; }
-            .center-piece h1 { font-family: sans-serif; font-size: 36pt; margin: 0 0 8mm 0; font-weight: 900; text-transform: uppercase; }
-            .center-piece p { font-size: 18pt; margin: 0 0 12mm 0; font-weight: bold; }
-            .art-square { width: 110mm; height: 110mm; margin: 0 auto; background: #fff url('{{ARTWORK_URL}}') center/cover; border: 2px solid #0d0d2b; }
-            .bottom-info { position: absolute; bottom: 24mm; left: 30mm; right: 30mm; z-index: 2; font-family: sans-serif; font-size: 16pt; border-top: 2px solid rgba(230, 230, 250, 0.3); padding-top: 8mm; }
-            </style></head>
-            <body>
-                <div class="lyrics-bg">TRACKLIST ARCHIVE • {{ARTIST_NAME}} • {{ALBUM_TITLE}} • {{RELEASE_YEAR}} • ALL RIGHTS RESERVED •</div>
-                <div class="center-piece">
-                    <h1>{{ALBUM_TITLE}}</h1>
-                    <p>BY {{ARTIST_NAME}} ({{RELEASE_YEAR}})</p>
-                    <div class="art-square"></div>
-                </div>
-                <div class="bottom-info">
-                    TRACKS: {{TRACKLIST_INLINE}} | PROD: {{PRODUCER}}
-                </div>
-            </body></html>`
+              <image x="850" y="1500" width="240" height="100" href="{{SPOTIFY_CODE_URL}}" preserveAspectRatio="xMidYMid contain" />
+            </svg>`
         };
 
-        // Automatic image color extractor helper
+        // Extract palette excluding white and near-white pixels
         function extractPaletteFromImage(imgUrl, callback) {
+            const defaultPalette = ['#2b2b2b', '#555555', '#888888', '#aaaaaa'];
             if (!imgUrl) {
-                callback(['#333333', '#666666', '#999999', '#cccccc']);
+                callback(defaultPalette);
                 return;
             }
             const img = new Image();
@@ -321,30 +164,44 @@ Track Six Title</textarea>
                 try {
                     const canvas = document.createElement('canvas');
                     const ctx = canvas.getContext('2d');
-                    canvas.width = 30;
-                    canvas.height = 30;
-                    ctx.drawImage(img, 0, 0, 30, 30);
-                    const imgData = ctx.getImageData(0, 0, 30, 30).data;
+                    canvas.width = 50;
+                    canvas.height = 50;
+                    ctx.drawImage(img, 0, 0, 50, 50);
+                    const imgData = ctx.getImageData(0, 0, 50, 50).data;
                     
                     let colors = [];
-                    for (let i = 0; i < imgData.length; i += 36) {
-                        colors.push({
-                            r: imgData[i],
-                            g: imgData[i+1],
-                            b: imgData[i+2]
-                        });
+                    for (let i = 0; i < imgData.length; i += 16) {
+                        let r = imgData[i];
+                        let g = imgData[i+1];
+                        let b = imgData[i+2];
+                        let a = imgData[i+3];
+                        
+                        if (a < 128) continue; // Skip transparent
+                        
+                        // Exclude white / near-white colors (RGB > 215)
+                        if (r > 215 && g > 215 && b > 215) continue;
+                        
+                        colors.push({ r, g, b });
                     }
-                    let p1 = `rgb(${colors[2]?.r || 40}, ${colors[2]?.g || 40}, ${colors[2]?.b || 40})`;
-                    let p2 = `rgb(${colors[8]?.r || 100}, ${colors[8]?.g || 100}, ${colors[8]?.b || 100})`;
-                    let p3 = `rgb(${colors[15]?.r || 160}, ${colors[15]?.g || 160}, ${colors[15]?.b || 160})`;
-                    let p4 = `rgb(${colors[20]?.r || 220}, ${colors[20]?.g || 220}, ${colors[20]?.b || 220})`;
+                    
+                    if (colors.length < 4) {
+                        callback(defaultPalette);
+                        return;
+                    }
+
+                    let step = Math.floor(colors.length / 4);
+                    let p1 = `rgb(${colors[0].r}, ${colors[0].g}, ${colors[0].b})`;
+                    let p2 = `rgb(${colors[step].r}, ${colors[step].g}, ${colors[step].b})`;
+                    let p3 = `rgb(${colors[step * 2].r}, ${colors[step * 2].g}, ${colors[step * 2].b})`;
+                    let p4 = `rgb(${colors[step * 3].r}, ${colors[step * 3].g}, ${colors[step * 3].b})`;
+
                     callback([p1, p2, p3, p4]);
                 } catch(e) {
-                    callback(['#333333', '#666666', '#999999', '#cccccc']);
+                    callback(defaultPalette);
                 }
             };
             img.onerror = function() {
-                callback(['#333333', '#666666', '#999999', '#cccccc']);
+                callback(defaultPalette);
             };
         }
 
@@ -355,15 +212,17 @@ Track Six Title</textarea>
             const producer = document.getElementById('producerName').value;
             const year = document.getElementById('releaseYear').value;
             const catalogNo = document.getElementById('catalogNo').value;
-            const spotifyCode = document.getElementById('spotifyCode').value;
-            const artworkUrl = document.getElementById('artworkUrl').value;
+            
+            const artworkUrl = uploadedArtworkUrl || document.getElementById('artworkUrl').value;
+            const spotifyCodeUrl = uploadedSpotifyCodeUrl || document.getElementById('spotifyCodeUrl').value;
+            
             const rawTrackText = document.getElementById('tracklist').value;
             const lines = rawTrackText.split('\n');
 
             extractPaletteFromImage(artworkUrl, (palette) => {
-                let code = templates[templateId];
+                let code = templates[templateId] || templates[1];
 
-                // Parse Multi-Sides for Template 1 (A2 Scale coordinates)
+                // Parse Multi-Sides for Grid layout (Side A left, Side B right, Side C underneath Side A)
                 let sides = [];
                 let currentSide = { title: "SIDE A", tracks: [] };
                 lines.forEach(line => {
@@ -380,29 +239,49 @@ Track Six Title</textarea>
                 });
                 sides.push(currentSide);
 
+                // Build 2-column stacked grid SVG (Side C placed underneath Side A)
                 let dynamicSidesSvg = '';
-                let startX = 80;
-                let startY = 1260;
-                sides.forEach((side, sIdx) => {
-                    if (sIdx > 0 && sIdx % 3 === 0) {
-                        startX = 80;
-                        startY += 210;
-                    } else if (sIdx > 0) {
-                        startX += 350;
-                    }
-                    
-                    dynamicSidesSvg += `<text x="${startX}" y="${startY}" font-family="Helvetica, Arial, sans-serif" font-size="20" font-weight="bold" fill="#111111">${side.title}</text>\n`;
-                    
-                    side.tracks.forEach((track, tIdx) => {
-                        let tNum = (tIdx + 1).toString().padStart(2, '0');
-                        let tY = startY + 32 + (tIdx * 30);
-                        if (tY < 1540) {
-                            dynamicSidesSvg += `<text x="${startX}" y="${tY}" font-family="Helvetica, Arial, sans-serif" font-size="18" fill="#444444">${tNum}. ${track}</text>\n`;
-                        }
-                    });
-                });
+                let col0X = 80;  // Column 1 X
+                let col1X = 460; // Column 2 X
+                let currentY = 1070; // Starting Y below artwork
 
-                // Standard track lists for other templates
+                for (let i = 0; i < sides.length; i += 2) {
+                    let sideLeft = sides[i];
+                    let sideRight = sides[i + 1];
+
+                    // Render Left Side (Col 1: Side A, Side C, etc.)
+                    if (sideLeft) {
+                        dynamicSidesSvg += `<text x="${col0X}" y="${currentY}" font-family="Helvetica, Arial, sans-serif" font-size="20" font-weight="bold" fill="#111111">${sideLeft.title}</text>\n`;
+                        sideLeft.tracks.forEach((track, tIdx) => {
+                            let tNum = (tIdx + 1).toString().padStart(2, '0');
+                            let tY = currentY + 30 + (tIdx * 26);
+                            if (tY < 1540) {
+                                dynamicSidesSvg += `<text x="${col0X}" y="${tY}" font-family="Helvetica, Arial, sans-serif" font-size="18" fill="#444444">${tNum}. ${track}</text>\n`;
+                            }
+                        });
+                    }
+
+                    // Render Right Side (Col 2: Side B, Side D, etc.)
+                    if (sideRight) {
+                        dynamicSidesSvg += `<text x="${col1X}" y="${currentY}" font-family="Helvetica, Arial, sans-serif" font-size="20" font-weight="bold" fill="#111111">${sideRight.title}</text>\n`;
+                        sideRight.tracks.forEach((track, tIdx) => {
+                            let tNum = (tIdx + 1).toString().padStart(2, '0');
+                            let tY = currentY + 30 + (tIdx * 26);
+                            if (tY < 1540) {
+                                dynamicSidesSvg += `<text x="${col1X}" y="${tY}" font-family="Helvetica, Arial, sans-serif" font-size="18" fill="#444444">${tNum}. ${track}</text>\n`;
+                            }
+                        });
+                    }
+
+                    // Calculate height of current row based on track count
+                    let maxTracksInRow = Math.max(
+                        sideLeft ? sideLeft.tracks.length : 0,
+                        sideRight ? sideRight.tracks.length : 0
+                    );
+                    currentY += 30 + (maxTracksInRow * 26) + 30; // Header height + tracks + row gap
+                }
+
+                // Standard track lists for backup templates
                 let allTracks = [];
                 lines.forEach(l => {
                     let t = l.trim();
@@ -412,31 +291,12 @@ Track Six Title</textarea>
                 });
 
                 let svgGrid2 = '';
-                let svgCenter = '';
-                let svgEditorial = '';
-                let svgBrutal = '';
-                let htmlList = '';
-                let htmlBrutal = '';
-                let storyboardFrames = '';
-                let inlineTracks = allTracks.join(' • ');
-
                 allTracks.forEach((t, i) => {
                     let num = (i + 1).toString().padStart(2, '0');
-                    
-                    if(i < 8) {
+                    if (i < 8) {
                         let x = i < 4 ? 100 : 600;
                         let y = 1180 + ((i % 4) * 44);
                         svgGrid2 += `<text x="${x}" y="${y}" font-family="'Courier New', monospace" font-size="20" fill="#FFFFFF">${num}. ${t}</text>\n`;
-                    }
-                    htmlList += `${num}. ${t} <br>`;
-                    htmlBrutal += `<div class="track">${num}. ${t}</div>`;
-                    
-                    if(i < 8) svgCenter += `<text x="595" y="${950 + (i * 36)}" font-family="'Times New Roman', serif" font-size="20" fill="#2C221E" text-anchor="middle">${i+1}. ${t}</text>\n`;
-                    if(i < 8) svgEditorial += `<text x="620" y="${420 + (i * 50)}" font-family="Helvetica, sans-serif" font-size="18" fill="#FF4500">0${i+1}</text><text x="670" y="${420 + (i * 50)}" font-family="Helvetica, sans-serif" font-size="18" fill="#DDDDDD">${t}</text>\n`;
-                    if(i < 10) svgBrutal += `<text x="680" y="${390 + (i * 40)}" font-family="Courier, monospace" font-size="18" font-weight="bold" fill="#000000">${num}. ${t}</text>\n`;
-                    
-                    if(i < 6) {
-                        storyboardFrames += `<div class="frame"><div class="frame-number">SCENE 0${i+1}</div><div class="frame-lyric">"${t}"</div><div class="frame-image"></div></div>\n`;
                     }
                 });
 
@@ -446,21 +306,14 @@ Track Six Title</textarea>
                     .replace(/{{PRODUCER}}/g, producer)
                     .replace(/{{RELEASE_YEAR}}/g, year)
                     .replace(/{{CATALOG_NO}}/g, catalogNo)
-                    .replace(/{{SPOTIFY_CODE}}/g, spotifyCode)
                     .replace(/{{ARTWORK_URL}}/g, artworkUrl)
+                    .replace(/{{SPOTIFY_CODE_URL}}/g, spotifyCodeUrl)
                     .replace(/{{DYNAMIC_SIDES}}/g, dynamicSidesSvg)
                     .replace(/{{PALETTE_1}}/g, palette[0])
                     .replace(/{{PALETTE_2}}/g, palette[1])
                     .replace(/{{PALETTE_3}}/g, palette[2])
                     .replace(/{{PALETTE_4}}/g, palette[3])
-                    .replace(/{{TRACKLIST_SVG_GRID_2}}/g, svgGrid2)
-                    .replace(/{{TRACKLIST_SVG_CENTER}}/g, svgCenter)
-                    .replace(/{{TRACKLIST_SVG_EDITORIAL}}/g, svgEditorial)
-                    .replace(/{{TRACKLIST_SVG_BRUTALIST}}/g, svgBrutal)
-                    .replace(/{{TRACKLIST_HTML}}/g, htmlList)
-                    .replace(/{{TRACKLIST_HTML_BRUTALIST}}/g, htmlBrutal)
-                    .replace(/{{TRACKLIST_INLINE}}/g, inlineTracks)
-                    .replace(/{{STORYBOARD_FRAMES}}/g, storyboardFrames);
+                    .replace(/{{TRACKLIST_SVG_GRID_2}}/g, svgGrid2);
 
                 const wrapper = document.getElementById('canvas-wrapper');
                 if (code.includes('<svg')) {
@@ -474,6 +327,33 @@ Track Six Title</textarea>
                 }
             });
         }
+
+        // File upload event listeners
+        document.getElementById('artworkFile').addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (evt) => {
+                    uploadedArtworkUrl = evt.target.result;
+                    document.getElementById('artworkUrl').value = '';
+                    updatePoster();
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        document.getElementById('spotifyCodeFile').addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (evt) => {
+                    uploadedSpotifyCodeUrl = evt.target.result;
+                    document.getElementById('spotifyCodeUrl').value = '';
+                    updatePoster();
+                };
+                reader.readAsDataURL(file);
+            }
+        });
 
         document.getElementById('downloadBtn').addEventListener('click', () => {
             const wrapper = document.getElementById('canvas-wrapper');
@@ -489,34 +369,26 @@ Track Six Title</textarea>
                 document.body.appendChild(a);
                 a.click();
                 document.body.removeChild(a);
-            } else {
-                const iframe = wrapper.querySelector('iframe');
-                if (iframe) {
-                    const htmlContent = iframe.contentWindow.document.documentElement.outerHTML;
-                    const blob = new Blob([htmlContent], { type: 'text/html;charset=utf-8' });
-                    const url = URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = filename + '.html';
-                    document.body.appendChild(a);
-                    a.click();
-                    document.body.removeChild(a);
-                }
             }
         });
 
         document.querySelectorAll('#sidebar input, #sidebar textarea, #sidebar select').forEach(el => {
-            el.addEventListener('input', updatePoster);
+            el.addEventListener('input', () => {
+                if (el.id === 'artworkUrl') uploadedArtworkUrl = '';
+                if (el.id === 'spotifyCodeUrl') uploadedSpotifyCodeUrl = '';
+                updatePoster();
+            });
             el.addEventListener('change', updatePoster);
         });
 
-        // Scale preview down slightly to fit comfortable viewport view while maintaining exact A2 proportions
+        // Scale preview box smoothly so nothing is visually clipped
         function adjustPreviewScale() {
             const container = document.getElementById('preview-container');
             const wrapper = document.getElementById('canvas-wrapper');
             const scale = Math.min((container.clientWidth - 60) / 1190, (container.clientHeight - 60) / 1684, 1);
             wrapper.style.transform = `scale(${scale})`;
         }
+
         window.addEventListener('resize', adjustPreviewScale);
         window.onload = () => {
             updatePoster();
