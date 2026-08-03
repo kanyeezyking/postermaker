@@ -97,7 +97,7 @@ Track Nine Title
 Track Ten Title</textarea>
         </div>
 
-        <button id="downloadBtn">Download A2 Poster (SVG)</button>
+        <button id="downloadBtn">Download A2 Poster (PNG)</button>
     </div>
 
     <div id="preview-container">
@@ -109,14 +109,14 @@ Track Ten Title</textarea>
         let uploadedSpotifyCodeUrl = '';
 
         const templates = {
-            // 1. Swiss / Minimalist
+            // 1. Swiss / Minimalist (Customized: smaller cover, bigger text)
             1: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1190 1684" width="100%" height="100%">
               <rect width="1190" height="1684" fill="#F4F4F0"/>
               <text x="80" y="95" font-family="Helvetica, Arial, sans-serif" font-size="52" font-weight="bold" fill="#111111">{{ALBUM_TITLE}}</text>
               <text x="80" y="140" font-family="Helvetica, Arial, sans-serif" font-size="26" fill="#666666">{{ARTIST_NAME}} • {{RELEASE_YEAR}}</text>
               <rect x="120" y="175" width="950" height="950" fill="#E0E0E0" stroke="#CCCCCC" stroke-width="2"/>
               <image x="120" y="175" width="950" height="950" href="{{ARTWORK_URL}}" preserveAspectRatio="xMidYMid slice" crossorigin="anonymous" />
-              {{TRACKLIST_CONTENT}}
+              {{DYNAMIC_SIDES}}
               <g transform="translate(80, 1480)">
                 <circle cx="14" cy="14" r="14" fill="{{PALETTE_1}}"/>
                 <circle cx="54" cy="14" r="14" fill="{{PALETTE_2}}"/>
@@ -138,7 +138,7 @@ Track Ten Title</textarea>
               <image x="100" y="80" width="990" height="740" href="{{ARTWORK_URL}}" preserveAspectRatio="xMidYMid slice" crossorigin="anonymous" />
               <text x="100" y="870" font-family="'Impact', sans-serif" font-size="64" fill="#FFFFFF" letter-spacing="4">{{ARTIST_NAME}}</text>
               <text x="100" y="930" font-family="'Courier New', monospace" font-size="32" fill="#00FFCC">{{ALBUM_TITLE}}</text>
-              {{TRACKLIST_CONTENT}}
+              {{TRACKLIST_SVG_GRID_2}}
               <g transform="translate(100, 1500)">
                 <rect width="200" height="100" fill="#FFFFFF" stroke="#000000" stroke-width="4"/>
                 <text x="100" y="32" font-family="Impact, sans-serif" font-size="24" fill="#000000" text-anchor="middle" letter-spacing="1">PARENTAL</text>
@@ -151,39 +151,38 @@ Track Ten Title</textarea>
 
             // 3. Vintage Vinyl Frame
             3: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1190 1684" width="100%" height="100%">
-              <rect width="1190" height="1684" fill="#FBF9F1"/>
-              <rect x="70" y="70" width="1050" height="1544" fill="none" stroke="#3E2723" stroke-width="8"/>
-              <text x="595" y="130" font-family="Georgia, serif" font-size="38" font-weight="bold" fill="#3E2723" text-anchor="middle" letter-spacing="3">{{ALBUM_TITLE}}</text>
-              <text x="595" y="170" font-family="Georgia, serif" font-size="20" font-style="italic" fill="#5D4037" text-anchor="middle">{{ARTIST_NAME}} — {{RELEASE_YEAR}}</text>
-              <rect x="195" y="210" width="800" height="800" fill="#EFEBE9" stroke="#3E2723" stroke-width="4"/>
-              <image x="195" y="210" width="800" height="800" href="{{ARTWORK_URL}}" preserveAspectRatio="xMidYMid slice" crossorigin="anonymous" />
-              {{TRACKLIST_CONTENT}}
-              <image x="455" y="1500" width="280" height="70" href="{{SPOTIFY_CODE_URL}}" preserveAspectRatio="xMidYMid contain" crossorigin="anonymous" />
+              <rect width="1190" height="1684" fill="#F4F1EA"/>
+              <rect x="95" y="95" width="1000" height="1494" fill="#FFFFFF" stroke="#D3C5B4" stroke-width="3"/>
+              <text x="595" y="160" font-family="Georgia, serif" font-size="44" font-weight="bold" fill="#1A1A1A" text-anchor="middle">{{ALBUM_TITLE}}</text>
+              <text x="595" y="200" font-family="Georgia, serif" font-size="22" fill="#666666" text-anchor="middle">{{ARTIST_NAME}} — {{RELEASE_YEAR}}</text>
+              <rect x="245" y="235" width="700" height="700" fill="#EAEAEA"/>
+              <image x="245" y="235" width="700" height="700" href="{{ARTWORK_URL}}" preserveAspectRatio="xMidYMid slice" crossorigin="anonymous" />
+              {{TRACKLIST_GENERIC}}
+              <image x="455" y="1500" width="280" height="60" href="{{SPOTIFY_CODE_URL}}" preserveAspectRatio="xMidYMid contain" crossorigin="anonymous" />
             </svg>`,
 
             // 4. Editorial / Magazine Style
             4: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1190 1684" width="100%" height="100%">
               <rect width="1190" height="1684" fill="#FFFFFF"/>
-              <text x="100" y="150" font-family="Times New Roman, serif" font-size="78" font-weight="bold" fill="#000000">{{ALBUM_TITLE}}</text>
-              <text x="100" y="200" font-family="Times New Roman, serif" font-size="24" font-style="italic" fill="#666666">ISSUE NO. {{RELEASE_YEAR}} / {{ARTIST_NAME}}</text>
-              <rect x="100" y="240" width="990" height="650" fill="#EEEEEE"/>
-              <image x="100" y="240" width="990" height="650" href="{{ARTWORK_URL}}" preserveAspectRatio="xMidYMid slice" crossorigin="anonymous" />
-              {{TRACKLIST_CONTENT}}
-              <text x="100" y="1610" font-family="Times New Roman, serif" font-size="14" fill="#444">PRODUCED BY {{PRODUCER}} • CAT: {{CATALOG_NO}}</text>
-              <image x="850" y="1540" width="240" height="70" href="{{SPOTIFY_CODE_URL}}" preserveAspectRatio="xMidYMid contain" crossorigin="anonymous" />
+              <text x="90" y="110" font-family="'Times New Roman', serif" font-size="64" font-weight="bold" fill="#000000">{{ALBUM_TITLE}}</text>
+              <text x="90" y="150" font-family="Helvetica, Arial, sans-serif" font-size="20" fill="#666666">SPECIAL EDITION / {{ARTIST_NAME}} / {{RELEASE_YEAR}}</text>
+              <rect x="90" y="185" width="1010" height="680" fill="#EAEAEA"/>
+              <image x="90" y="185" width="1010" height="680" href="{{ARTWORK_URL}}" preserveAspectRatio="xMidYMid slice" crossorigin="anonymous" />
+              {{TRACKLIST_GENERIC}}
+              <image x="820" y="1520" width="280" height="60" href="{{SPOTIFY_CODE_URL}}" preserveAspectRatio="xMidYMid contain" crossorigin="anonymous" />
             </svg>`,
 
             // 5. Neo-Brutalist Grid
             5: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1190 1684" width="100%" height="100%">
-              <rect width="1190" height="1684" fill="#FFDE00"/>
-              <rect x="80" y="80" width="1030" height="1524" fill="#FFFFFF" stroke="#000000" stroke-width="6"/>
+              <rect width="1190" height="1684" fill="#FFEE00"/>
+              <rect x="90" y="90" width="1010" height="1504" fill="#FFFFFF" stroke="#000000" stroke-width="6"/>
               <rect x="130" y="130" width="450" height="450" fill="#000000" stroke="#000000" stroke-width="4"/>
               <image x="130" y="130" width="450" height="450" href="{{ARTWORK_URL}}" preserveAspectRatio="xMidYMid slice" crossorigin="anonymous" />
               <text x="610" y="190" font-family="Impact, sans-serif" font-size="56" fill="#000000">{{ALBUM_TITLE}}</text>
               <text x="610" y="240" font-family="Arial Black, sans-serif" font-size="24" fill="#333333">{{ARTIST_NAME}} // {{RELEASE_YEAR}}</text>
               <line x1="130" y1="620" x2="1060" y2="620" stroke="#000000" stroke-width="4"/>
-              {{TRACKLIST_CONTENT}}
-              <image x="130" y="1480" width="260" height="70" href="{{SPOTIFY_CODE_URL}}" preserveAspectRatio="xMidYMid contain" crossorigin="anonymous" />
+              {{TRACKLIST_GENERIC}}
+              <image x="130" y="1500" width="260" height="60" href="{{SPOTIFY_CODE_URL}}" preserveAspectRatio="xMidYMid contain" crossorigin="anonymous" />
             </svg>`,
 
             // 6. MPC Sampler / Classic Hip-Hop
@@ -191,10 +190,10 @@ Track Ten Title</textarea>
               <rect width="1190" height="1684" fill="#1C1E1D"/>
               <rect x="90" y="90" width="1010" height="680" fill="#2A2E2D" stroke="#FF9900" stroke-width="3"/>
               <image x="90" y="90" width="1010" height="680" href="{{ARTWORK_URL}}" preserveAspectRatio="xMidYMid slice" crossorigin="anonymous" />
-              <text x="90" y="830" font-family="'Courier New', monospace" font-size="44" font-weight="bold" fill="#FF9900">{{ARTIST_NAME}} - {{ALBUM_TITLE}}</text>
+              <text x="90" y="830" font-family="'Courier New', monospace" font-size="40" font-weight="bold" fill="#FF9900">{{ARTIST_NAME}} - {{ALBUM_TITLE}}</text>
               <text x="90" y="870" font-family="'Courier New', monospace" font-size="20" fill="#AAAAAA">BEAT LAB PRODUCTIONS • {{RELEASE_YEAR}}</text>
-              {{TRACKLIST_CONTENT}}
-              <image x="820" y="1500" width="280" height="80" href="{{SPOTIFY_CODE_URL}}" preserveAspectRatio="xMidYMid contain" crossorigin="anonymous" />
+              {{TRACKLIST_GENERIC}}
+              <image x="820" y="1520" width="280" height="60" href="{{SPOTIFY_CODE_URL}}" preserveAspectRatio="xMidYMid contain" crossorigin="anonymous" />
             </svg>`,
 
             // 7. Director's Cut Storyboard
@@ -204,8 +203,8 @@ Track Ten Title</textarea>
               <image x="80" y="80" width="1030" height="600" href="{{ARTWORK_URL}}" preserveAspectRatio="xMidYMid slice" crossorigin="anonymous" />
               <text x="80" y="740" font-family="Helvetica, sans-serif" font-size="42" font-weight="bold" fill="#FFFFFF">{{ALBUM_TITLE}} // DIRECTOR'S CUT</text>
               <text x="80" y="780" font-family="Helvetica, sans-serif" font-size="22" fill="#00FFCC">STARRING {{ARTIST_NAME}} • {{RELEASE_YEAR}}</text>
-              {{TRACKLIST_CONTENT}}
-              <image x="830" y="1520" width="280" height="70" href="{{SPOTIFY_CODE_URL}}" preserveAspectRatio="xMidYMid contain" crossorigin="anonymous" />
+              {{TRACKLIST_GENERIC}}
+              <image x="830" y="1520" width="280" height="60" href="{{SPOTIFY_CODE_URL}}" preserveAspectRatio="xMidYMid contain" crossorigin="anonymous" />
             </svg>`,
 
             // 8. Chicago Soul / Vinyl Sleeve
@@ -215,8 +214,8 @@ Track Ten Title</textarea>
               <image x="140" y="140" width="910" height="910" href="{{ARTWORK_URL}}" preserveAspectRatio="xMidYMid slice" crossorigin="anonymous" />
               <text x="595" y="1120" font-family="Georgia, serif" font-size="40" font-weight="bold" fill="#E5C158" text-anchor="middle">{{ALBUM_TITLE}}</text>
               <text x="595" y="1160" font-family="Georgia, serif" font-size="24" fill="#FFFFFF" text-anchor="middle">{{ARTIST_NAME}}</text>
-              {{TRACKLIST_CONTENT}}
-              <image x="455" y="1520" width="280" height="70" href="{{SPOTIFY_CODE_URL}}" preserveAspectRatio="xMidYMid contain" crossorigin="anonymous" />
+              {{TRACKLIST_GENERIC}}
+              <image x="455" y="1520" width="280" height="60" href="{{SPOTIFY_CODE_URL}}" preserveAspectRatio="xMidYMid contain" crossorigin="anonymous" />
             </svg>`,
 
             // 9. Modern Brutalist / Experimental
@@ -227,8 +226,8 @@ Track Ten Title</textarea>
               <image x="80" y="160" width="600" height="600" href="{{ARTWORK_URL}}" preserveAspectRatio="xMidYMid slice" crossorigin="anonymous" />
               <text x="710" y="220" font-family="Arial, sans-serif" font-size="28" fill="#FF5555">ARTIST: {{ARTIST_NAME}}</text>
               <text x="710" y="270" font-family="Arial, sans-serif" font-size="22" fill="#AAAAAA">YEAR: {{RELEASE_YEAR}}</text>
-              {{TRACKLIST_CONTENT}}
-              <image x="830" y="1520" width="280" height="70" href="{{SPOTIFY_CODE_URL}}" preserveAspectRatio="xMidYMid contain" crossorigin="anonymous" />
+              {{TRACKLIST_GENERIC}}
+              <image x="830" y="1520" width="280" height="60" href="{{SPOTIFY_CODE_URL}}" preserveAspectRatio="xMidYMid contain" crossorigin="anonymous" />
             </svg>`,
 
             // 10. Lyrical Typography Focus
@@ -239,8 +238,8 @@ Track Ten Title</textarea>
               <image x="395" y="140" width="400" height="400" href="{{ARTWORK_URL}}" preserveAspectRatio="xMidYMid slice" crossorigin="anonymous" />
               <text x="595" y="580" font-family="Georgia, serif" font-size="36" font-weight="bold" fill="#111111" text-anchor="middle">{{ALBUM_TITLE}}</text>
               <text x="595" y="620" font-family="Georgia, serif" font-size="20" fill="#555555" text-anchor="middle">{{ARTIST_NAME}} • {{RELEASE_YEAR}}</text>
-              {{TRACKLIST_CONTENT}}
-              <image x="455" y="1520" width="280" height="70" href="{{SPOTIFY_CODE_URL}}" preserveAspectRatio="xMidYMid contain" crossorigin="anonymous" />
+              {{TRACKLIST_GENERIC}}
+              <image x="455" y="1520" width="280" height="60" href="{{SPOTIFY_CODE_URL}}" preserveAspectRatio="xMidYMid contain" crossorigin="anonymous" />
             </svg>`
         };
 
@@ -297,6 +296,57 @@ Track Ten Title</textarea>
             };
         }
 
+        // Convert external image URLs to Base64 Data URLs to prevent tainted canvas issues on PNG export
+        function prepareImageUrl(url, callback) {
+            if (!url || url.startsWith('data:') || url.startsWith('blob:')) {
+                callback(url);
+                return;
+            }
+            const img = new Image();
+            img.crossOrigin = 'anonymous';
+            img.onload = function() {
+                try {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = img.naturalWidth || 600;
+                    canvas.height = img.naturalHeight || 600;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0);
+                    callback(canvas.toDataURL('image/png'));
+                } catch (e) {
+                    // CORS proxy fallback
+                    const proxyUrl = 'https://images.weserv.nl/?url=' + encodeURIComponent(url);
+                    const proxyImg = new Image();
+                    proxyImg.crossOrigin = 'anonymous';
+                    proxyImg.onload = function() {
+                        const canvas = document.createElement('canvas');
+                        canvas.width = proxyImg.naturalWidth || 600;
+                        canvas.height = proxyImg.naturalHeight || 600;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(proxyImg, 0, 0);
+                        callback(canvas.toDataURL('image/png'));
+                    };
+                    proxyImg.onerror = () => callback(url);
+                    proxyImg.src = proxyUrl;
+                }
+            };
+            img.onerror = function() {
+                const proxyUrl = 'https://images.weserv.nl/?url=' + encodeURIComponent(url);
+                const proxyImg = new Image();
+                proxyImg.crossOrigin = 'anonymous';
+                proxyImg.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = proxyImg.naturalWidth || 600;
+                    canvas.height = proxyImg.naturalHeight || 600;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(proxyImg, 0, 0);
+                    callback(canvas.toDataURL('image/png'));
+                };
+                proxyImg.onerror = () => callback(url);
+                proxyImg.src = proxyUrl;
+            };
+            img.src = url;
+        }
+
         function updatePoster() {
             const templateId = document.getElementById('templateSelect').value;
             const artist = document.getElementById('artistName').value;
@@ -305,144 +355,137 @@ Track Ten Title</textarea>
             const year = document.getElementById('releaseYear').value;
             const catalogNo = document.getElementById('catalogNo').value;
             
-            const artworkUrl = uploadedArtworkUrl || document.getElementById('artworkUrl').value;
-            const spotifyCodeUrl = uploadedSpotifyCodeUrl || document.getElementById('spotifyCodeUrl').value;
+            const rawArtworkUrl = uploadedArtworkUrl || document.getElementById('artworkUrl').value;
+            const rawSpotifyCodeUrl = uploadedSpotifyCodeUrl || document.getElementById('spotifyCodeUrl').value;
             
             const rawTrackText = document.getElementById('tracklist').value;
             const lines = rawTrackText.split('\n');
 
-            extractPaletteFromImage(artworkUrl, (palette) => {
-                let code = templates[templateId] || templates[1];
+            prepareImageUrl(rawArtworkUrl, (artworkUrl) => {
+                prepareImageUrl(rawSpotifyCodeUrl, (spotifyCodeUrl) => {
+                    extractPaletteFromImage(artworkUrl, (palette) => {
+                        let code = templates[templateId] || templates[1];
 
-                // Parse Multi-Sides for Stacked Row Grid
-                let sides = [];
-                let currentSide = { title: "SIDE A", tracks: [] };
-                lines.forEach(line => {
-                    let trimmed = line.trim();
-                    if (!trimmed) return;
-                    if (trimmed.toUpperCase().startsWith("SIDE") || trimmed.toUpperCase().startsWith("VOL") || trimmed.toUpperCase().startsWith("PART")) {
-                        if (currentSide.tracks.length > 0 || currentSide.title !== "SIDE A") {
-                            sides.push(currentSide);
+                        // Parse Multi-Sides for Stacked Row Grid
+                        let sides = [];
+                        let currentSide = { title: "SIDE A", tracks: [] };
+                        lines.forEach(line => {
+                            let trimmed = line.trim();
+                            if (!trimmed) return;
+                            if (trimmed.toUpperCase().startsWith("SIDE") || trimmed.toUpperCase().startsWith("VOL") || trimmed.toUpperCase().startsWith("PART")) {
+                                if (currentSide.tracks.length > 0 || currentSide.title !== "SIDE A") {
+                                    sides.push(currentSide);
+                                }
+                                currentSide = { title: trimmed.toUpperCase(), tracks: [] };
+                            } else {
+                                currentSide.tracks.push(trimmed);
+                            }
+                        });
+                        sides.push(currentSide);
+
+                        // Template 1 Dynamic Sizing
+                        let numRows = Math.ceil(sides.length / 2);
+                        let maxTracks = Math.max(...sides.map(s => s.tracks.length), 1);
+                        
+                        let fontSize = 19;
+                        let lineGap = 26;
+                        let rowGap = 26;
+                        
+                        if (numRows >= 2 || maxTracks > 6) { fontSize = 15; lineGap = 21; rowGap = 21; }
+                        if (numRows >= 3 || maxTracks > 9) { fontSize = 13; lineGap = 18; rowGap = 18; }
+                        if (numRows >= 4 || maxTracks > 12) { fontSize = 11; lineGap = 15; rowGap = 15; }
+
+                        let dynamicSidesSvg = '';
+                        let col0X = 80;
+                        let col1X = 630;
+                        let currentY = 1175;
+
+                        for (let i = 0; i < sides.length; i += 2) {
+                            let sideLeft = sides[i];
+                            let sideRight = sides[i + 1];
+
+                            if (sideLeft) {
+                                dynamicSidesSvg += `<text x="${col0X}" y="${currentY}" font-family="Helvetica, Arial, sans-serif" font-size="${fontSize + 2}" font-weight="bold" fill="#111111">${sideLeft.title}</text>\n`;
+                                sideLeft.tracks.forEach((track, tIdx) => {
+                                    let tNum = (tIdx + 1).toString().padStart(2, '0');
+                                    let tY = currentY + lineGap + (tIdx * lineGap);
+                                    dynamicSidesSvg += `<text x="${col0X}" y="${tY}" font-family="Helvetica, Arial, sans-serif" font-size="${fontSize}" fill="#444444">${tNum}. ${track}</text>\n`;
+                                });
+                            }
+
+                            if (sideRight) {
+                                dynamicSidesSvg += `<text x="${col1X}" y="${currentY}" font-family="Helvetica, Arial, sans-serif" font-size="${fontSize + 2}" font-weight="bold" fill="#111111">${sideRight.title}</text>\n`;
+                                sideRight.tracks.forEach((track, tIdx) => {
+                                    let tNum = (tIdx + 1).toString().padStart(2, '0');
+                                    let tY = currentY + lineGap + (tIdx * lineGap);
+                                    dynamicSidesSvg += `<text x="${col1X}" y="${tY}" font-family="Helvetica, Arial, sans-serif" font-size="${fontSize}" fill="#444444">${tNum}. ${track}</text>\n`;
+                                });
+                            }
+
+                            let maxT = Math.max(
+                                sideLeft ? sideLeft.tracks.length : 0,
+                                sideRight ? sideRight.tracks.length : 0
+                            );
+                            currentY += lineGap + (maxT * lineGap) + rowGap;
                         }
-                        currentSide = { title: trimmed.toUpperCase(), tracks: [] };
-                    } else {
-                        currentSide.tracks.push(trimmed);
-                    }
+
+                        // Template 2 Dynamic Tracklist Generation
+                        let allTracks = [];
+                        lines.forEach(l => {
+                            let t = l.trim();
+                            if (t && !t.toUpperCase().startsWith("SIDE") && !t.toUpperCase().startsWith("VOL") && !t.toUpperCase().startsWith("PART")) {
+                                allTracks.push(t);
+                            }
+                        });
+
+                        let svgGrid2 = '';
+                        let t2YStart = 980;
+                        let t2ColHeight = Math.ceil(allTracks.length / 2);
+                        
+                        allTracks.forEach((t, i) => {
+                            let num = (i + 1).toString().padStart(2, '0');
+                            let col = i >= t2ColHeight ? 1 : 0;
+                            let rowIndex = i >= t2ColHeight ? i - t2ColHeight : i;
+                            let x = col === 0 ? 100 : 640;
+                            let y = t2YStart + (rowIndex * 38);
+                            svgGrid2 += `<text x="${x}" y="${y}" font-family="'Courier New', monospace" font-size="18" fill="#FFFFFF">${num}. ${t}</text>\n`;
+                        });
+
+                        // Generic Tracklist for Templates 3-10
+                        let genericTracklistSvg = '';
+                        let gStartY = (templateId === '3' || templateId === '8') ? 970 : 900;
+                        let gColHeight = Math.ceil(allTracks.length / 2);
+                        
+                        allTracks.forEach((t, i) => {
+                            let num = (i + 1).toString().padStart(2, '0');
+                            let col = i >= gColHeight ? 1 : 0;
+                            let rowIndex = i >= gColHeight ? i - gColHeight : i;
+                            let x = col === 0 ? 120 : 620;
+                            let y = gStartY + (rowIndex * 36);
+                            let textColor = (templateId === '6' || templateId === '7' || templateId === '9') ? '#CCCCCC' : '#333333';
+                            genericTracklistSvg += `<text x="${x}" y="${y}" font-family="Helvetica, Arial, sans-serif" font-size="16" fill="${textColor}">${num}. ${t}</text>\n`;
+                        });
+
+                        code = code
+                            .replace(/{{ARTIST_NAME}}/g, artist)
+                            .replace(/{{ALBUM_TITLE}}/g, title)
+                            .replace(/{{PRODUCER}}/g, producer)
+                            .replace(/{{RELEASE_YEAR}}/g, year)
+                            .replace(/{{CATALOG_NO}}/g, catalogNo)
+                            .replace(/{{ARTWORK_URL}}/g, artworkUrl)
+                            .replace(/{{SPOTIFY_CODE_URL}}/g, spotifyCodeUrl)
+                            .replace(/{{DYNAMIC_SIDES}}/g, dynamicSidesSvg)
+                            .replace(/{{TRACKLIST_SVG_GRID_2}}/g, svgGrid2)
+                            .replace(/{{TRACKLIST_GENERIC}}/g, genericTracklistSvg)
+                            .replace(/{{PALETTE_1}}/g, palette[0])
+                            .replace(/{{PALETTE_2}}/g, palette[1])
+                            .replace(/{{PALETTE_3}}/g, palette[2])
+                            .replace(/{{PALETTE_4}}/g, palette[3]);
+
+                        const wrapper = document.getElementById('canvas-wrapper');
+                        wrapper.innerHTML = code;
+                    });
                 });
-                sides.push(currentSide);
-
-                // Tracklist formatting based on template type
-                let tracklistSvg = '';
-                
-                if (templateId === '2') {
-                    // Template 2 specific 2-column list layout
-                    let allTracks = [];
-                    lines.forEach(l => {
-                        let t = l.trim();
-                        if (t && !t.toUpperCase().startsWith("SIDE") && !t.toUpperCase().startsWith("VOL") && !t.toUpperCase().startsWith("PART")) {
-                            allTracks.push(t);
-                        }
-                    });
-                    let t2ColHeight = Math.ceil(allTracks.length / 2);
-                    allTracks.forEach((t, i) => {
-                        let num = (i + 1).toString().padStart(2, '0');
-                        let col = i >= t2ColHeight ? 1 : 0;
-                        let rowIndex = i >= t2ColHeight ? i - t2ColHeight : i;
-                        let x = col === 0 ? 100 : 640;
-                        let y = 980 + (rowIndex * 38);
-                        tracklistSvg += `<text x="${x}" y="${y}" font-family="'Courier New', monospace" font-size="18" fill="#FFFFFF">${num}. ${t}</text>\n`;
-                    });
-                } else if (templateId === '3' || templateId === '8' || templateId === '10') {
-                    // Centered layouts
-                    let currentY = templateId === '3' ? 1060 : (templateId === '8' ? 1220 : 680);
-                    sides.forEach(side => {
-                        tracklistSvg += `<text x="595" y="${currentY}" font-family="Georgia, serif" font-size="16" font-weight="bold" fill="${templateId === '8' ? '#E5C158' : '#3E2723'}" text-anchor="middle">${side.title}</text>\n`;
-                        currentY += 24;
-                        side.tracks.forEach((track, tIdx) => {
-                            let tNum = (tIdx + 1).toString().padStart(2, '0');
-                            tracklistSvg += `<text x="595" y="${currentY}" font-family="Georgia, serif" font-size="14" fill="${templateId === '8' ? '#FFFFFF' : '#444444'}" text-anchor="middle">${tNum}. ${track}</text>\n`;
-                            currentY += 22;
-                        });
-                        currentY += 12;
-                    });
-                } else if (templateId === '4' || templateId === '9') {
-                    // Editorial/Brutalist vertical split or compact list
-                    let currentY = templateId === '4' ? 950 : 340;
-                    let currentX = templateId === '4' ? 100 : 710;
-                    sides.forEach(side => {
-                        tracklistSvg += `<text x="${currentX}" y="${currentY}" font-family="sans-serif" font-size="16" font-weight="bold" fill="${templateId === '9' ? '#FFFFFF' : '#111111'}">${side.title}</text>\n`;
-                        currentY += 24;
-                        side.tracks.forEach((track, tIdx) => {
-                            let tNum = (tIdx + 1).toString().padStart(2, '0');
-                            tracklistSvg += `<text x="${currentX}" y="${currentY}" font-family="sans-serif" font-size="13" fill="${templateId === '9' ? '#CCCCCC' : '#444444'}">${tNum}. ${track}</text>\n`;
-                            currentY += 20;
-                        });
-                        currentY += 10;
-                    });
-                } else {
-                    // Standard Two-Column Layout (Templates 1, 5, 6, 7)
-                    let numRows = Math.ceil(sides.length / 2);
-                    let maxTracks = Math.max(...sides.map(s => s.tracks.length), 1);
-                    
-                    let fontSize = 17;
-                    let lineGap = 24;
-                    let rowGap = 24;
-                    
-                    if (numRows >= 2 || maxTracks > 6) { fontSize = 14; lineGap = 20; rowGap = 20; }
-                    if (numRows >= 3 || maxTracks > 9) { fontSize = 12; lineGap = 16; rowGap = 16; }
-
-                    let col0X = templateId === '5' ? 130 : 80;
-                    let col1X = templateId === '5' ? 610 : 630;
-                    let currentY = templateId === '5' ? 670 : (templateId === '6' ? 930 : (templateId === '7' ? 840 : 1175));
-                    let textColor = templateId === '5' ? '#000000' : (templateId === '6' ? '#FFFFFF' : '#111111');
-                    let trackColor = templateId === '5' ? '#333333' : (templateId === '6' ? '#CCCCCC' : '#444444');
-
-                    for (let i = 0; i < sides.length; i += 2) {
-                        let sideLeft = sides[i];
-                        let sideRight = sides[i + 1];
-
-                        if (sideLeft) {
-                            tracklistSvg += `<text x="${col0X}" y="${currentY}" font-family="Helvetica, Arial, sans-serif" font-size="${fontSize + 2}" font-weight="bold" fill="${textColor}">${sideLeft.title}</text>\n`;
-                            sideLeft.tracks.forEach((track, tIdx) => {
-                                let tNum = (tIdx + 1).toString().padStart(2, '0');
-                                let tY = currentY + lineGap + (tIdx * lineGap);
-                                tracklistSvg += `<text x="${col0X}" y="${tY}" font-family="Helvetica, Arial, sans-serif" font-size="${fontSize}" fill="${trackColor}">${tNum}. ${track}</text>\n`;
-                            });
-                        }
-
-                        if (sideRight) {
-                            tracklistSvg += `<text x="${col1X}" y="${currentY}" font-family="Helvetica, Arial, sans-serif" font-size="${fontSize + 2}" font-weight="bold" fill="${textColor}">${sideRight.title}</text>\n`;
-                            sideRight.tracks.forEach((track, tIdx) => {
-                                let tNum = (tIdx + 1).toString().padStart(2, '0');
-                                let tY = currentY + lineGap + (tIdx * lineGap);
-                                tracklistSvg += `<text x="${col1X}" y="${tY}" font-family="Helvetica, Arial, sans-serif" font-size="${fontSize}" fill="${trackColor}">${tNum}. ${track}</text>\n`;
-                            });
-                        }
-
-                        let maxT = Math.max(
-                            sideLeft ? sideLeft.tracks.length : 0,
-                            sideRight ? sideRight.tracks.length : 0
-                        );
-                        currentY += lineGap + (maxT * lineGap) + rowGap;
-                    }
-                }
-
-                code = code
-                    .replace(/{{ARTIST_NAME}}/g, artist)
-                    .replace(/{{ALBUM_TITLE}}/g, title)
-                    .replace(/{{PRODUCER}}/g, producer)
-                    .replace(/{{RELEASE_YEAR}}/g, year)
-                    .replace(/{{CATALOG_NO}}/g, catalogNo)
-                    .replace(/{{ARTWORK_URL}}/g, artworkUrl)
-                    .replace(/{{SPOTIFY_CODE_URL}}/g, spotifyCodeUrl)
-                    .replace(/{{TRACKLIST_CONTENT}}/g, tracklistSvg)
-                    .replace(/{{PALETTE_1}}/g, palette[0])
-                    .replace(/{{PALETTE_2}}/g, palette[1])
-                    .replace(/{{PALETTE_3}}/g, palette[2])
-                    .replace(/{{PALETTE_4}}/g, palette[3]);
-
-                const wrapper = document.getElementById('canvas-wrapper');
-                wrapper.innerHTML = code;
             });
         }
 
@@ -472,24 +515,39 @@ Track Ten Title</textarea>
             }
         });
 
-        // SVG File Export
+        // High-Resolution PNG Export that preserves images & works great in Google Drive
         document.getElementById('downloadBtn').addEventListener('click', () => {
             const wrapper = document.getElementById('canvas-wrapper');
-            let filename = document.getElementById('albumTitle').value.toLowerCase().replace(/[^a-z0-9]/g, '_') + '_a2_poster.svg';
+            let filename = document.getElementById('albumTitle').value.toLowerCase().replace(/[^a-z0-9]/g, '_') + '_a2_poster.png';
             
             const svgElement = wrapper.querySelector('svg');
             if (!svgElement) return;
 
             const svgString = new XMLSerializer().serializeToString(svgElement);
-            const blob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = filename;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
+            const svgBlob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
+            const DOMURL = window.URL || window.webkitURL || window;
+            const url = DOMURL.createObjectURL(svgBlob);
+
+            const img = new Image();
+            img.onload = function() {
+                const canvas = document.createElement('canvas');
+                canvas.width = 1190;
+                canvas.height = 1684;
+                const ctx = canvas.getContext('2d');
+                ctx.fillStyle = '#ffffff';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.drawImage(img, 0, 0);
+                DOMURL.revokeObjectURL(url);
+
+                const pngUrl = canvas.toDataURL('image/png');
+                const a = document.createElement('a');
+                a.href = pngUrl;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+            };
+            img.src = url;
         });
 
         document.querySelectorAll('#sidebar input, #sidebar textarea, #sidebar select').forEach(el => {
