@@ -1,461 +1,1473 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Album Poster Editor</title>
+
+
 <style>
+
 * {
     box-sizing: border-box;
 }
 
+
 body {
-    margin: 0;
-    background: #111;
-    color: white;
-    font-family: Arial, Helvetica, sans-serif;
+
+    margin:0;
+    background:#111;
+    color:white;
+    font-family:Arial, Helvetica, sans-serif;
+
 }
+
 
 header {
-    padding: 20px;
-    background: #181818;
-    border-bottom: 1px solid #333;
+
+    height:70px;
+    background:#181818;
+    display:flex;
+    align-items:center;
+    padding:20px;
+    border-bottom:1px solid #333;
+
 }
 
-h1 {
-    margin: 0;
+
+header h1 {
+
+    margin:0;
+    font-size:24px;
+
 }
+
+
 
 .container {
-    display: flex;
-    height: calc(100vh - 80px);
+
+    display:flex;
+    height:calc(100vh - 70px);
+
 }
+
+
+
+/* LEFT PANEL */
 
 .sidebar {
-    width: 320px;
-    background: #161616;
-    padding: 20px;
-    overflow-y: auto;
-    border-right: 1px solid #333;
+
+    width:300px;
+    background:#151515;
+    padding:20px;
+    overflow-y:auto;
+    border-right:1px solid #333;
+
 }
 
-.editor {
-    flex: 1;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background: #222;
+
+
+.sidebar h2 {
+
+    margin-top:0;
+
 }
 
-.canvas-wrapper {
-    background: white;
-    width: 600px;
-    height: 600px;
-    position: relative;
-    overflow: hidden;
-}
 
-.poster-element {
-    position: absolute;
-    cursor: move;
-    user-select: none;
-}
 
 button {
-    width: 100%;
-    padding: 12px;
-    margin: 5px 0;
-    background: #333;
+
+    width:100%;
+    padding:12px;
+    margin:6px 0;
+
+    background:#292929;
     color:white;
+
     border:none;
     border-radius:8px;
+
     cursor:pointer;
+
 }
+
+
 
 button:hover {
-    background:#555;
+
+    background:#444;
+
 }
 
-input {
+
+
+input, select {
+
     width:100%;
     padding:10px;
+
     margin:5px 0;
+
     background:#222;
-    border:1px solid #555;
     color:white;
+
+    border:1px solid #555;
+    border-radius:5px;
+
 }
 
-.template {
+
+
+/* TEMPLATE BUTTONS */
+
+
+.template-btn {
+
     background:#222;
-    padding:10px;
-    margin:10px 0;
+    padding:12px;
+
+    margin-bottom:8px;
+
     border-radius:8px;
+
     cursor:pointer;
+
 }
 
-.template:hover {
+
+.template-btn:hover {
+
     background:#333;
+
 }
 
-.control-group {
-    margin-bottom:20px;
+
+
+/* EDITOR */
+
+
+.editor-area {
+
+    flex:1;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    background:#242424;
+
 }
+
+
+
+/* POSTER */
+
+#canvas {
+
+
+    width:600px;
+    height:600px;
+
+    background:white;
+
+    position:relative;
+
+    overflow:hidden;
+
+
+}
+
+
+
+.poster-element {
+
+    position:absolute;
+
+    cursor:move;
+
+    user-select:none;
+
+    color:black;
+
+}
+
+
+
+.selected {
+
+    outline:
+    2px dashed #00aaff;
+
+}
+
+
+
+/* CONTROLS */
+
+
+.control {
+
+    margin-bottom:15px;
+
+}
+
 
 label {
+
     display:block;
+
     margin-bottom:5px;
+
+    font-size:14px;
+
 }
+
+
 </style>
+
 </head>
+
+
 
 <body>
 
+
 <header>
-<h1>Album Poster Editor</h1>
+
+<h1>
+Album Poster Editor
+</h1>
+
 </header>
+
 
 
 <div class="container">
 
+
+
 <div class="sidebar">
 
-<h2>Templates</h2>
 
-<div class="template" onclick="loadTemplate(1)">
-Template 1 - Tracklist Poster
+<h2>
+Templates
+</h2>
+
+
+<div class="template-btn" onclick="loadTemplate(1)">
+Template 1 - Tracklist
 </div>
 
-<div class="template" onclick="loadTemplate(2)">
-Template 2 - Minimal Album
+
+<div class="template-btn" onclick="loadTemplate(2)">
+Template 2 - Minimal
 </div>
 
-<div class="template" onclick="loadTemplate(3)">
-Template 3 - Artist Focus
+
+<div class="template-btn" onclick="loadTemplate(3)">
+Template 3 - Magazine
 </div>
 
-<div class="template" onclick="loadTemplate(4)">
-Template 4 - Classic Cover
+
+<div class="template-btn" onclick="loadTemplate(4)">
+Template 4 - Vinyl
 </div>
 
-<div class="template" onclick="loadTemplate(5)">
-Template 5 - Tour Poster
+
+<div class="template-btn" onclick="loadTemplate(5)">
+Template 5 - Tour
 </div>
+
+
+<div class="template-btn" onclick="loadTemplate(6)">
+Template 6 - Dark
+</div>
+
+
+<div class="template-btn" onclick="loadTemplate(7)">
+Template 7 - Artwork
+</div>
+
+
+<div class="template-btn" onclick="loadTemplate(8)">
+Template 8 - Retro
+</div>
+
+
+<div class="template-btn" onclick="loadTemplate(9)">
+Template 9 - Tracklist Left
+</div>
+
+
+<div class="template-btn" onclick="loadTemplate(10)">
+Template 10 - Collector
+</div>
+
 
 
 <hr>
 
 
-<h2>Edit Selected</h2>
+<h2>
+Edit
+</h2>
 
-<div class="control-group">
 
-<label>Text</label>
-<input id="textInput" placeholder="Change text">
+<div class="control">
 
-<button onclick="updateText()">Update Text</button>
+<label>
+Text
+</label>
+
+<input id="textInput" placeholder="Enter text">
+
+
+<button onclick="updateText()">
+Change Text
+</button>
+
 
 </div>
 
 
-<div class="control-group">
 
-<label>Upload Image</label>
-<input type="file" id="imageInput">
+<div class="control">
+
+<label>
+Text Size
+</label>
+
+
+<button onclick="resizeSelected(5)">
+Increase
+</button>
+
+
+<button onclick="resizeSelected(-5)">
+Decrease
+</button>
+
 
 </div>
+
+
+
+<div class="control">
+
+<label>
+Upload Image
+</label>
+
+
+<input type="file" id="imageUpload">
+
+
+</div>
+
 
 
 <button onclick="addText()">
 Add Text
 </button>
 
-<button onclick="savePoster()">
-Save Poster
+
+<button onclick="saveProject()">
+Save
 </button>
 
 
-<button onclick="clearPoster()">
+<button onclick="loadProject()">
+Load
+</button>
+
+
+<button onclick="exportPoster()">
+Export PNG
+</button>
+
+
+<button onclick="clearCanvas()">
 Clear
 </button>
 
 
-</div>
-
-
-<div class="editor">
-
-<div id="canvas" class="canvas-wrapper">
 
 </div>
 
-</div>
+
+
+
+<div class="editor-area">
+
+
+<div id="canvas">
 
 </div>
 
+
+</div>
+
+
+
+</div>
+
+
+<!-- JavaScript starts in Part 2 -->
 
 <script>
+
+// =================================
+// EDITOR ENGINE
+// =================================
+
 
 let selectedElement = null;
 
 
-function createElement(type, content, x, y){
 
-let el=document.createElement("div");
+// Select an element
 
-el.className="poster-element";
-
-el.style.left=x+"px";
-el.style.top=y+"px";
+function selectElement(element){
 
 
-if(type==="text"){
-    el.innerText=content;
-    el.style.fontSize="32px";
-    el.style.color="black";
-    el.style.fontWeight="bold";
-}
+    if(selectedElement){
+
+        selectedElement.classList.remove("selected");
+
+    }
 
 
-if(type==="image"){
-    let img=document.createElement("img");
-    img.src=content;
-    img.style.width="200px";
-    el.appendChild(img);
-}
+    selectedElement = element;
 
+    selectedElement.classList.add("selected");
 
-el.onclick=function(e){
-    e.stopPropagation();
-    selectedElement=el;
-};
-
-
-dragElement(el);
-
-
-document.getElementById("canvas").appendChild(el);
-
-return el;
 
 }
 
 
 
-function dragElement(el){
 
-let offsetX;
-let offsetY;
-let dragging=false;
+// Create poster element
 
-
-el.onmousedown=function(e){
-
-dragging=true;
-
-offsetX=e.offsetX;
-offsetY=e.offsetY;
-
-};
+function createElement(type, content, x, y, size = 35){
 
 
-document.onmousemove=function(e){
-
-if(!dragging)return;
+    let element = document.createElement("div");
 
 
-let rect=document.getElementById("canvas").getBoundingClientRect();
-
-el.style.left=(e.clientX-rect.left-offsetX)+"px";
-el.style.top=(e.clientY-rect.top-offsetY)+"px";
-
-};
+    element.className = "poster-element";
 
 
-document.onmouseup=function(){
+    element.style.left = x + "px";
 
-dragging=false;
+    element.style.top = y + "px";
 
-};
+
+    element.dataset.type = type;
+
+
+
+    if(type === "text"){
+
+
+        element.innerText = content;
+
+
+        element.style.fontSize =
+        size + "px";
+
+
+        element.style.fontWeight =
+        "bold";
+
+
+    }
+
+
+
+
+    if(type === "image"){
+
+
+        let img =
+        document.createElement("img");
+
+
+        img.src = content;
+
+
+        img.style.width =
+        "250px";
+
+
+        element.appendChild(img);
+
+
+    }
+
+
+
+    element.onclick = function(e){
+
+
+        e.stopPropagation();
+
+
+        selectElement(element);
+
+
+    };
+
+
+
+    makeDraggable(element);
+
+
+
+    document
+    .getElementById("canvas")
+    .appendChild(element);
+
+
+
+    return element;
+
 
 }
 
 
+
+
+// Drag elements
+
+function makeDraggable(element){
+
+
+    let offsetX;
+
+    let offsetY;
+
+    let dragging = false;
+
+
+
+    element.onmousedown = function(e){
+
+
+        selectElement(element);
+
+
+        dragging = true;
+
+
+        offsetX =
+        e.offsetX;
+
+
+        offsetY =
+        e.offsetY;
+
+
+
+    };
+
+
+
+
+
+    document.onmousemove = function(e){
+
+
+        if(!dragging)
+        return;
+
+
+
+        let canvas =
+        document
+        .getElementById("canvas")
+        .getBoundingClientRect();
+
+
+
+        let x =
+        e.clientX -
+        canvas.left -
+        offsetX;
+
+
+
+        let y =
+        e.clientY -
+        canvas.top -
+        offsetY;
+
+
+
+        element.style.left =
+        x + "px";
+
+
+
+        element.style.top =
+        y + "px";
+
+
+
+    };
+
+
+
+
+
+    document.onmouseup = function(){
+
+
+        dragging = false;
+
+
+    };
+
+
+}
+
+
+
+
+// Add text
 
 function addText(){
 
-createElement(
-"text",
-"NEW TEXT",
-100,
-100
-);
+
+    createElement(
+
+        "text",
+
+        "NEW TEXT",
+
+        100,
+
+        100,
+
+        35
+
+    );
+
 
 }
 
 
+
+
+// Update selected text
 
 function updateText(){
 
-if(!selectedElement)return;
 
-selectedElement.innerText=
-document.getElementById("textInput").value;
+    if(!selectedElement)
+    return;
+
+
+
+    let input =
+    document
+    .getElementById("textInput");
+
+
+
+    selectedElement.innerText =
+    input.value;
+
+
 
 }
 
 
 
-document.getElementById("imageInput").onchange=function(e){
 
-let file=e.target.files[0];
+// Resize text
 
-if(!file)return;
+function resizeSelected(amount){
 
 
-let reader=new FileReader();
-
-reader.onload=function(){
-
-createElement(
-"image",
-reader.result,
-200,
-200
-);
-
-}
-
-reader.readAsDataURL(file);
-
-}
+    if(!selectedElement)
+    return;
 
 
 
-function clearPoster(){
+    let current =
+    parseInt(
+        window
+        .getComputedStyle(selectedElement)
+        .fontSize
+    );
 
-document.getElementById("canvas").innerHTML="";
+
+
+    selectedElement.style.fontSize =
+    (current + amount) + "px";
+
 
 }
 
 
 
-function savePoster(){
 
-localStorage.setItem(
-"poster",
-document.getElementById("canvas").innerHTML
-);
+// Upload image
 
-alert("Saved");
+
+document
+.getElementById("imageUpload")
+.onchange = function(e){
+
+
+
+    let file =
+    e.target.files[0];
+
+
+
+    if(!file)
+    return;
+
+
+
+    let reader =
+    new FileReader();
+
+
+
+    reader.onload = function(event){
+
+
+        createElement(
+
+            "image",
+
+            event.target.result,
+
+            175,
+
+            175
+
+        );
+
+
+    };
+
+
+
+    reader.readAsDataURL(file);
+
+
+
+};
+
+
+
+
+
+
+// Delete selected element
+
+document.addEventListener(
+"keydown",
+function(e){
+
+
+    if(e.key === "Delete"){
+
+
+        if(selectedElement){
+
+
+            selectedElement.remove();
+
+
+            selectedElement = null;
+
+
+        }
+
+
+    }
+
+
+});
+
+
+
+
+
+// Clear poster
+
+function clearCanvas(){
+
+
+    document
+    .getElementById("canvas")
+    .innerHTML = "";
+
+
+
+    selectedElement = null;
+
 
 }
 
 
 
-function loadSaved(){
 
-let saved=localStorage.getItem("poster");
+// Click empty space removes selection
 
-if(saved){
-
-document.getElementById("canvas").innerHTML=saved;
-
-}
-
-}
+document
+.getElementById("canvas")
+.onclick=function(){
 
 
-
-function loadTemplate(id){
-
-clearPoster();
+    if(selectedElement){
 
 
-if(id===1){
+        selectedElement.classList.remove(
+        "selected"
+        );
 
-createElement(
-"text",
-"ALBUM TITLE",
-150,
-50
-);
 
-createElement(
-"text",
-"01\n02\n03\n04\n05",
-100,
-400
-);
+    }
 
-}
+
+    selectedElement=null;
+
+
+};
+    // =================================
+// ALBUM POSTER TEMPLATES
+// =================================
+
+
+const templates = {
 
 
 
-if(id===2){
+1: {
 
-createElement(
-"text",
-"ARTIST",
-250,
-100
-);
+name:"Tracklist",
 
-createElement(
-"text",
-"ALBUM NAME",
-200,
-250
-);
-
-}
+elements:[
 
 
-
-if(id===3){
-
-createElement(
-"text",
-"ARTIST NAME",
-150,
-150
-);
-
-}
+{
+type:"text",
+text:"ARTIST NAME",
+x:200,
+y:40,
+size:40
+},
 
 
+{
+type:"text",
+text:"ALBUM TITLE",
+x:170,
+y:100,
+size:45
+},
 
-if(id===4){
 
-createElement(
-"text",
-"CLASSIC ALBUM",
-150,
-300
-);
-
+{
+type:"text",
+text:
+`01  TRACK NAME
+02  TRACK NAME
+03  TRACK NAME
+04  TRACK NAME
+05  TRACK NAME
+06  TRACK NAME
+07  TRACK NAME`,
+x:80,
+y:300,
+size:24
 }
 
 
+]
 
-if(id===5){
 
-createElement(
-"text",
-"WORLD TOUR",
-200,
-100
-);
+},
+
+
+
+
+
+2: {
+
+name:"Minimal",
+
+elements:[
+
+
+{
+type:"text",
+text:"ALBUM",
+x:230,
+y:120,
+size:70
+},
+
+
+{
+type:"text",
+text:"ARTIST",
+x:260,
+y:220,
+size:30
+},
+
+
+{
+type:"text",
+text:"2026",
+x:270,
+y:520,
+size:25
+}
+
+
+]
+
+
+},
+
+
+
+
+
+3: {
+
+name:"Magazine",
+
+elements:[
+
+
+{
+type:"text",
+text:"THE NEW ALBUM",
+x:80,
+y:40,
+size:25
+},
+
+
+{
+type:"text",
+text:"ARTIST NAME",
+x:80,
+y:130,
+size:60
+},
+
+
+{
+type:"text",
+text:"ALBUM TITLE",
+x:80,
+y:500,
+size:40
+}
+
+
+]
+
+
+},
+
+
+
+
+
+4: {
+
+name:"Vinyl",
+
+elements:[
+
+
+{
+type:"text",
+text:"ALBUM TITLE",
+x:160,
+y:80,
+size:50
+},
+
+
+{
+type:"text",
+text:"SIDE A",
+x:70,
+y:450,
+size:30
+},
+
+
+{
+type:"text",
+text:"SIDE B",
+x:420,
+y:450,
+size:30
+}
+
+
+]
+
+
+},
+
+
+
+
+
+5: {
+
+name:"Tour Poster",
+
+elements:[
+
+
+{
+type:"text",
+text:"ARTIST WORLD TOUR",
+x:100,
+y:60,
+size:42
+},
+
+
+{
+type:"text",
+text:
+`HOBART
+SYDNEY
+MELBOURNE
+BRISBANE
+PERTH`,
+x:150,
+y:250,
+size:30
+},
+
+
+{
+type:"text",
+text:"2026",
+x:250,
+y:520,
+size:65
+}
+
+
+]
+
+
+},
+
+
+
+
+
+6: {
+
+name:"Dark Aesthetic",
+
+elements:[
+
+
+{
+type:"text",
+text:"★",
+x:260,
+y:70,
+size:100
+},
+
+
+{
+type:"text",
+text:"ARTIST",
+x:230,
+y:280,
+size:60
+},
+
+
+{
+type:"text",
+text:"ALBUM",
+x:240,
+y:400,
+size:45
+}
+
+
+]
+
+
+},
+
+
+
+
+
+7: {
+
+name:"Artwork Focus",
+
+elements:[
+
+
+{
+type:"text",
+text:"ALBUM ART",
+x:190,
+y:240,
+size:45
+},
+
+
+{
+type:"text",
+text:"ARTIST NAME",
+x:190,
+y:520,
+size:35
+}
+
+
+]
+
+
+},
+
+
+
+
+
+8: {
+
+name:"Retro",
+
+elements:[
+
+
+{
+type:"text",
+text:"EST. 2026",
+x:230,
+y:40,
+size:25
+},
+
+
+{
+type:"text",
+text:"ARTIST",
+x:210,
+y:180,
+size:70
+},
+
+
+{
+type:"text",
+text:"ALBUM TITLE",
+x:150,
+y:400,
+size:45
+}
+
+
+]
+
+
+},
+
+
+
+
+
+9: {
+
+name:"Tracklist Left",
+
+elements:[
+
+
+{
+type:"text",
+text:"ARTIST NAME",
+x:50,
+y:60,
+size:45
+},
+
+
+{
+type:"text",
+text:
+`TRACKLIST
+
+01
+02
+03
+04
+05
+06`,
+x:60,
+y:220,
+size:30
+},
+
+
+{
+type:"text",
+text:"ALBUM TITLE",
+x:330,
+y:500,
+size:35
+}
+
+
+]
+
+
+},
+
+
+
+
+
+10: {
+
+name:"Collector Edition",
+
+elements:[
+
+
+{
+type:"text",
+text:"LIMITED EDITION",
+x:150,
+y:50,
+size:30
+},
+
+
+{
+type:"text",
+text:"ARTIST",
+x:220,
+y:230,
+size:65
+},
+
+
+{
+type:"text",
+text:"ALBUM TITLE",
+x:160,
+y:360,
+size:45
+},
+
+
+{
+type:"text",
+text:"001 / 500",
+x:250,
+y:520,
+size:25
+}
+
+
+]
+
 
 }
 
+
+
+};
+
+
+
+
+
+
+// Load selected template
+
+function loadTemplate(number){
+
+
+
+    clearCanvas();
+
+
+
+    let template =
+    templates[number];
+
+
+
+    template.elements.forEach(item=>{
+
+
+        createElement(
+
+            item.type,
+
+            item.text,
+
+            item.x,
+
+            item.y,
+
+            item.size
+
+        );
+
+
+    });
+
+
+
+}
+    // =================================
+// SAVE / LOAD / EXPORT
+// =================================
+
+
+
+// Save poster
+
+function saveProject(){
+
+
+    let poster =
+    document
+    .getElementById("canvas")
+    .innerHTML;
+
+
+
+    localStorage.setItem(
+        "albumPoster",
+        poster
+    );
+
+
+    alert("Poster saved!");
+
 }
 
 
 
-loadSaved();
-
-</script>
 
 
-</body>
-</html>
+// Load poster
+
+function loadProject(){
+
+
+    let saved =
+    localStorage.getItem(
+        "albumPoster"
+    );
+
+
+
+    if(!saved)
+    return;
+
+
+
+    document
+    .getElementById("canvas")
+    .innerHTML =
+    saved;
+
+
+
+    document
+    .querySelectorAll(".poster-element")
+    .forEach(element=>{
+
+
+        makeDraggable(element);
+
+
+        element.onclick=function(e){
+
+            e.stopPropagation();
+
+            selectElement(element);
+
+        };
+
+
+    });
+
+
+
+}
+
+
+
+
+
+// Export PNG
+
+function exportPoster(){
+
+
+    let canvas =
+    document.getElementById("canvas");
+
+
+
+    let image =
+    document.createElement("canvas");
+
+
+
+    html2canvas(canvas)
+    .then(function(result){
+
+
+        let link =
+        document.createElement("a");
+
+
+        link.download =
+        "album-poster.png";
+
+
+        link.href =
+        result.toDataURL();
+
+
+
+        link.click();
+
+
+
+    });
+
+
+
+}
