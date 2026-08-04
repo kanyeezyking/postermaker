@@ -1,1473 +1,575 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Album Poster Editor</title>
-
-
-<style>
-
-* {
-    box-sizing: border-box;
-}
-
-
-body {
-
-    margin:0;
-    background:#111;
-    color:white;
-    font-family:Arial, Helvetica, sans-serif;
-
-}
-
-
-header {
-
-    height:70px;
-    background:#181818;
-    display:flex;
-    align-items:center;
-    padding:20px;
-    border-bottom:1px solid #333;
-
-}
-
-
-header h1 {
-
-    margin:0;
-    font-size:24px;
-
-}
-
-
-
-.container {
-
-    display:flex;
-    height:calc(100vh - 70px);
-
-}
-
-
-
-/* LEFT PANEL */
-
-.sidebar {
-
-    width:300px;
-    background:#151515;
-    padding:20px;
-    overflow-y:auto;
-    border-right:1px solid #333;
-
-}
-
-
-
-.sidebar h2 {
-
-    margin-top:0;
-
-}
-
-
-
-button {
-
-    width:100%;
-    padding:12px;
-    margin:6px 0;
-
-    background:#292929;
-    color:white;
-
-    border:none;
-    border-radius:8px;
-
-    cursor:pointer;
-
-}
-
-
-
-button:hover {
-
-    background:#444;
-
-}
-
-
-
-input, select {
-
-    width:100%;
-    padding:10px;
-
-    margin:5px 0;
-
-    background:#222;
-    color:white;
-
-    border:1px solid #555;
-    border-radius:5px;
-
-}
-
-
-
-/* TEMPLATE BUTTONS */
-
-
-.template-btn {
-
-    background:#222;
-    padding:12px;
-
-    margin-bottom:8px;
-
-    border-radius:8px;
-
-    cursor:pointer;
-
-}
-
-
-.template-btn:hover {
-
-    background:#333;
-
-}
-
-
-
-/* EDITOR */
-
-
-.editor-area {
-
-    flex:1;
-
-    display:flex;
-
-    justify-content:center;
-
-    align-items:center;
-
-    background:#242424;
-
-}
-
-
-
-/* POSTER */
-
-#canvas {
-
-
-    width:600px;
-    height:600px;
-
-    background:white;
-
-    position:relative;
-
-    overflow:hidden;
-
-
-}
-
-
-
-.poster-element {
-
-    position:absolute;
-
-    cursor:move;
-
-    user-select:none;
-
-    color:black;
-
-}
-
-
-
-.selected {
-
-    outline:
-    2px dashed #00aaff;
-
-}
-
-
-
-/* CONTROLS */
-
-
-.control {
-
-    margin-bottom:15px;
-
-}
-
-
-label {
-
-    display:block;
-
-    margin-bottom:5px;
-
-    font-size:14px;
-
-}
-
-
-</style>
-
-</head>
-
-
-
-<body>
-
-
-<header>
-
-<h1>
-Album Poster Editor
-</h1>
-
-</header>
-
-
-
-<div class="container">
-
-
-
-<div class="sidebar">
-
-
-<h2>
-Templates
-</h2>
-
-
-<div class="template-btn" onclick="loadTemplate(1)">
-Template 1 - Tracklist
-</div>
-
-
-<div class="template-btn" onclick="loadTemplate(2)">
-Template 2 - Minimal
-</div>
-
-
-<div class="template-btn" onclick="loadTemplate(3)">
-Template 3 - Magazine
-</div>
-
-
-<div class="template-btn" onclick="loadTemplate(4)">
-Template 4 - Vinyl
-</div>
-
-
-<div class="template-btn" onclick="loadTemplate(5)">
-Template 5 - Tour
-</div>
-
-
-<div class="template-btn" onclick="loadTemplate(6)">
-Template 6 - Dark
-</div>
-
-
-<div class="template-btn" onclick="loadTemplate(7)">
-Template 7 - Artwork
-</div>
-
-
-<div class="template-btn" onclick="loadTemplate(8)">
-Template 8 - Retro
-</div>
-
-
-<div class="template-btn" onclick="loadTemplate(9)">
-Template 9 - Tracklist Left
-</div>
-
-
-<div class="template-btn" onclick="loadTemplate(10)">
-Template 10 - Collector
-</div>
-
-
-
-<hr>
-
-
-<h2>
-Edit
-</h2>
-
-
-<div class="control">
-
-<label>
-Text
-</label>
-
-<input id="textInput" placeholder="Enter text">
-
-
-<button onclick="updateText()">
-Change Text
-</button>
-
-
-</div>
-
-
-
-<div class="control">
-
-<label>
-Text Size
-</label>
-
-
-<button onclick="resizeSelected(5)">
-Increase
-</button>
-
-
-<button onclick="resizeSelected(-5)">
-Decrease
-</button>
-
-
-</div>
-
-
-
-<div class="control">
-
-<label>
-Upload Image
-</label>
-
-
-<input type="file" id="imageUpload">
-
-
-</div>
-
-
-
-<button onclick="addText()">
-Add Text
-</button>
-
-
-<button onclick="saveProject()">
-Save
-</button>
-
-
-<button onclick="loadProject()">
-Load
-</button>
-
-
-<button onclick="exportPoster()">
-Export PNG
-</button>
-
-
-<button onclick="clearCanvas()">
-Clear
-</button>
-
-
-
-</div>
-
-
-
-
-<div class="editor-area">
-
-
-<div id="canvas">
-
-</div>
-
-
-</div>
-
-
-
-</div>
-
-
-<!-- JavaScript starts in Part 2 -->
-
-<script>
-
-// =================================
-// EDITOR ENGINE
-// =================================
-
-
-let selectedElement = null;
-
-
-
-// Select an element
-
-function selectElement(element){
-
-
-    if(selectedElement){
-
-        selectedElement.classList.remove("selected");
-
-    }
-
-
-    selectedElement = element;
-
-    selectedElement.classList.add("selected");
-
-
-}
-
-
-
-
-// Create poster element
-
-function createElement(type, content, x, y, size = 35){
-
-
-    let element = document.createElement("div");
-
-
-    element.className = "poster-element";
-
-
-    element.style.left = x + "px";
-
-    element.style.top = y + "px";
-
-
-    element.dataset.type = type;
-
-
-
-    if(type === "text"){
-
-
-        element.innerText = content;
-
-
-        element.style.fontSize =
-        size + "px";
-
-
-        element.style.fontWeight =
-        "bold";
-
-
-    }
-
-
-
-
-    if(type === "image"){
-
-
-        let img =
-        document.createElement("img");
-
-
-        img.src = content;
-
-
-        img.style.width =
-        "250px";
-
-
-        element.appendChild(img);
-
-
-    }
-
-
-
-    element.onclick = function(e){
-
-
-        e.stopPropagation();
-
-
-        selectElement(element);
-
-
-    };
-
-
-
-    makeDraggable(element);
-
-
-
-    document
-    .getElementById("canvas")
-    .appendChild(element);
-
-
-
-    return element;
-
-
-}
-
-
-
-
-// Drag elements
-
-function makeDraggable(element){
-
-
-    let offsetX;
-
-    let offsetY;
-
-    let dragging = false;
-
-
-
-    element.onmousedown = function(e){
-
-
-        selectElement(element);
-
-
-        dragging = true;
-
-
-        offsetX =
-        e.offsetX;
-
-
-        offsetY =
-        e.offsetY;
-
-
-
-    };
-
-
-
-
-
-    document.onmousemove = function(e){
-
-
-        if(!dragging)
-        return;
-
-
-
-        let canvas =
-        document
-        .getElementById("canvas")
-        .getBoundingClientRect();
-
-
-
-        let x =
-        e.clientX -
-        canvas.left -
-        offsetX;
-
-
-
-        let y =
-        e.clientY -
-        canvas.top -
-        offsetY;
-
-
-
-        element.style.left =
-        x + "px";
-
-
-
-        element.style.top =
-        y + "px";
-
-
-
-    };
-
-
-
-
-
-    document.onmouseup = function(){
-
-
-        dragging = false;
-
-
-    };
-
-
-}
-
-
-
-
-// Add text
-
-function addText(){
-
-
-    createElement(
-
-        "text",
-
-        "NEW TEXT",
-
-        100,
-
-        100,
-
-        35
-
-    );
-
-
-}
-
-
-
-
-// Update selected text
-
-function updateText(){
-
-
-    if(!selectedElement)
-    return;
-
-
-
-    let input =
-    document
-    .getElementById("textInput");
-
-
-
-    selectedElement.innerText =
-    input.value;
-
-
-
-}
-
-
-
-
-// Resize text
-
-function resizeSelected(amount){
-
-
-    if(!selectedElement)
-    return;
-
-
-
-    let current =
-    parseInt(
-        window
-        .getComputedStyle(selectedElement)
-        .fontSize
-    );
-
-
-
-    selectedElement.style.fontSize =
-    (current + amount) + "px";
-
-
-}
-
-
-
-
-// Upload image
-
-
-document
-.getElementById("imageUpload")
-.onchange = function(e){
-
-
-
-    let file =
-    e.target.files[0];
-
-
-
-    if(!file)
-    return;
-
-
-
-    let reader =
-    new FileReader();
-
-
-
-    reader.onload = function(event){
-
-
-        createElement(
-
-            "image",
-
-            event.target.result,
-
-            175,
-
-            175
-
-        );
-
-
-    };
-
-
-
-    reader.readAsDataURL(file);
-
-
-
-};
-
-
-
-
-
-
-// Delete selected element
-
-document.addEventListener(
-"keydown",
-function(e){
-
-
-    if(e.key === "Delete"){
-
-
-        if(selectedElement){
-
-
-            selectedElement.remove();
-
-
-            selectedElement = null;
-
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Album Art & Visual Treatment Generator</title>
+    <style>
+        :root {
+            --bg-color: #121212;
+            --panel-bg: #1e1e1e;
+            --text-main: #ffffff;
+            --text-muted: #888888;
+            --accent: #ff4500;
+            --border-color: #333333;
         }
 
-
-    }
-
-
-});
-
-
-
-
-
-// Clear poster
-
-function clearCanvas(){
-
-
-    document
-    .getElementById("canvas")
-    .innerHTML = "";
-
-
-
-    selectedElement = null;
-
-
-}
-
-
-
-
-// Click empty space removes selection
-
-document
-.getElementById("canvas")
-.onclick=function(){
-
-
-    if(selectedElement){
-
-
-        selectedElement.classList.remove(
-        "selected"
-        );
-
-
-    }
-
-
-    selectedElement=null;
-
-
-};
-    // =================================
-// ALBUM POSTER TEMPLATES
-// =================================
-
-
-const templates = {
-
-
-
-1: {
-
-name:"Tracklist",
-
-elements:[
-
-
-{
-type:"text",
-text:"ARTIST NAME",
-x:200,
-y:40,
-size:40
-},
-
-
-{
-type:"text",
-text:"ALBUM TITLE",
-x:170,
-y:100,
-size:45
-},
-
-
-{
-type:"text",
-text:
-`01  TRACK NAME
-02  TRACK NAME
-03  TRACK NAME
-04  TRACK NAME
-05  TRACK NAME
-06  TRACK NAME
-07  TRACK NAME`,
-x:80,
-y:300,
-size:24
-}
-
-
-]
-
-
-},
-
-
-
-
-
-2: {
-
-name:"Minimal",
-
-elements:[
-
-
-{
-type:"text",
-text:"ALBUM",
-x:230,
-y:120,
-size:70
-},
-
-
-{
-type:"text",
-text:"ARTIST",
-x:260,
-y:220,
-size:30
-},
-
-
-{
-type:"text",
-text:"2026",
-x:270,
-y:520,
-size:25
-}
-
-
-]
-
-
-},
-
-
-
-
-
-3: {
-
-name:"Magazine",
-
-elements:[
-
-
-{
-type:"text",
-text:"THE NEW ALBUM",
-x:80,
-y:40,
-size:25
-},
-
-
-{
-type:"text",
-text:"ARTIST NAME",
-x:80,
-y:130,
-size:60
-},
-
-
-{
-type:"text",
-text:"ALBUM TITLE",
-x:80,
-y:500,
-size:40
-}
-
-
-]
-
-
-},
-
-
-
-
-
-4: {
-
-name:"Vinyl",
-
-elements:[
-
-
-{
-type:"text",
-text:"ALBUM TITLE",
-x:160,
-y:80,
-size:50
-},
-
-
-{
-type:"text",
-text:"SIDE A",
-x:70,
-y:450,
-size:30
-},
-
-
-{
-type:"text",
-text:"SIDE B",
-x:420,
-y:450,
-size:30
-}
-
-
-]
-
-
-},
-
-
-
-
-
-5: {
-
-name:"Tour Poster",
-
-elements:[
-
-
-{
-type:"text",
-text:"ARTIST WORLD TOUR",
-x:100,
-y:60,
-size:42
-},
-
-
-{
-type:"text",
-text:
-`HOBART
-SYDNEY
-MELBOURNE
-BRISBANE
-PERTH`,
-x:150,
-y:250,
-size:30
-},
-
-
-{
-type:"text",
-text:"2026",
-x:250,
-y:520,
-size:65
-}
-
-
-]
-
-
-},
-
-
-
-
-
-6: {
-
-name:"Dark Aesthetic",
-
-elements:[
-
-
-{
-type:"text",
-text:"★",
-x:260,
-y:70,
-size:100
-},
-
-
-{
-type:"text",
-text:"ARTIST",
-x:230,
-y:280,
-size:60
-},
-
-
-{
-type:"text",
-text:"ALBUM",
-x:240,
-y:400,
-size:45
-}
-
-
-]
-
-
-},
-
-
-
-
-
-7: {
-
-name:"Artwork Focus",
-
-elements:[
-
-
-{
-type:"text",
-text:"ALBUM ART",
-x:190,
-y:240,
-size:45
-},
-
-
-{
-type:"text",
-text:"ARTIST NAME",
-x:190,
-y:520,
-size:35
-}
-
-
-]
-
-
-},
-
-
-
-
-
-8: {
-
-name:"Retro",
-
-elements:[
-
-
-{
-type:"text",
-text:"EST. 2026",
-x:230,
-y:40,
-size:25
-},
-
-
-{
-type:"text",
-text:"ARTIST",
-x:210,
-y:180,
-size:70
-},
-
-
-{
-type:"text",
-text:"ALBUM TITLE",
-x:150,
-y:400,
-size:45
-}
-
-
-]
-
-
-},
-
-
-
-
-
-9: {
-
-name:"Tracklist Left",
-
-elements:[
-
-
-{
-type:"text",
-text:"ARTIST NAME",
-x:50,
-y:60,
-size:45
-},
-
-
-{
-type:"text",
-text:
-`TRACKLIST
-
-01
-02
-03
-04
-05
-06`,
-x:60,
-y:220,
-size:30
-},
-
-
-{
-type:"text",
-text:"ALBUM TITLE",
-x:330,
-y:500,
-size:35
-}
-
-
-]
-
-
-},
-
-
-
-
-
-10: {
-
-name:"Collector Edition",
-
-elements:[
-
-
-{
-type:"text",
-text:"LIMITED EDITION",
-x:150,
-y:50,
-size:30
-},
-
-
-{
-type:"text",
-text:"ARTIST",
-x:220,
-y:230,
-size:65
-},
-
-
-{
-type:"text",
-text:"ALBUM TITLE",
-x:160,
-y:360,
-size:45
-},
-
-
-{
-type:"text",
-text:"001 / 500",
-x:250,
-y:520,
-size:25
-}
-
-
-]
-
-
-}
-
-
-
-};
-
-
-
-
-
-
-// Load selected template
-
-function loadTemplate(number){
-
-
-
-    clearCanvas();
-
-
-
-    let template =
-    templates[number];
-
-
-
-    template.elements.forEach(item=>{
-
-
-        createElement(
-
-            item.type,
-
-            item.text,
-
-            item.x,
-
-            item.y,
-
-            item.size
-
-        );
-
-
-    });
-
-
-
-}
-    // =================================
-// SAVE / LOAD / EXPORT
-// =================================
-
-
-
-// Save poster
-
-function saveProject(){
-
-
-    let poster =
-    document
-    .getElementById("canvas")
-    .innerHTML;
-
-
-
-    localStorage.setItem(
-        "albumPoster",
-        poster
-    );
-
-
-    alert("Poster saved!");
-
-}
-
-
-
-
-
-// Load poster
-
-function loadProject(){
-
-
-    let saved =
-    localStorage.getItem(
-        "albumPoster"
-    );
-
-
-
-    if(!saved)
-    return;
-
-
-
-    document
-    .getElementById("canvas")
-    .innerHTML =
-    saved;
-
-
-
-    document
-    .querySelectorAll(".poster-element")
-    .forEach(element=>{
-
-
-        makeDraggable(element);
-
-
-        element.onclick=function(e){
-
-            e.stopPropagation();
-
-            selectElement(element);
-
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* --- LAYOUT --- */
+        #app-container {
+            display: flex;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* --- TEMPLATE SELECTOR (LEFT) --- */
+        #template-selector {
+            width: 250px;
+            background-color: var(--panel-bg);
+            border-right: 1px solid var(--border-color);
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .template-btn {
+            display: block;
+            width: 100%;
+            background: transparent;
+            color: var(--text-muted);
+            border: 1px solid var(--border-color);
+            padding: 12px;
+            margin-bottom: 10px;
+            text-align: left;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: all 0.2s;
+            font-size: 14px;
+        }
+
+        .template-btn:hover, .template-btn.active {
+            border-color: var(--text-main);
+            color: var(--text-main);
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+
+        /* --- PREVIEW AREA (CENTER) --- */
+        #preview-area {
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #0a0a0a;
+            overflow: auto;
+            padding: 40px;
+        }
+
+        #art-board {
+            width: 600px;
+            height: 800px;
+            background-color: #fff;
+            color: #000;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        /* --- SIDEBAR EDITOR (RIGHT) --- */
+        #editor-sidebar {
+            width: 350px;
+            background-color: var(--panel-bg);
+            border-left: 1px solid var(--border-color);
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .sidebar-header {
+            margin-bottom: 24px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border-color);
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+
+        .control-group {
+            margin-bottom: 20px;
+        }
+
+        .control-group label {
+            display: block;
+            font-size: 12px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+            letter-spacing: 0.5px;
+        }
+
+        .control-group input[type="text"],
+        .control-group textarea {
+            width: 100%;
+            background-color: rgba(255,255,255,0.05);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 10px;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .control-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .track-input-group {
+            display: flex;
+            margin-bottom: 8px;
+            gap: 8px;
+        }
+
+        /* --- TEMPLATE SPECIFIC STYLES --- */
+        
+        /* Template: Director's Cut (Code_Generated_Image (3).png) */
+        .tpl-directors-cut {
+            background-color: #1a1a1a;
+            color: #dcdcdc;
+            padding: 40px;
+            font-family: monospace;
+        }
+        .tpl-directors-cut .header h1 {
+            text-align: center;
+            font-size: 32px;
+            letter-spacing: 4px;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+        }
+        .tpl-directors-cut .header h2 {
+            text-align: center;
+            font-size: 14px;
+            color: #888;
+            border-bottom: 1px solid #444;
+            padding-bottom: 20px;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+        }
+        .tpl-directors-cut .concept {
+            font-size: 12px;
+            margin-bottom: 30px;
+            line-height: 1.5;
+        }
+        .tpl-directors-cut .scene-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .tpl-directors-cut .scene-row {
+            display: flex;
+            height: 100px;
+            border: 1px solid #333;
+        }
+        .tpl-directors-cut .scene-text {
+            flex: 2;
+            padding: 10px;
+            position: relative;
+            background: #000;
+        }
+        .tpl-directors-cut .scene-meta {
+            color: #ff3333;
+            font-size: 10px;
+            position: absolute;
+            top: 10px;
+            left: 10px;
+        }
+        .tpl-directors-cut .scene-lyric {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            font-style: italic;
+            font-size: 12px;
+        }
+        .tpl-directors-cut .scene-art {
+            flex: 1;
+            background: #2a2a2a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            color: #666;
+            border-left: 1px solid #333;
+        }
+
+        /* Template: Yellow Brutalism (gemini-svg (5).png) */
+        .tpl-yellow-brut {
+            background-color: #fce655;
+            color: #000;
+            padding: 20px;
+            border: 10px solid #000;
+            display: flex;
+            flex-direction: column;
+            font-weight: bold;
+        }
+        .tpl-yellow-brut .header-box {
+            border-bottom: 5px solid #000;
+            padding-bottom: 10px;
+            margin-bottom: 10px;
+        }
+        .tpl-yellow-brut .header-box h1 { font-size: 42px; text-transform: uppercase; line-height: 1; }
+        .tpl-yellow-brut .header-box h2 { font-size: 24px; text-transform: uppercase; }
+        .tpl-yellow-brut .main-grid {
+            display: grid;
+            grid-template-columns: 2.5fr 1fr;
+            gap: 10px;
+            flex-grow: 1;
+        }
+        .tpl-yellow-brut .art-box {
+            background: #fff;
+            border: 5px solid #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 400px;
+        }
+        .tpl-yellow-brut .specs-box {
+            border-left: 5px solid #000;
+            padding-left: 10px;
+            font-size: 12px;
+        }
+        .tpl-yellow-brut .tracklist-box {
+            border-top: 5px solid #000;
+            margin-top: 10px;
+            padding-top: 10px;
+        }
+        .tpl-yellow-brut .tracklist-box ul { list-style: none; }
+        .tpl-yellow-brut .tracklist-box li { margin-bottom: 8px; font-size: 14px; }
+
+        /* Template: Clean Split (gemini-svg (1).png) */
+        .tpl-clean-split {
+            background-color: #f4f4f4;
+            color: #111;
+            padding: 40px;
+        }
+        .tpl-clean-split .top-text {
+            margin-bottom: 20px;
+        }
+        .tpl-clean-split .top-text h1 { font-size: 36px; text-transform: uppercase; }
+        .tpl-clean-split .top-text p { font-size: 14px; color: #555; }
+        .tpl-clean-split .art-square {
+            width: 100%;
+            height: 450px;
+            background: #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #888;
+            margin-bottom: 30px;
+        }
+        .tpl-clean-split .bottom-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 20px;
+            font-size: 12px;
+        }
+        .tpl-clean-split ul { list-style: none; }
+        .tpl-clean-split li { margin-bottom: 6px; }
+
+        /* Template: Vinyl Sleeve (gemini-svg (3).png) */
+        .tpl-vinyl {
+            background-color: #e8e3d3;
+            color: #3b3631;
+            padding: 30px;
+            border: 15px solid #3b3631;
+            text-align: center;
+            font-family: 'Times New Roman', Times, serif;
+        }
+        .tpl-vinyl h1 { font-size: 40px; margin-bottom: 5px; text-transform: uppercase; }
+        .tpl-vinyl .sub { font-style: italic; margin-bottom: 30px; }
+        .tpl-vinyl .art-container {
+            width: 80%;
+            height: 400px;
+            margin: 0 auto 30px auto;
+            border: 2px solid #3b3631;
+            background: #d1ccbc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+    </style>
+</head>
+<body>
+
+    <div id="app-container">
+        
+        <!-- LEFT: Template Selection -->
+        <aside id="template-selector">
+            <div class="sidebar-header">TEMPLATES</div>
+            <div id="template-list"></div>
+        </aside>
+
+        <!-- CENTER: Live Preview -->
+        <main id="preview-area">
+            <div id="art-board">
+                <!-- Content injected via JS -->
+            </div>
+        </main>
+
+        <!-- RIGHT: The Core Editing Sidebar -->
+        <aside id="editor-sidebar">
+            <div class="sidebar-header">EDIT PROPERTIES</div>
+            
+            <div class="control-group">
+                <label>Artist Name</label>
+                <input type="text" id="edit-artist" oninput="updateState('artist', this.value)">
+            </div>
+            
+            <div class="control-group">
+                <label>Album / Project Title</label>
+                <input type="text" id="edit-album" oninput="updateState('album', this.value)">
+            </div>
+
+            <div class="control-group">
+                <label>Concept / Notes (For Storyboard)</label>
+                <textarea id="edit-concept" oninput="updateState('concept', this.value)"></textarea>
+            </div>
+
+            <div class="control-group">
+                <label>Tracklist / Lyrics</label>
+                <div id="track-inputs"></div>
+                <button onclick="addTrack()" style="margin-top: 10px; padding: 5px 10px; background: #333; color: white; border: none; cursor: pointer; border-radius: 3px;">+ Add Line</button>
+            </div>
+        </aside>
+
+    </div>
+
+    <script>
+        // --- STATE MANAGEMENT ---
+        // Pre-loaded with data fitting the Director's Cut structure and typical rollout specs
+        const state = {
+            activeTemplate: 'directors-cut',
+            artist: "Kanye West",
+            album: "Bully",
+            concept: "CONCEPT: Rapid-fire visual transition. The transition structure applies to every individual line of the song. No exceptions.",
+            tracks: [
+                "I just touched down in the city",
+                "Got the whole crew rolling with me",
+                "Lights flashing, camera action",
+                "We ain't looking for a reaction",
+                "Building empires from the ground up"
+            ]
         };
 
+        // --- TEMPLATE DEFINITIONS ---
+        // Referencing the requested images from the prompt
+        const templates = {
+            'directors-cut': {
+                name: "Director's Cut Visuals",
+                sourceFile: "Code_Generated_Image (3).png",
+                render: (s) => `
+                    <div class="tpl-directors-cut" style="height: 100%;">
+                        <div class="header">
+                            <h1>[ ${s.album} ]</h1>
+                            <h2>DIRECTOR's CUT VISUAL TREATMENT</h2>
+                        </div>
+                        <div class="concept">${s.concept}</div>
+                        <div class="scene-grid">
+                            ${s.tracks.slice(0, 5).map((track, i) => `
+                                <div class="scene-row">
+                                    <div class="scene-text">
+                                        <div class="scene-meta">SCENE 0${i+1} - 0:0${i*3}</div>
+                                        <div class="scene-lyric">"[ ${track} ]"</div>
+                                    </div>
+                                    <div class="scene-art">[ SCENE ART ]</div>
+                                </div>
+                            `).join('')}
+                        </div>
+                        <div style="position: absolute; bottom: 30px; font-size: 10px; color: #666;">
+                            ARTIST: [ ${s.artist} ] | SPOTIFY CODE: ||| | || || | || |
+                        </div>
+                    </div>
+                `
+            },
+            'yellow-brutalism': {
+                name: "Yellow Specifications",
+                sourceFile: "gemini-svg (5).png",
+                render: (s) => `
+                    <div class="tpl-yellow-brut" style="height: 100%;">
+                        <div class="header-box">
+                            <h1>[ ${s.artist} ]</h1>
+                            <h2>[ ${s.album} ]</h2>
+                        </div>
+                        <div class="main-grid">
+                            <div class="art-col">
+                                <div class="art-box">[ ARTWORK HERE ]</div>
+                                <div class="tracklist-box">
+                                    <p style="margin-bottom: 10px;">SIDE A / SIDE B TRACKLIST</p>
+                                    <ul>
+                                        ${s.tracks.map((t, i) => `<li>0${i+1}. [ ${t.substring(0, 15)}... ]</li>`).join('')}
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="specs-col">
+                                <div class="specs-box">
+                                    <p>SPECIFICATIONS</p><br>
+                                    <p>GENRE: [ HIP HOP ]</p>
+                                    <p>BPM: [ 88 ]</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+            'clean-split': {
+                name: "Clean Layout",
+                sourceFile: "gemini-svg (1).png",
+                render: (s) => `
+                    <div class="tpl-clean-split" style="height: 100%;">
+                        <div class="top-text">
+                            <h1>[ ${s.album} ]</h1>
+                            <p>[ ${s.artist} ] • [ 2026 ]</p>
+                        </div>
+                        <div class="art-square">[ INSERT ALBUM ARTWORK HERE ]</div>
+                        <div class="bottom-grid">
+                            <div>
+                                <p style="font-weight: bold; margin-bottom: 10px;">SIDE A</p>
+                                <ul>
+                                    ${s.tracks.slice(0,4).map((t, i) => `<li>0${i+1}. [ ${t.substring(0,12)} ] — 00:00</li>`).join('')}
+                                </ul>
+                            </div>
+                            <div>
+                                <p style="font-weight: bold; margin-bottom: 10px;">SIDE B</p>
+                                <ul>
+                                    ${s.tracks.slice(4,8).map((t, i) => `<li>0${i+5}. [ ${t.substring(0,12)} ] — 00:00</li>`).join('')}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+            'vinyl-sleeve': {
+                name: "Vintage Vinyl Sleeve",
+                sourceFile: "gemini-svg (3).png",
+                render: (s) => `
+                    <div class="tpl-vinyl" style="height: 100%;">
+                        <h1>[ ${s.album} ]</h1>
+                        <div class="sub">A Long Playing Record by [ ${s.artist} ]</div>
+                        <div class="art-container">[ INSERT ALBUM COVER ]</div>
+                        <div style="font-size: 14px; border-top: 1px solid #3b3631; padding-top: 15px;">
+                            — TRACK LISTING —<br><br>
+                            ${s.tracks.map((t, i) => `${i+1}. ${t.substring(0,10)}`).join(' • ')}
+                        </div>
+                    </div>
+                `
+            }
+            // Additional architecture ready for Code_Generated_Image (4).png, Code_Generated_Image (2).png, etc.
+        };
 
-    });
+        // --- CORE LOGIC ---
 
+        function initApp() {
+            // Build Template Selector
+            const selector = document.getElementById('template-list');
+            for (const [key, tpl] of Object.entries(templates)) {
+                const btn = document.createElement('button');
+                btn.className = `template-btn ${key === state.activeTemplate ? 'active' : ''}`;
+                btn.innerText = tpl.name;
+                btn.onclick = () => selectTemplate(key);
+                selector.appendChild(btn);
+            }
 
+            // Sync initial state to sidebar inputs
+            document.getElementById('edit-artist').value = state.artist;
+            document.getElementById('edit-album').value = state.album;
+            document.getElementById('edit-concept').value = state.concept;
+            
+            renderTrackInputs();
+            renderPreview();
+        }
 
-}
+        function selectTemplate(templateKey) {
+            state.activeTemplate = templateKey;
+            
+            // Update UI buttons
+            document.querySelectorAll('.template-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            renderPreview();
+        }
 
+        function updateState(key, value) {
+            state[key] = value;
+            renderPreview();
+        }
 
+        function updateTrack(index, value) {
+            state.tracks[index] = value;
+            renderPreview();
+        }
 
+        function addTrack() {
+            state.tracks.push(`New Track ${state.tracks.length + 1}`);
+            renderTrackInputs();
+            renderPreview();
+        }
 
+        function removeTrack(index) {
+            state.tracks.splice(index, 1);
+            renderTrackInputs();
+            renderPreview();
+        }
 
-// Export PNG
+        function renderTrackInputs() {
+            const container = document.getElementById('track-inputs');
+            container.innerHTML = '';
+            
+            state.tracks.forEach((track, index) => {
+                const div = document.createElement('div');
+                div.className = 'track-input-group';
+                
+                const input = document.createElement('input');
+                input.type = 'text';
+                input.value = track;
+                input.oninput = (e) => updateTrack(index, e.target.value);
+                
+                const delBtn = document.createElement('button');
+                delBtn.innerText = 'X';
+                delBtn.style.padding = '0 10px';
+                delBtn.style.background = '#442222';
+                delBtn.style.color = 'white';
+                delBtn.style.border = 'none';
+                delBtn.style.cursor = 'pointer';
+                delBtn.onclick = () => removeTrack(index);
+                
+                div.appendChild(input);
+                div.appendChild(delBtn);
+                container.appendChild(div);
+            });
+        }
 
-function exportPoster(){
+        function renderPreview() {
+            const board = document.getElementById('art-board');
+            const template = templates[state.activeTemplate];
+            
+            if (template) {
+                board.innerHTML = template.render(state);
+            }
+        }
 
+        // Initialize on load
+        window.onload = initApp;
 
-    let canvas =
-    document.getElementById("canvas");
-
-
-
-    let image =
-    document.createElement("canvas");
-
-
-
-    html2canvas(canvas)
-    .then(function(result){
-
-
-        let link =
-        document.createElement("a");
-
-
-        link.download =
-        "album-poster.png";
-
-
-        link.href =
-        result.toDataURL();
-
-
-
-        link.click();
-
-
-
-    });
-
-
-
-}
+    </script>
+</body>
+</html>
