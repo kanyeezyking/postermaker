@@ -201,17 +201,20 @@
         </div>
 
         <div class="input-group">
-            <label for="tracklist">Tracklist (One per line)</label>
-            <textarea id="tracklist">SIDE A
-Track One Title
-Track Two Title
+            <label for="barcodeUpload">Barcode Image Upload</label>
+            <input type="file" id="barcodeUpload" accept="image/*">
+        </div>
 
-SIDE B
+        <div class="input-group">
+            <label for="tracklist">Tracklist (One per line)</label>
+            <textarea id="tracklist">Track One Title
+Track Two Title
 Track Three Title
 Track Four Title
 Track Five Title
-Track Six Title</textarea>
-            <p class="help-text">Put SIDE A, SIDE B, SIDE C and so on on their own lines. Each side can contain any number of tracks.</p>
+Track Six Title
+Track Seven Title
+Track Eight Title</textarea>
         </div>
 
         <div class="button-row">
@@ -254,12 +257,8 @@ Track Six Title</textarea>
               <text x="50" y="615" font-family="'Courier New', monospace" font-size="20" fill="#00FFCC">{{ALBUM_TITLE}}</text>
               <text x="50" y="655" font-family="'Courier New', monospace" font-size="10" fill="#888888">TRACKLIST</text>
               {{TRACKLIST_SVG_GRID_2}}
-              <rect x="50" y="750" width="90" height="50" fill="#FFFFFF"/>
-              <text x="95" y="772" font-family="Impact, sans-serif" font-size="10" fill="#000000" text-anchor="middle">PARENTAL</text>
-              <text x="95" y="785" font-family="Impact, sans-serif" font-size="10" fill="#000000" text-anchor="middle">ADVISORY</text>
-              <text x="95" y="794" font-family="Arial, sans-serif" font-size="5" fill="#000000" text-anchor="middle">EXPLICIT CONTENT</text>
-              <rect x="425" y="750" width="120" height="50" fill="#1A1A24" stroke="#333344"/>
-              <text x="485" y="780" font-family="'Courier New', monospace" font-size="9" fill="#888888" text-anchor="middle">[ BARCODE ]</text>
+              <rect x="425" y="785" width="120" height="35" fill="#FFFFFF" stroke="#333344"/>
+              <image x="425" y="785" width="120" height="35" href="{{BARCODE_IMAGE}}" preserveAspectRatio="xMidYMid meet" />
             </svg>`,
 
             3: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 595 842" width="100%" height="100%">
@@ -440,6 +439,7 @@ Track Six Title</textarea>
 
         let artworkSource = '';
         let spotifySource = '';
+        let barcodeSource = '';
         let paletteColors = ['#333333', '#666666', '#999999', '#CCCCCC'];
 
         function escapeXml(value) {
@@ -451,40 +451,11 @@ Track Six Title</textarea>
                 .replace(/'/g, '&apos;');
         }
 
-        function parseTracklist(value) {
-            const entries = [];
-            const tracks = [];
-            let sideTrackNumber = 0;
-            let globalTrackNumber = 0;
-            let insideSide = false;
-
-            String(value || '')
+        function parseTracks(value) {
+            return String(value || '')
                 .split('\n')
                 .map(line => line.trim())
-                .filter(Boolean)
-                .forEach(line => {
-                    const sideMatch = line.match(/^side\s+(.+?)[\s:.-]*$/i);
-
-                    if (sideMatch) {
-                        const sideLabel = sideMatch[1].trim().toUpperCase();
-                        entries.push({ type: 'side', text: `SIDE ${sideLabel}` });
-                        sideTrackNumber = 0;
-                        insideSide = true;
-                        return;
-                    }
-
-                    globalTrackNumber++;
-                    sideTrackNumber++;
-                    const number = insideSide ? sideTrackNumber : globalTrackNumber;
-                    tracks.push(line);
-                    entries.push({
-                        type: 'track',
-                        raw: line,
-                        text: `${String(number).padStart(2, '0')}. ${line}`
-                    });
-                });
-
-            return { entries, tracks };
+                .filter(Boolean);
         }
 
         function wrapWords(text, maxChars) {
@@ -517,7 +488,7 @@ Track Six Title</textarea>
             return lines;
         }
 
-        function buildSwissTracklist(entries) {
+        function buildSwissTracklist(tracks) {
             const columns = [40, 125, 210, 295];
             const columnWidth = 76;
             const top = 668;
@@ -529,14 +500,10 @@ Track Six Title</textarea>
                 const lineHeight = fontSize + 2.2;
                 const maxChars = Math.max(10, Math.floor(columnWidth / (fontSize * 0.54)));
                 const capacity = Math.floor((bottom - top) / lineHeight);
-                const prepared = entries.map(entry => ({
-                    ...entry,
-                    lines: wrapWords(entry.text, maxChars)
+                const prepared = tracks.map((track, index) => ({
+                    lines: wrapWords(`${String(index + 1).padStart(2, '0')}. ${track}`, maxChars)
                 }));
-                const requiredLines = prepared.reduce(
-                    (sum, entry) => sum + entry.lines.length + (entry.type === 'side' ? 0.35 : 0),
-                    0
-                );
+                const requiredLines = prepared.reduce((sum, entry) => sum + entry.lines.length, 0);
 
                 if (requiredLines <= capacity * columns.length) {
                     chosen = { fontSize, lineHeight, capacity, prepared };
@@ -552,7 +519,9 @@ Track Six Title</textarea>
                     fontSize,
                     lineHeight,
                     capacity: Math.floor((bottom - top) / lineHeight),
-                    prepared: entries.map(entry => ({ ...entry, lines: wrapWords(entry.text, maxChars) }))
+                    prepared: tracks.map((track, index) => ({
+                        lines: wrapWords(`${String(index + 1).padStart(2, '0')}. ${track}`, maxChars)
+                    }))
                 };
             }
 
@@ -560,20 +529,11 @@ Track Six Title</textarea>
             let usedLines = 0;
             let svg = '';
 
-            chosen.prepared.forEach((entry, entryIndex) => {
-                const nextEntry = chosen.prepared[entryIndex + 1];
-                const sideSpacing = entry.type === 'side' && usedLines > 0 ? 0.35 : 0;
-                const keepWithFirstTrack = entry.type === 'side' && nextEntry?.type === 'track'
-                    ? nextEntry.lines.length
-                    : 0;
-                const preferredBlockSize = entry.lines.length + sideSpacing + keepWithFirstTrack;
-
-                if (usedLines + preferredBlockSize > chosen.capacity && column < columns.length - 1) {
+            chosen.prepared.forEach(entry => {
+                if (usedLines + entry.lines.length > chosen.capacity && column < columns.length - 1) {
                     column++;
                     usedLines = 0;
                 }
-
-                if (entry.type === 'side' && usedLines > 0) usedLines += 0.35;
 
                 entry.lines.forEach(line => {
                     if (usedLines >= chosen.capacity && column < columns.length - 1) {
@@ -583,8 +543,72 @@ Track Six Title</textarea>
                     if (column >= columns.length || usedLines >= chosen.capacity) return;
 
                     const y = top + (usedLines * chosen.lineHeight);
-                    const isSide = entry.type === 'side';
-                    svg += `<text x="${columns[column]}" y="${y.toFixed(1)}" font-family="Helvetica, Arial, sans-serif" font-size="${isSide ? chosen.fontSize + 0.4 : chosen.fontSize}" font-weight="${isSide ? 'bold' : 'normal'}" letter-spacing="${isSide ? '0.8' : '0'}" fill="${isSide ? '#111111' : '#444444'}">${escapeXml(line)}</text>\n`;
+                    svg += `<text x="${columns[column]}" y="${y.toFixed(1)}" font-family="Helvetica, Arial, sans-serif" font-size="${chosen.fontSize}" fill="#444444">${escapeXml(line)}</text>
+`;
+                    usedLines++;
+                });
+            });
+
+            return svg;
+        }
+
+        function buildTemplate2Tracklist(tracks) {
+            const columns = [50, 150, 250, 350, 450];
+            const columnWidth = 88;
+            const top = 674;
+            const bottom = 770;
+            const fontOptions = [9, 8.5, 8, 7.5, 7, 6.5, 6, 5.5, 5, 4.5];
+            let chosen = null;
+
+            for (const fontSize of fontOptions) {
+                const lineHeight = fontSize + 2;
+                const maxChars = Math.max(9, Math.floor(columnWidth / (fontSize * 0.57)));
+                const capacity = Math.floor((bottom - top) / lineHeight);
+                const prepared = tracks.map((track, index) => ({
+                    lines: wrapWords(`${String(index + 1).padStart(2, '0')}. ${track}`, maxChars)
+                }));
+                const requiredLines = prepared.reduce((sum, entry) => sum + entry.lines.length, 0);
+
+                if (requiredLines <= capacity * columns.length) {
+                    chosen = { fontSize, lineHeight, capacity, prepared };
+                    break;
+                }
+            }
+
+            if (!chosen) {
+                const fontSize = 4;
+                const lineHeight = 5.5;
+                const maxChars = Math.max(9, Math.floor(columnWidth / (fontSize * 0.57)));
+                chosen = {
+                    fontSize,
+                    lineHeight,
+                    capacity: Math.floor((bottom - top) / lineHeight),
+                    prepared: tracks.map((track, index) => ({
+                        lines: wrapWords(`${String(index + 1).padStart(2, '0')}. ${track}`, maxChars)
+                    }))
+                };
+            }
+
+            let column = 0;
+            let usedLines = 0;
+            let svg = '';
+
+            chosen.prepared.forEach(entry => {
+                if (usedLines + entry.lines.length > chosen.capacity && column < columns.length - 1) {
+                    column++;
+                    usedLines = 0;
+                }
+
+                entry.lines.forEach(line => {
+                    if (usedLines >= chosen.capacity && column < columns.length - 1) {
+                        column++;
+                        usedLines = 0;
+                    }
+                    if (column >= columns.length || usedLines >= chosen.capacity) return;
+
+                    const y = top + (usedLines * chosen.lineHeight);
+                    svg += `<text x="${columns[column]}" y="${y.toFixed(1)}" font-family="'Courier New', monospace" font-size="${chosen.fontSize}" fill="#FFFFFF">${escapeXml(line)}</text>
+`;
                     usedLines++;
                 });
             });
@@ -601,13 +625,13 @@ Track Six Title</textarea>
             const catalogNumber = document.getElementById('catalogNumber').value;
             const artworkUrl = artworkSource || document.getElementById('artworkUrl').value.trim();
             const spotifyImage = spotifySource || document.getElementById('spotifyCodeUrl').value.trim();
-            const parsedTracklist = parseTracklist(document.getElementById('tracklist').value);
-            const tracks = parsedTracklist.tracks;
+            const barcodeImage = barcodeSource;
+            const tracks = parseTracks(document.getElementById('tracklist').value);
 
             let code = templates[templateId];
 
-            let svgCol = buildSwissTracklist(parsedTracklist.entries);
-            let svgGrid2 = '';
+            let svgCol = buildSwissTracklist(tracks);
+            let svgGrid2 = buildTemplate2Tracklist(tracks);
             let svgCenter = '';
             let svgEditorial = '';
             let svgBrutal = '';
@@ -618,11 +642,6 @@ Track Six Title</textarea>
             tracks.forEach((track, i) => {
                 const safeTrack = escapeXml(track);
                 const num = (i + 1).toString().padStart(2, '0');
-                if (i < 6) {
-                    const x = i < 3 ? 50 : 280;
-                    const y = 675 + ((i % 3) * 20);
-                    svgGrid2 += `<text x="${x}" y="${y}" font-family="'Courier New', monospace" font-size="11" fill="#FFFFFF">${num}. ${safeTrack}</text>\n`;
-                }
                 htmlList += `${num}. ${safeTrack} <br>`;
                 htmlBrutal += `<div class="track">${num}. ${safeTrack}</div>`;
                 if (i < 5) svgCenter += `<text x="297" y="${615 + (i * 20)}" font-family="'Times New Roman', serif" font-size="11" fill="#2C221E" text-anchor="middle">${i + 1}. ${safeTrack}</text>\n`;
@@ -638,6 +657,7 @@ Track Six Title</textarea>
                 .replace(/{{CATALOG_NUMBER}}/g, escapeXml(catalogNumber))
                 .replace(/{{ARTWORK_URL}}/g, escapeXml(artworkUrl))
                 .replace(/{{SPOTIFY_IMAGE}}/g, escapeXml(spotifyImage))
+                .replace(/{{BARCODE_IMAGE}}/g, escapeXml(barcodeImage))
                 .replace(/{{PALETTE_1}}/g, paletteColors[0])
                 .replace(/{{PALETTE_2}}/g, paletteColors[1])
                 .replace(/{{PALETTE_3}}/g, paletteColors[2])
@@ -881,6 +901,13 @@ Track Six Title</textarea>
             spotifySource = '';
             document.getElementById('spotifyCodeUpload').value = '';
             updatePoster();
+        });
+
+        document.getElementById('barcodeUpload').addEventListener('change', event => {
+            readImageFile(event.target.files[0], source => {
+                barcodeSource = source;
+                updatePoster();
+            });
         });
 
         document.getElementById('downloadPng').addEventListener('click', downloadPng);
