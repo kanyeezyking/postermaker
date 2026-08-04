@@ -131,15 +131,14 @@
            TEMPLATE 1: Grid Poster (Code_Generated_Image 4)
            ========================================= */
         .tpl-grid-poster { background-color: #f7f7f7; color: #000; padding: 40px; height: 100%; display: flex; flex-direction: column; }
-        .tpl-grid-poster .advisory { border: 2px solid #000; padding: 4px 8px; font-size: 10px; font-weight: bold; display: inline-block; margin-bottom: 40px; align-self: flex-start; }
-        .tpl-grid-poster .titles { margin-bottom: 40px; }
+        .tpl-grid-poster .titles { margin-bottom: 40px; margin-top: 20px; }
         .tpl-grid-poster .titles h2 { font-size: 24px; text-transform: uppercase; margin-bottom: 5px; }
         .tpl-grid-poster .titles h1 { font-size: 48px; text-transform: uppercase; font-weight: 900; letter-spacing: -1px; }
         .tpl-grid-poster .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 40px; }
-        .tpl-grid-poster .grid-box { height: 150px; background-color: #dfdfdf; border: 2px solid #000; display: flex; align-items: flex-start; padding: 10px; font-size: 10px; font-weight: bold; }
+        .tpl-grid-poster .grid-box { height: 150px; background-color: #dfdfdf; border: 2px solid #000; display: flex; align-items: flex-start; padding: 10px; font-size: 10px; font-weight: bold; background-size: cover; background-position: center; }
         .tpl-grid-poster .grid-box.accent { background-color: #ff3333; border: 2px solid #000; }
-        .tpl-grid-poster .tracklist { font-size: 14px; font-weight: bold; line-height: 1.6; }
-        .tpl-grid-poster .tracklist span { font-weight: normal; font-style: italic; color: #555; }
+        .tpl-grid-poster .tracklist { flex-grow: 1; font-size: 14px; font-weight: bold; line-height: 1.6; column-count: 2; column-gap: 40px; }
+        .tpl-grid-poster .tracklist-item { break-inside: avoid; margin-bottom: 5px; }
 
         /* =========================================
            TEMPLATE 2: Director's Cut (Code_Generated_Image 3)
@@ -153,7 +152,7 @@
         .tpl-directors-cut .scene-text { flex: 2; padding: 10px; position: relative; background: #0a0a0a; }
         .tpl-directors-cut .scene-meta { color: #ff3333; font-size: 10px; position: absolute; top: 10px; left: 10px; }
         .tpl-directors-cut .scene-lyric { position: absolute; bottom: 10px; left: 10px; font-style: italic; font-size: 12px; }
-        .tpl-directors-cut .scene-art { flex: 1; background: #2a2a2a; display: flex; align-items: center; justify-content: center; font-size: 10px; color: #666; border-left: 1px solid #333; }
+        .tpl-directors-cut .scene-art { flex: 1; background: #2a2a2a; display: flex; align-items: center; justify-content: center; font-size: 10px; color: #666; border-left: 1px solid #333; background-size: cover; background-position: center; }
         .tpl-directors-cut .footer { font-size: 10px; color: #666; margin-top: 20px; line-height: 1.5; text-transform: uppercase;}
 
         /* =========================================
@@ -163,9 +162,9 @@
         .tpl-vinyl-center .inner-border { border: 3px solid #2c2519; height: 100%; display: flex; flex-direction: column; align-items: center; padding: 40px; position: relative;}
         .tpl-vinyl-center h1 { font-family: Georgia, serif; font-size: 48px; font-style: italic; margin-bottom: 10px; }
         .tpl-vinyl-center h2 { font-size: 16px; text-transform: uppercase; letter-spacing: 2px; }
-        .tpl-vinyl-center .record-circle { width: 350px; height: 350px; border-radius: 50%; border: 2px solid #2c2519; background-color: #e6dac3; margin: 40px 0; display: flex; align-items: center; justify-content: center; position: relative;}
-        .tpl-vinyl-center .spindle-hole { width: 25px; height: 25px; border-radius: 50%; border: 2px solid #2c2519; background-color: #d2aa7a; position: absolute; }
-        .tpl-vinyl-center .label-art-text { font-size: 10px; color: #888; position: absolute; bottom: 60px; text-transform: uppercase;}
+        .tpl-vinyl-center .record-circle { width: 350px; height: 350px; border-radius: 50%; border: 2px solid #2c2519; background-color: #e6dac3; margin: 40px 0; display: flex; align-items: center; justify-content: center; position: relative; background-size: cover; background-position: center;}
+        .tpl-vinyl-center .spindle-hole { width: 25px; height: 25px; border-radius: 50%; border: 2px solid #2c2519; background-color: #d2aa7a; position: absolute; z-index: 2; }
+        .tpl-vinyl-center .label-art-text { font-size: 10px; color: #888; position: absolute; bottom: 60px; text-transform: uppercase; background: rgba(230, 218, 195, 0.8); padding: 2px 5px;}
         .tpl-vinyl-center .track-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; font-size: 12px; font-weight: bold; width: 100%; text-align: center; border-top: 2px solid #2c2519; padding-top: 20px; position: absolute; bottom: 40px;}
 
         /* =========================================
@@ -177,7 +176,7 @@
         .tpl-offset .red-box h2 { font-size: 24px; text-transform: uppercase; margin-bottom: 20px; }
         .tpl-offset .red-box ul { list-style: none; }
         .tpl-offset .red-box li { border-bottom: 1px solid rgba(255,255,255,0.3); padding: 6px 0; font-size: 12px; font-weight: bold; text-transform: uppercase; }
-        .tpl-offset .black-box { position: absolute; bottom: 40px; left: 20px; width: 280px; height: 350px; background-color: #000; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold; border: 4px solid #fff; box-shadow: 10px 10px 0px rgba(0,0,0,0.2); }
+        .tpl-offset .black-box { position: absolute; bottom: 40px; left: 20px; width: 280px; height: 350px; background-color: #000; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold; border: 4px solid #fff; box-shadow: 10px 10px 0px rgba(0,0,0,0.2); background-size: cover; background-position: center; }
 
         /* =========================================
            TEMPLATE 5: Lyrics Overlay (Code_Generated_Image)
@@ -187,7 +186,7 @@
         .tpl-lyrics-bg .center-card { background: #e0e0f8; color: #0a0a2a; padding: 40px; margin: auto; width: 85%; text-align: center; z-index: 2; border-radius: 4px;}
         .tpl-lyrics-bg .center-card h1 { font-size: 36px; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 10px; font-weight: 900;}
         .tpl-lyrics-bg .center-card h3 { font-size: 14px; text-transform: uppercase; margin-bottom: 30px; font-weight: 600;}
-        .tpl-lyrics-bg .art-square { width: 100%; aspect-ratio: 1; border: 1px solid #0a0a2a; display: flex; align-items: center; justify-content: center; font-size: 12px; }
+        .tpl-lyrics-bg .art-square { width: 100%; aspect-ratio: 1; border: 1px solid #0a0a2a; display: flex; align-items: center; justify-content: center; font-size: 12px; background-size: cover; background-position: center;}
         .tpl-lyrics-bg .footer { display: flex; justify-content: space-between; align-items: flex-end; z-index: 2; border-top: 1px solid rgba(255,255,255,0.2); padding-top: 20px; margin-top: auto;}
         .tpl-lyrics-bg .footer-tracks { font-size: 11px; text-transform: uppercase; width: 60%; line-height: 1.6;}
         .tpl-lyrics-bg .palette { display: flex; gap: 8px; align-items: center; font-size: 10px; }
@@ -197,7 +196,7 @@
            TEMPLATE 6: Neon Cyan Dark (gemini-svg 2)
            ========================================= */
         .tpl-neon { background-color: #0b0b0b; color: #fff; padding: 30px; height: 100%; display: flex; flex-direction: column; font-family: monospace;}
-        .tpl-neon .artwork-frame { flex-grow: 1; border: 2px solid #00ffff; background: #15151a; margin-bottom: 20px; display: flex; align-items: center; justify-content: center; color: #00ffff; font-size: 14px; text-transform: uppercase; }
+        .tpl-neon .artwork-frame { flex-grow: 1; border: 2px solid #00ffff; background: #15151a; margin-bottom: 20px; display: flex; align-items: center; justify-content: center; color: #00ffff; font-size: 14px; text-transform: uppercase; background-size: cover; background-position: center; }
         .tpl-neon h1 { font-family: impact, sans-serif; font-size: 54px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: -5px; }
         .tpl-neon h2 { color: #00ffff; font-size: 20px; text-transform: uppercase; margin-bottom: 25px; }
         .tpl-neon .tracks { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 12px; color: #aaa; margin-bottom: 30px; }
@@ -213,7 +212,7 @@
         .tpl-vintage .sleeve-inner { border: 2px solid #3b3631; height: 100%; padding: 30px; text-align: center; display: flex; flex-direction: column; }
         .tpl-vintage h1 { font-size: 38px; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 10px; }
         .tpl-vintage .subtitle { font-style: italic; font-size: 16px; margin-bottom: 30px; }
-        .tpl-vintage .art-placeholder { background: #dcd7c6; border: 1px solid #3b3631; flex-grow: 1; margin-bottom: 30px; display: flex; align-items: center; justify-content: center; color: #888; font-family: sans-serif; font-size: 12px; }
+        .tpl-vintage .art-placeholder { background: #dcd7c6; border: 1px solid #3b3631; flex-grow: 1; margin-bottom: 30px; display: flex; align-items: center; justify-content: center; color: #888; font-family: sans-serif; font-size: 12px; background-size: cover; background-position: center;}
         .tpl-vintage .track-listing { font-size: 14px; margin-bottom: 40px; line-height: 1.8; }
         .tpl-vintage .signatures { display: flex; justify-content: space-between; font-size: 10px; text-transform: uppercase; margin-bottom: 20px; }
         .tpl-vintage .sig-line { border-top: 1px solid #3b3631; width: 40%; padding-top: 5px; }
@@ -225,7 +224,7 @@
         .tpl-clean .header { margin-bottom: 20px; }
         .tpl-clean h1 { font-size: 36px; text-transform: uppercase; margin-bottom: 5px; font-weight: 800;}
         .tpl-clean p.sub { font-size: 14px; color: #666; text-transform: uppercase; letter-spacing: 1px; }
-        .tpl-clean .big-art { flex-grow: 1; background: #ddd; margin-bottom: 30px; display: flex; align-items: center; justify-content: center; color: #999; font-size: 14px; letter-spacing: 1px; }
+        .tpl-clean .big-art { flex-grow: 1; background: #ddd; margin-bottom: 30px; display: flex; align-items: center; justify-content: center; color: #999; font-size: 14px; letter-spacing: 1px; background-size: cover; background-position: center;}
         .tpl-clean .bottom-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; font-size: 11px; margin-bottom: 20px; border-bottom: 1px solid #ddd; padding-bottom: 20px;}
         .tpl-clean .col h3 { font-size: 12px; font-weight: 800; margin-bottom: 12px; }
         .tpl-clean .col ul { list-style: none; line-height: 1.8; color: #444; }
@@ -238,7 +237,7 @@
            TEMPLATE 9: Dark Split (gemini-svg 4)
            ========================================= */
         .tpl-dark-split { display: flex; height: 100%; background: #111; color: #fff; }
-        .tpl-dark-split .left-art { width: 55%; background: #222; display: flex; align-items: center; justify-content: center; color: #555; font-size: 14px; letter-spacing: 2px;}
+        .tpl-dark-split .left-art { width: 55%; background: #222; display: flex; align-items: center; justify-content: center; color: #555; font-size: 14px; letter-spacing: 2px; background-size: cover; background-position: center;}
         .tpl-dark-split .right-content { width: 45%; padding: 40px 30px; display: flex; flex-direction: column; }
         .tpl-dark-split .tag { color: #ff5500; font-size: 10px; font-weight: bold; letter-spacing: 2px; margin-bottom: 15px; }
         .tpl-dark-split h1 { font-size: 42px; text-transform: uppercase; line-height: 1; margin-bottom: 5px; }
@@ -261,7 +260,7 @@
         .tpl-brutalist .header-box h2 { font-size: 24px; text-transform: uppercase; }
         .tpl-brutalist .main-grid { display: grid; grid-template-columns: 2.5fr 1fr; gap: 15px; flex-grow: 1; }
         .tpl-brutalist .left-col { display: flex; flex-direction: column; gap: 15px; }
-        .tpl-brutalist .art-box { background: #fff; border: 4px solid #000; flex-grow: 1; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+        .tpl-brutalist .art-box { background: #fff; border: 4px solid #000; flex-grow: 1; display: flex; align-items: center; justify-content: center; font-size: 16px; background-size: cover; background-position: center;}
         .tpl-brutalist .tracklist-box { border: 4px solid #000; padding: 15px; background: transparent; }
         .tpl-brutalist .tracklist-box h3 { margin-bottom: 15px; font-size: 14px; }
         .tpl-brutalist .tracklist-box ul { list-style: none; font-size: 12px; line-height: 2; }
@@ -295,6 +294,11 @@
             <div class="sidebar-header">EDIT PROPERTIES</div>
             
             <div class="control-group">
+                <label>Artwork Image URL</label>
+                <input type="text" id="edit-artwork" placeholder="https://example.com/image.jpg" oninput="updateState('artwork', this.value)">
+            </div>
+
+            <div class="control-group">
                 <label>Artist Name</label>
                 <input type="text" id="edit-artist" oninput="updateState('artist', this.value)">
             </div>
@@ -320,18 +324,19 @@
 
     <script>
         // --- STATE MANAGEMENT ---
-        // Defaults reset to generic placeholders as requested. No brackets in state.
         const state = {
             activeTemplate: 'grid-poster',
             artist: "Artist Name",
             album: "Album Title",
+            artwork: "",
             concept: "CONCEPT: Rapid-fire visual transition. The transition structure applies to every individual line of the song.",
             tracks: [
                 "Track One",
                 "Track Two",
                 "Track Three",
                 "Track Four",
-                "Track Five"
+                "Track Five",
+                "Track Six"
             ]
         };
 
@@ -341,19 +346,20 @@
                 name: "1. Grid Poster",
                 render: (s) => `
                     <div class="tpl-grid-poster">
-                        <div class="advisory">PARENTAL ADVISORY EXPLICIT CONTENT</div>
                         <div class="titles">
                             <h2>${s.artist}</h2>
                             <h1>${s.album}</h1>
                         </div>
                         <div class="grid">
-                            <div class="grid-box">ARTWORK</div>
+                            <div class="grid-box" style="${s.artwork ? `background-image: url('${s.artwork}');` : ''}">
+                                ${s.artwork ? '' : 'ARTWORK'}
+                            </div>
                             <div class="grid-box accent"></div>
                             <div class="grid-box"></div>
                             <div class="grid-box"></div>
                         </div>
                         <div class="tracklist">
-                            ${s.tracks.map((t, i) => `0${i+1}. ${t.toUpperCase()} <br>`).join('')}
+                            ${s.tracks.map((t, i) => `<div class="tracklist-item">0${i+1}. ${t.toUpperCase()}</div>`).join('')}
                         </div>
                     </div>
                 `
@@ -374,7 +380,9 @@
                                         <div class="scene-meta">SCENE 0${i+1} - 0:0${i*3}</div>
                                         <div class="scene-lyric">"${track}"</div>
                                     </div>
-                                    <div class="scene-art">SCENE ART</div>
+                                    <div class="scene-art" style="${s.artwork ? `background-image: url('${s.artwork}');` : ''}">
+                                        ${s.artwork ? '' : 'SCENE ART'}
+                                    </div>
                                 </div>
                             `).join('')}
                         </div>
@@ -392,9 +400,9 @@
                         <div class="inner-border">
                             <h1>${s.album}</h1>
                             <h2>${s.artist}</h2>
-                            <div class="record-circle">
+                            <div class="record-circle" style="${s.artwork ? `background-image: url('${s.artwork}');` : ''}">
                                 <div class="spindle-hole"></div>
-                                <div class="label-art-text">VINYL CENTER LABEL ART</div>
+                                ${s.artwork ? '' : '<div class="label-art-text">VINYL CENTER LABEL ART</div>'}
                             </div>
                             <div class="track-grid">
                                 ${s.tracks.slice(0,6).map((t, i) => `<div>0${i+1}. ${t.toUpperCase()}</div>`).join('')}
@@ -415,7 +423,9 @@
                             </ul>
                             <div style="background:#fff; color:#000; display:inline-block; padding:4px; font-size:8px; margin-top:20px; font-weight:bold;">SPOTIFY CODE BAR</div>
                         </div>
-                        <div class="black-box">INSERT ARTWORK</div>
+                        <div class="black-box" style="${s.artwork ? `background-image: url('${s.artwork}');` : ''}">
+                            ${s.artwork ? '' : 'INSERT ARTWORK'}
+                        </div>
                     </div>
                 `
             },
@@ -429,7 +439,9 @@
                         <div class="center-card">
                             <h1>${s.album}</h1>
                             <h3>BY ${s.artist}</h3>
-                            <div class="art-square">ARTWORK</div>
+                            <div class="art-square" style="${s.artwork ? `background-image: url('${s.artwork}');` : ''}">
+                                ${s.artwork ? '' : 'ARTWORK'}
+                            </div>
                         </div>
                         <div class="footer">
                             <div class="footer-tracks">TRACKLIST: ${s.tracks.map((t,i)=>`${i+1}. ${t}`).join(' ')}</div>
@@ -446,7 +458,9 @@
                 name: "6. Neon Cyan Dark",
                 render: (s) => `
                     <div class="tpl-neon">
-                        <div class="artwork-frame">INSERT ARTWORK HERE</div>
+                        <div class="artwork-frame" style="${s.artwork ? `background-image: url('${s.artwork}');` : ''}">
+                            ${s.artwork ? '' : 'INSERT ARTWORK HERE'}
+                        </div>
                         <h1>${s.artist}</h1>
                         <h2>${s.album}</h2>
                         <div style="font-size:10px; color:#555; margin-bottom:10px; border-bottom:1px solid #333; padding-bottom:10px;">TRACKLIST // 01 - ${s.tracks.length > 9 ? s.tracks.length : '0'+s.tracks.length}</div>
@@ -468,7 +482,9 @@
                             <div class="sleeve-inner">
                                 <h1>${s.album}</h1>
                                 <div class="subtitle">A Long Playing Record by ${s.artist}</div>
-                                <div class="art-placeholder">INSERT ALBUM COVER</div>
+                                <div class="art-placeholder" style="${s.artwork ? `background-image: url('${s.artwork}');` : ''}">
+                                    ${s.artwork ? '' : 'INSERT ALBUM COVER'}
+                                </div>
                                 <div class="track-listing">
                                     <strong>— TRACK LISTING —</strong><br>
                                     ${s.tracks.map((t, i) => `${i+1}. ${t}`).join(' &bull; ')}
@@ -491,7 +507,9 @@
                             <h1>${s.album}</h1>
                             <p class="sub">${s.artist} &bull; RELEASE YEAR</p>
                         </div>
-                        <div class="big-art">INSERT ALBUM ARTWORK HERE</div>
+                        <div class="big-art" style="${s.artwork ? `background-image: url('${s.artwork}');` : ''}">
+                            ${s.artwork ? '' : 'INSERT ALBUM ARTWORK HERE'}
+                        </div>
                         <div class="bottom-grid">
                             <div class="col">
                                 <h3>SIDE A</h3>
@@ -517,7 +535,9 @@
                 name: "9. Dark Split",
                 render: (s) => `
                     <div class="tpl-dark-split">
-                        <div class="left-art">COVER ARTWORK</div>
+                        <div class="left-art" style="${s.artwork ? `background-image: url('${s.artwork}');` : ''}">
+                            ${s.artwork ? '' : 'COVER ARTWORK'}
+                        </div>
                         <div class="right-content">
                             <div class="tag">FEATURED ALBUM</div>
                             <h1>${s.album}</h1>
@@ -554,7 +574,9 @@
                         </div>
                         <div class="main-grid">
                             <div class="left-col">
-                                <div class="art-box">ARTWORK HERE</div>
+                                <div class="art-box" style="${s.artwork ? `background-image: url('${s.artwork}');` : ''}">
+                                    ${s.artwork ? '' : 'ARTWORK HERE'}
+                                </div>
                                 <div class="tracklist-box">
                                     <h3>SIDE A / SIDE B TRACKLIST</h3>
                                     <ul>
@@ -589,6 +611,7 @@
             }
 
             // Sync initial state to sidebar inputs
+            document.getElementById('edit-artwork').value = state.artwork;
             document.getElementById('edit-artist').value = state.artist;
             document.getElementById('edit-album').value = state.album;
             document.getElementById('edit-concept').value = state.concept;
