@@ -53,7 +53,13 @@
             border-radius: 4px;
             font-family: inherit;
         }
-        .input-group textarea { resize: vertical; min-height: 150px; }
+        .input-group textarea { resize: vertical; min-height: 180px; }
+        .help-text {
+            margin: 6px 0 0;
+            color: #888;
+            font-size: 0.75rem;
+            line-height: 1.4;
+        }
         .input-group input:focus,
         .input-group select:focus,
         .input-group textarea:focus {
@@ -185,31 +191,27 @@
         </div>
 
         <div class="input-group">
-            <label for="spotifyCodeUpload">Spotify Code Image</label>
+            <label for="spotifyCodeUpload">Spotify Code Image Upload</label>
             <input type="file" id="spotifyCodeUpload" accept="image/*">
         </div>
 
-        <div class="checkbox-row">
-            <input type="checkbox" id="showSides">
-            <label for="showSides">Add Side A, Side B, Side C...</label>
-        </div>
-
-        <div class="input-group" id="tracksPerSideGroup" style="display:none;">
-            <label for="tracksPerSide">Tracks Per Side</label>
-            <input type="number" id="tracksPerSide" min="1" max="99" value="5">
+        <div class="input-group">
+            <label for="spotifyCodeUrl">Or Spotify Code Image URL</label>
+            <input type="text" id="spotifyCodeUrl" placeholder="https://example.com/spotify-code.png">
         </div>
 
         <div class="input-group">
             <label for="tracklist">Tracklist (One per line)</label>
-            <textarea id="tracklist">Track One Title
+            <textarea id="tracklist">SIDE A
+Track One Title
 Track Two Title
+
+SIDE B
 Track Three Title
 Track Four Title
 Track Five Title
-Track Six Title
-Track Seven Title
-Track Eight Title
-Track Nine Title</textarea>
+Track Six Title</textarea>
+            <p class="help-text">Put SIDE A, SIDE B, SIDE C and so on on their own lines. Each side can contain any number of tracks.</p>
         </div>
 
         <div class="button-row">
@@ -449,15 +451,40 @@ Track Nine Title</textarea>
                 .replace(/'/g, '&apos;');
         }
 
-        function sideName(index) {
-            let name = '';
-            let number = index + 1;
-            while (number > 0) {
-                number--;
-                name = String.fromCharCode(65 + (number % 26)) + name;
-                number = Math.floor(number / 26);
-            }
-            return name;
+        function parseTracklist(value) {
+            const entries = [];
+            const tracks = [];
+            let sideTrackNumber = 0;
+            let globalTrackNumber = 0;
+            let insideSide = false;
+
+            String(value || '')
+                .split('\n')
+                .map(line => line.trim())
+                .filter(Boolean)
+                .forEach(line => {
+                    const sideMatch = line.match(/^side\s+(.+?)[\s:.-]*$/i);
+
+                    if (sideMatch) {
+                        const sideLabel = sideMatch[1].trim().toUpperCase();
+                        entries.push({ type: 'side', text: `SIDE ${sideLabel}` });
+                        sideTrackNumber = 0;
+                        insideSide = true;
+                        return;
+                    }
+
+                    globalTrackNumber++;
+                    sideTrackNumber++;
+                    const number = insideSide ? sideTrackNumber : globalTrackNumber;
+                    tracks.push(line);
+                    entries.push({
+                        type: 'track',
+                        raw: line,
+                        text: `${String(number).padStart(2, '0')}. ${line}`
+                    });
+                });
+
+            return { entries, tracks };
         }
 
         function wrapWords(text, maxChars) {
@@ -490,26 +517,12 @@ Track Nine Title</textarea>
             return lines;
         }
 
-        function buildSwissTracklist(tracks) {
-            const showSides = document.getElementById('showSides').checked;
-            const tracksPerSide = Math.max(1, parseInt(document.getElementById('tracksPerSide').value, 10) || 5);
-            const entries = [];
-
-            tracks.forEach((track, index) => {
-                if (showSides && index % tracksPerSide === 0) {
-                    entries.push({ type: 'side', text: `SIDE ${sideName(Math.floor(index / tracksPerSide))}` });
-                }
-                entries.push({
-                    type: 'track',
-                    text: `${String(index + 1).padStart(2, '0')}. ${track}`
-                });
-            });
-
+        function buildSwissTracklist(entries) {
             const columns = [40, 125, 210, 295];
             const columnWidth = 76;
             const top = 668;
             const bottom = 766;
-            const fontOptions = [8.5, 8, 7.5, 7, 6.5, 6];
+            const fontOptions = [8.5, 8, 7.5, 7, 6.5, 6, 5.5, 5];
             let chosen = null;
 
             for (const fontSize of fontOptions) {
@@ -520,7 +533,11 @@ Track Nine Title</textarea>
                     ...entry,
                     lines: wrapWords(entry.text, maxChars)
                 }));
-                const requiredLines = prepared.reduce((sum, entry) => sum + entry.lines.length + (entry.type === 'side' ? 0.35 : 0), 0);
+                const requiredLines = prepared.reduce(
+                    (sum, entry) => sum + entry.lines.length + (entry.type === 'side' ? 0.35 : 0),
+                    0
+                );
+
                 if (requiredLines <= capacity * columns.length) {
                     chosen = { fontSize, lineHeight, capacity, prepared };
                     break;
@@ -528,8 +545,8 @@ Track Nine Title</textarea>
             }
 
             if (!chosen) {
-                const fontSize = 5.5;
-                const lineHeight = 7;
+                const fontSize = 4.5;
+                const lineHeight = 6;
                 const maxChars = Math.max(10, Math.floor(columnWidth / (fontSize * 0.54)));
                 chosen = {
                     fontSize,
@@ -543,18 +560,22 @@ Track Nine Title</textarea>
             let usedLines = 0;
             let svg = '';
 
-            chosen.prepared.forEach(entry => {
-                const extra = entry.type === 'side' && usedLines > 0 ? 0.35 : 0;
-                const blockSize = entry.lines.length + extra;
+            chosen.prepared.forEach((entry, entryIndex) => {
+                const nextEntry = chosen.prepared[entryIndex + 1];
+                const sideSpacing = entry.type === 'side' && usedLines > 0 ? 0.35 : 0;
+                const keepWithFirstTrack = entry.type === 'side' && nextEntry?.type === 'track'
+                    ? nextEntry.lines.length
+                    : 0;
+                const preferredBlockSize = entry.lines.length + sideSpacing + keepWithFirstTrack;
 
-                if (usedLines + blockSize > chosen.capacity && column < columns.length - 1) {
+                if (usedLines + preferredBlockSize > chosen.capacity && column < columns.length - 1) {
                     column++;
                     usedLines = 0;
                 }
 
                 if (entry.type === 'side' && usedLines > 0) usedLines += 0.35;
 
-                entry.lines.forEach((line, lineIndex) => {
+                entry.lines.forEach(line => {
                     if (usedLines >= chosen.capacity && column < columns.length - 1) {
                         column++;
                         usedLines = 0;
@@ -579,14 +600,13 @@ Track Nine Title</textarea>
             const releaseYear = document.getElementById('releaseYear').value;
             const catalogNumber = document.getElementById('catalogNumber').value;
             const artworkUrl = artworkSource || document.getElementById('artworkUrl').value.trim();
-            const tracks = document.getElementById('tracklist').value
-                .split('\n')
-                .map(track => track.trim())
-                .filter(Boolean);
+            const spotifyImage = spotifySource || document.getElementById('spotifyCodeUrl').value.trim();
+            const parsedTracklist = parseTracklist(document.getElementById('tracklist').value);
+            const tracks = parsedTracklist.tracks;
 
             let code = templates[templateId];
 
-            let svgCol = buildSwissTracklist(tracks);
+            let svgCol = buildSwissTracklist(parsedTracklist.entries);
             let svgGrid2 = '';
             let svgCenter = '';
             let svgEditorial = '';
@@ -617,7 +637,7 @@ Track Nine Title</textarea>
                 .replace(/{{RELEASE_YEAR}}/g, escapeXml(releaseYear))
                 .replace(/{{CATALOG_NUMBER}}/g, escapeXml(catalogNumber))
                 .replace(/{{ARTWORK_URL}}/g, escapeXml(artworkUrl))
-                .replace(/{{SPOTIFY_IMAGE}}/g, escapeXml(spotifySource))
+                .replace(/{{SPOTIFY_IMAGE}}/g, escapeXml(spotifyImage))
                 .replace(/{{PALETTE_1}}/g, paletteColors[0])
                 .replace(/{{PALETTE_2}}/g, paletteColors[1])
                 .replace(/{{PALETTE_3}}/g, paletteColors[2])
@@ -646,7 +666,6 @@ Track Nine Title</textarea>
                 iframe.contentWindow.document.close();
             }
 
-            document.getElementById('tracksPerSideGroup').style.display = document.getElementById('showSides').checked ? 'block' : 'none';
             fitPreview();
         }
 
@@ -853,8 +872,15 @@ Track Nine Title</textarea>
         document.getElementById('spotifyCodeUpload').addEventListener('change', event => {
             readImageFile(event.target.files[0], source => {
                 spotifySource = source;
+                document.getElementById('spotifyCodeUrl').value = '';
                 updatePoster();
             });
+        });
+
+        document.getElementById('spotifyCodeUrl').addEventListener('input', event => {
+            spotifySource = '';
+            document.getElementById('spotifyCodeUpload').value = '';
+            updatePoster();
         });
 
         document.getElementById('downloadPng').addEventListener('click', downloadPng);
