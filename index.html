@@ -32,6 +32,7 @@
             color: #00ffcc;
         }
         .input-group { margin-bottom: 14px; }
+        .template-field.is-hidden { display: none !important; }
         .input-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         .input-group label {
             display: block;
@@ -147,7 +148,6 @@
                 <option value="4">Template 4: Editorial / Magazine Style</option>
                 <option value="5">Template 5: Neo-Brutalist Grid</option>
                 <option value="6">Template 6: MPC Sampler / Classic Hip-Hop</option>
-                <option value="7">Template 7: Director's Cut Storyboard</option>
                 <option value="8">Template 8: Chicago Soul / Vinyl Sleeve</option>
                 <option value="9">Template 9: Modern Brutalist / Experimental</option>
                 <option value="10">Template 10: Lyrical Typography Focus</option>
@@ -164,12 +164,12 @@
             <input type="text" id="albumTitle" value="[ ALBUM TITLE ]">
         </div>
 
-        <div class="input-group">
+        <div class="input-group template-field" data-templates="1 3 5 10">
             <label for="producerName">Producer / Label</label>
             <input type="text" id="producerName" value="[ PRODUCER ]">
         </div>
 
-        <div class="input-row">
+        <div class="input-row template-field" data-templates="1">
             <div class="input-group">
                 <label for="releaseYear">Release Year</label>
                 <input type="text" id="releaseYear" value="2026">
@@ -190,44 +190,59 @@
             <input type="text" id="artworkUrl" placeholder="https://example.com/image.jpg">
         </div>
 
-        <div class="input-group">
+        <div class="input-group template-field" data-templates="1 4">
             <label for="spotifyCodeUpload">Spotify Code Image Upload</label>
             <input type="file" id="spotifyCodeUpload" accept="image/*">
         </div>
 
-        <div class="input-group">
+        <div class="input-group template-field" data-templates="1 4">
             <label for="spotifyCodeUrl">Or Paste Spotify Code Image URL</label>
             <input type="text" id="spotifyCodeUrl" placeholder="https://example.com/spotify-code.png">
         </div>
 
-        <div class="input-group">
+        <div class="input-group template-field" data-templates="2 5">
             <label for="barcodeUpload">Barcode Image Upload</label>
             <input type="file" id="barcodeUpload" accept="image/*">
         </div>
 
-        <div class="input-group">
+        <div class="input-group template-field" data-templates="2 5">
             <label for="barcodeUrl">Or Paste Barcode Image URL</label>
             <input type="text" id="barcodeUrl" placeholder="Paste an image link or image from clipboard">
         </div>
 
-        <div class="input-group">
+        <div class="input-group template-field" data-templates="3">
             <label for="artistSignatureUpload">Artist Signature Image Upload</label>
             <input type="file" id="artistSignatureUpload" accept="image/*">
         </div>
 
-        <div class="input-group">
+        <div class="input-group template-field" data-templates="3">
             <label for="artistSignatureUrl">Or Paste Artist Signature Image URL</label>
             <input type="text" id="artistSignatureUrl" placeholder="Paste an image link or image from clipboard">
         </div>
 
-        <div class="input-group">
+        <div class="input-group template-field" data-templates="3">
             <label for="producerSignatureUpload">Producer Signature Image Upload</label>
             <input type="file" id="producerSignatureUpload" accept="image/*">
         </div>
 
-        <div class="input-group">
+        <div class="input-group template-field" data-templates="3">
             <label for="producerSignatureUrl">Or Paste Producer Signature Image URL</label>
             <input type="text" id="producerSignatureUrl" placeholder="Paste an image link or image from clipboard">
+        </div>
+
+        <div class="input-group template-field" data-templates="5">
+            <label for="logoUpload">Logo Image Upload</label>
+            <input type="file" id="logoUpload" accept="image/*">
+        </div>
+
+        <div class="input-group template-field" data-templates="5">
+            <label for="logoUrl">Or Paste Logo Image URL</label>
+            <input type="text" id="logoUrl" placeholder="Paste an image link or image from clipboard">
+        </div>
+
+        <div class="input-group template-field" data-templates="10">
+            <label for="lyrics">Background Lyrics</label>
+            <textarea id="lyrics" placeholder="Paste lyrics here, one or more lines...">Lyrics go here. Add as much text as you want for the background.</textarea>
         </div>
 
         <div class="input-group">
@@ -333,107 +348,84 @@ Track Eight Title</textarea>
               <line x1="410" y1="120" x2="410" y2="822" stroke="#000000" stroke-width="4"/>
               <text x="425" y="150" font-family="sans-serif" font-weight="900" font-size="12" fill="#000000">SPECIFICATIONS</text>
               <text x="425" y="180" font-family="Courier, monospace" font-size="10" fill="#000000">PROD: {{PRODUCER}}</text>
-              <rect x="425" y="250" width="135" height="135" fill="#000000"/>
-              <text x="492" y="322" font-family="sans-serif" font-size="10" fill="#FFFFFF" text-anchor="middle">[ LOGO ]</text>
+              <rect x="425" y="235" width="135" height="150" fill="#FFFFFF" stroke="#000000" stroke-width="3"/>
+              <image x="430" y="240" width="125" height="140" href="{{LOGO_IMAGE}}" preserveAspectRatio="xMidYMid meet" />
               <line x1="20" y1="510" x2="410" y2="510" stroke="#000000" stroke-width="4"/>
               <text x="40" y="540" font-family="'Arial Black', sans-serif" font-size="14" fill="#000000">TRACKLIST</text>
               {{TRACKLIST_SVG_BRUTALIST}}
               <line x1="20" y1="720" x2="575" y2="720" stroke="#000000" stroke-width="4"/>
               <rect x="40" y="735" width="200" height="70" fill="#FFFFFF" stroke="#000000" stroke-width="2"/>
-              <text x="140" y="775" font-family="Courier, monospace" font-size="12" fill="#000000" text-anchor="middle">[ BARCODE ]</text>
+              <image x="45" y="740" width="190" height="60" href="{{BARCODE_IMAGE}}" preserveAspectRatio="xMidYMid meet" />
             </svg>`,
 
             6: `<!DOCTYPE html>
             <html><head><style>
             * { box-sizing: border-box; }
-            body { margin: 0; padding: 20mm; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; color: #111; background-color: #f8f8f8; height: 842px; width: 595px; }
-            .advisory { border: 2px solid #111; display: inline-block; padding: 2px 8px; font-weight: 900; font-size: 10px; letter-spacing: 1px; }
-            .grid { width: 100%; height: 200px; display: block; margin-top: 10mm; position: relative; }
-            .pad { width: 45%; height: 45%; background: #e0e0e0; position: absolute; border: 2px solid #111; box-shadow: 4px 4px 0px #111; background-size: cover; background-position: center; }
+            html, body { margin: 0; width: 595px; height: 842px; overflow: hidden; }
+            body { padding: 48px 56px; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; color: #111; background-color: #f8f8f8; position: relative; }
+            .artist { font-size: 30px; font-weight: bold; margin: 0 0 8px; max-height: 72px; overflow: hidden; }
+            .title { font-size: 52px; font-weight: 900; text-transform: uppercase; margin: 0; line-height: 0.95; letter-spacing: -2px; max-height: 105px; overflow: hidden; }
+            .grid { width: 100%; height: 200px; margin-top: 30px; position: relative; }
+            .pad { width: 45%; height: 45%; background: #e0e0e0; position: absolute; border: 2px solid #111; box-shadow: 4px 4px 0 #111; background-size: cover; background-position: center; }
             .pad-1 { top: 0; left: 0; background-image: url('{{ARTWORK_URL}}'); }
             .pad-2 { top: 0; right: 0; background: #ff4444; }
             .pad-3 { bottom: 0; left: 0; }
             .pad-4 { bottom: 0; right: 0; }
-            .title { font-size: 40pt; font-weight: 900; text-transform: uppercase; margin: 0; line-height: 1; letter-spacing: -2px; }
-            .artist { font-size: 24pt; font-weight: bold; margin-bottom: 20px; }
-            .tracklist { margin-top: 20mm; font-size: 11pt; font-weight: bold; line-height: 1.6; }
+            .tracklist-box { position: absolute; left: 56px; right: 56px; top: 500px; bottom: 45px; overflow: hidden; }
+            .track-columns { display: grid; width: 100%; height: 100%; gap: 18px; align-content: start; font-weight: 700; }
+            .track-column { min-width: 0; overflow: hidden; }
+            .track-line { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
             </style></head>
             <body>
-                <div class="advisory">PARENTAL ADVISORY EXPLICIT CONTENT</div>
-                <div class="artist" style="margin-top: 15mm;">{{ARTIST_NAME}}</div>
+                <div class="artist">{{ARTIST_NAME}}</div>
                 <div class="title">{{ALBUM_TITLE}}</div>
                 <div class="grid">
                     <div class="pad pad-1"></div><div class="pad pad-2"></div><div class="pad pad-3"></div><div class="pad pad-4"></div>
                 </div>
-                <div class="tracklist">{{TRACKLIST_HTML}}</div>
-            </body></html>`,
-
-            7: `<!DOCTYPE html>
-            <html><head><style>
-            * { box-sizing: border-box; }
-            body { margin: 0; padding: 15mm; font-family: 'Courier New', Courier, monospace; color: #eee; background-color: #1a1a1a; height: 842px; width: 595px; }
-            .header { text-align: center; border-bottom: 2px solid #555; padding-bottom: 10px; margin-bottom: 20px; }
-            .header h1 { font-size: 24pt; margin: 0; letter-spacing: 4px; text-transform: uppercase; color: #fff; }
-            .header p { font-size: 10pt; margin: 5px 0 0 0; color: #aaa; }
-            .storyboard { width: 100%; position: relative; height: 160mm; }
-            .frame { width: 100%; height: 26mm; border: 1px solid #444; margin-bottom: 5px; position: relative; background: #000; box-sizing: border-box; }
-            .frame-number { position: absolute; top: 5px; left: 5px; font-size: 9px; color: #ff3333; font-weight: bold; }
-            .frame-lyric { position: absolute; bottom: 5px; left: 5px; font-size: 11px; font-style: italic; color: #ccc; }
-            .frame-image { position: absolute; top: 0; right: 0; width: 50mm; height: 100%; background: #2a2a2a url('{{ARTWORK_URL}}') center/cover; border-left: 1px solid #444; }
-            .footer { margin-top: 10mm; font-size: 9pt; color: #888; }
-            </style></head>
-            <body>
-                <div class="header">
-                    <h1>{{ALBUM_TITLE}}</h1>
-                    <p>{{ARTIST_NAME}} | DIRECTOR's CUT</p>
-                </div>
-                <div class="storyboard">
-                    <div class="frame"><div class="frame-number">SCENE 01</div><div class="frame-lyric">"{{TRACK_1}}"</div><div class="frame-image"></div></div>
-                    <div class="frame"><div class="frame-number">SCENE 02</div><div class="frame-lyric">"{{TRACK_2}}"</div><div class="frame-image"></div></div>
-                    <div class="frame"><div class="frame-number">SCENE 03</div><div class="frame-lyric">"{{TRACK_3}}"</div><div class="frame-image"></div></div>
-                    <div class="frame"><div class="frame-number">SCENE 04</div><div class="frame-lyric">"{{TRACK_4}}"</div><div class="frame-image"></div></div>
-                </div>
-                <div class="footer">PRODUCER: {{PRODUCER}}</div>
+                <div class="tracklist-box">{{TRACKLIST_HTML_6}}</div>
             </body></html>`,
 
             8: `<!DOCTYPE html>
             <html><head><style>
             * { box-sizing: border-box; }
-            body { margin: 0; padding: 0; font-family: 'Georgia', serif; color: #3b2a1a; background-color: #dcb37b; height: 842px; width: 595px; }
-            .border { border: 4px solid #3b2a1a; margin: 15mm; padding: 10mm; height: 237mm; position: relative; }
-            .title { font-size: 42pt; text-align: center; margin: 0; font-style: italic; line-height: 1.1; padding-top: 5mm; }
-            .subtitle { text-align: center; font-size: 12pt; letter-spacing: 2px; margin-top: 5mm; text-transform: uppercase; }
-            .art-box { width: 100mm; height: 100mm; border: 2px solid #3b2a1a; margin: 10mm auto; background: #f4e3c5 url('{{ARTWORK_URL}}') center/cover; border-radius: 50%; position: relative; display: block; }
-            .hole { width: 8mm; height: 8mm; background: #dcb37b; border-radius: 50%; border: 2px solid #3b2a1a; position: absolute; top: 44mm; left: 44mm; }
-            .tracklist-container { width: 100%; position: absolute; bottom: 5mm; left: 0; text-align: center; }
-            .tracklist { font-size: 9pt; line-height: 1.6; font-family: sans-serif; text-transform: uppercase; font-weight: bold; }
+            html, body { margin: 0; width: 595px; height: 842px; overflow: hidden; }
+            body { font-family: 'Georgia', serif; color: #3b2a1a; background-color: #dcb37b; position: relative; }
+            .border { border: 4px solid #3b2a1a; position: absolute; inset: 56px; padding: 30px 38px; overflow: hidden; }
+            .title { font-size: 48px; text-align: center; margin: 0; font-style: italic; line-height: 1.05; max-height: 102px; overflow: hidden; }
+            .subtitle { text-align: center; font-size: 16px; letter-spacing: 2px; margin-top: 10px; text-transform: uppercase; max-height: 42px; overflow: hidden; }
+            .art-box { width: 300px; height: 300px; border: 2px solid #3b2a1a; margin: 24px auto 0; background: #f4e3c5 url('{{ARTWORK_URL}}') center/cover; border-radius: 50%; position: relative; }
+            .hole { width: 24px; height: 24px; background: #dcb37b; border-radius: 50%; border: 2px solid #3b2a1a; position: absolute; top: 136px; left: 136px; }
+            .tracklist-box { position: absolute; left: 30px; right: 30px; bottom: 24px; height: 150px; overflow: hidden; text-transform: uppercase; font-family: sans-serif; font-weight: 700; text-align: left; }
+            .track-columns { display: grid; width: 100%; height: 100%; gap: 16px; align-content: start; }
+            .track-column { min-width: 0; overflow: hidden; }
+            .track-line { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
             </style></head>
             <body>
                 <div class="border">
                     <div class="title">{{ALBUM_TITLE}}</div>
                     <div class="subtitle">{{ARTIST_NAME}}</div>
                     <div class="art-box"><div class="hole"></div></div>
-                    <div class="tracklist-container">
-                        <div class="tracklist">{{TRACKLIST_HTML}}</div>
-                    </div>
+                    <div class="tracklist-box">{{TRACKLIST_HTML_8}}</div>
                 </div>
             </body></html>`,
 
             9: `<!DOCTYPE html>
             <html><head><style>
             * { box-sizing: border-box; }
-            body { margin: 0; padding: 0; font-family: 'Helvetica', sans-serif; color: #000; background-color: #fff; height: 842px; width: 595px; overflow: hidden; position: relative; }
-            .massive-text { font-size: 110pt; font-weight: 900; line-height: 0.8; letter-spacing: -5px; position: absolute; top: -5mm; left: -5mm; width: 230mm; z-index: 1; text-transform: uppercase; color: #111; }
-            .content-box { position: absolute; top: 40mm; right: 10mm; width: 120mm; background: #ff0000; color: #fff; z-index: 2; padding: 10mm; border: 4px solid #000; }
-            .content-box h2 { margin: 0 0 5mm 0; font-size: 20pt; font-weight: 900; }
-            .track { border-bottom: 1px solid #fff; padding: 4px 0; font-size: 10pt; font-weight: bold; }
-            .art-placeholder { position: absolute; bottom: 15mm; left: 15mm; width: 100mm; height: 120mm; background: #000 url('{{ARTWORK_URL}}') center/cover; border: 4px solid #000; z-index: 3; }
+            html, body { margin: 0; width: 595px; height: 842px; overflow: hidden; }
+            body { font-family: 'Helvetica', sans-serif; color: #000; background-color: #fff; position: relative; }
+            .massive-text { font-size: 145px; font-weight: 900; line-height: 0.8; letter-spacing: -5px; position: absolute; top: -18px; left: -18px; width: 595px; z-index: 1; text-transform: uppercase; color: #111; max-height: 245px; overflow: hidden; }
+            .content-box { position: absolute; top: 150px; right: 38px; bottom: 38px; width: 455px; background: #ff0000; color: #fff; z-index: 2; padding: 28px 32px; border: 4px solid #000; overflow: hidden; }
+            .content-box h2 { margin: 0 0 16px; font-size: {{T9_TITLE_SIZE}}px; line-height: 1; font-weight: 900; max-height: 90px; overflow: hidden; }
+            .tracklist-list { height: calc(100% - 100px); overflow: hidden; }
+            .track { border-bottom: 1px solid rgba(255,255,255,.75); padding: {{T9_TRACK_PADDING}}px 0; font-size: {{T9_TRACK_SIZE}}px; line-height: {{T9_LINE_HEIGHT}}px; font-weight: bold; overflow-wrap: anywhere; }
+            .art-placeholder { position: absolute; bottom: 56px; left: 56px; width: 285px; height: 340px; background: #000 url('{{ARTWORK_URL}}') center/cover; border: 4px solid #000; z-index: 3; }
             </style></head>
             <body>
                 <div class="massive-text">{{ARTIST_NAME}}</div>
                 <div class="content-box">
                     <h2>{{ALBUM_TITLE}}</h2>
-                    {{TRACKLIST_HTML_BRUTALIST}}
+                    <div class="tracklist-list">{{TRACKLIST_HTML_9}}</div>
                 </div>
                 <div class="art-placeholder"></div>
             </body></html>`,
@@ -441,23 +433,29 @@ Track Eight Title</textarea>
             10: `<!DOCTYPE html>
             <html><head><style>
             * { box-sizing: border-box; }
-            body { margin: 0; padding: 15mm; font-family: 'Times New Roman', serif; color: #e6e6fa; background-color: #0d0d2b; height: 842px; width: 595px; position: relative; }
-            .lyrics-bg { position: absolute; top: 15mm; left: 15mm; right: 15mm; bottom: 15mm; font-size: 11pt; line-height: 1.2; color: rgba(230, 230, 250, 0.15); z-index: 1; overflow: hidden; }
-            .center-piece { position: absolute; top: 70mm; left: 50%; transform: translate(-50%, 0); z-index: 2; width: 130mm; background: #e6e6fa; padding: 8mm; text-align: center; color: #0d0d2b; }
-            .center-piece h1 { font-family: sans-serif; font-size: 22pt; margin: 0 0 5mm 0; font-weight: 900; text-transform: uppercase; }
-            .center-piece p { font-size: 10pt; margin: 0 0 8mm 0; font-weight: bold; }
-            .art-square { width: 70mm; height: 70mm; margin: 0 auto; background: #fff url('{{ARTWORK_URL}}') center/cover; border: 1px solid #0d0d2b; }
-            .bottom-info { position: absolute; bottom: 15mm; left: 15mm; right: 15mm; z-index: 2; font-family: sans-serif; font-size: 8pt; border-top: 1px solid rgba(230, 230, 250, 0.3); padding-top: 5mm; }
+            html, body { margin: 0; width: 595px; height: 842px; overflow: hidden; }
+            body { padding: 56px; font-family: 'Times New Roman', serif; color: #e6e6fa; background-color: #0d0d2b; position: relative; }
+            .lyrics-bg { position: absolute; top: 56px; left: 56px; right: 56px; bottom: 56px; font-size: {{LYRICS_FONT_SIZE}}px; line-height: 1.2; color: rgba(230,230,250,.15); z-index: 1; overflow: hidden; overflow-wrap: anywhere; white-space: normal; }
+            .center-piece { position: absolute; top: 250px; left: 50%; transform: translateX(-50%); z-index: 2; width: 370px; background: #e6e6fa; padding: 30px; text-align: center; color: #0d0d2b; }
+            .center-piece h1 { font-family: sans-serif; font-size: 30px; line-height: 1; margin: 0 0 16px; font-weight: 900; text-transform: uppercase; max-height: 70px; overflow: hidden; }
+            .center-piece p { font-size: 14px; margin: 0 0 22px; font-weight: bold; }
+            .art-square { width: 205px; height: 205px; margin: 0 auto; background: #fff url('{{ARTWORK_URL}}') center/cover; border: 1px solid #0d0d2b; }
+            .bottom-info { position: absolute; bottom: 48px; left: 56px; right: 56px; height: 118px; z-index: 3; font-family: sans-serif; border-top: 1px solid rgba(230,230,250,.3); padding-top: 12px; overflow: hidden; }
+            .track-columns { display: grid; width: 100%; height: 86px; gap: 14px; align-content: start; }
+            .track-column { min-width: 0; overflow: hidden; }
+            .track-line { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+            .producer { margin-top: 5px; font-size: 8px; opacity: .8; }
             </style></head>
             <body>
-                <div class="lyrics-bg">[ LYRICS OVERLAY TEXT CONTAINER ]</div>
+                <div class="lyrics-bg">{{LYRICS_HTML}}</div>
                 <div class="center-piece">
                     <h1>{{ALBUM_TITLE}}</h1>
                     <p>BY {{ARTIST_NAME}}</p>
                     <div class="art-square"></div>
                 </div>
                 <div class="bottom-info">
-                    TRACKLIST: {{TRACKLIST_INLINE}} | PROD: {{PRODUCER}}
+                    {{TRACKLIST_HTML_10}}
+                    <div class="producer">PROD: {{PRODUCER}}</div>
                 </div>
             </body></html>`
         };
@@ -467,6 +465,7 @@ Track Eight Title</textarea>
         let barcodeSource = '';
         let artistSignatureSource = '';
         let producerSignatureSource = '';
+        let logoSource = '';
         let paletteColors = ['#333333', '#666666', '#999999', '#CCCCCC'];
 
         function escapeXml(value) {
@@ -815,6 +814,160 @@ Track Eight Title</textarea>
             return svg;
         }
 
+        function buildTemplate5Tracklist(tracks) {
+            const columns = [40, 130, 220, 310];
+            const columnWidth = 78;
+            const top = 562;
+            const bottom = 704;
+            const fontOptions = [10, 9.5, 9, 8.5, 8, 7.5, 7, 6.5, 6, 5.5, 5, 4.5, 4, 3.5];
+            let chosen = null;
+
+            for (const fontSize of fontOptions) {
+                const lineHeight = fontSize + 2;
+                const maxChars = Math.max(8, Math.floor(columnWidth / (fontSize * 0.56)));
+                const capacity = Math.floor((bottom - top) / lineHeight);
+                const prepared = tracks.map((track, index) => ({
+                    lines: wrapWords(`${String(index + 1).padStart(2, '0')}. ${track}`, maxChars)
+                }));
+                const requiredLines = prepared.reduce((sum, entry) => sum + entry.lines.length, 0);
+                if (requiredLines <= capacity * columns.length) {
+                    chosen = { fontSize, lineHeight, capacity, prepared };
+                    break;
+                }
+            }
+
+            if (!chosen) {
+                const fontSize = 3;
+                const lineHeight = 4.2;
+                const maxChars = 45;
+                chosen = {
+                    fontSize,
+                    lineHeight,
+                    capacity: Math.floor((bottom - top) / lineHeight),
+                    prepared: tracks.map((track, index) => ({
+                        lines: wrapWords(`${String(index + 1).padStart(2, '0')}. ${track}`, maxChars)
+                    }))
+                };
+            }
+
+            let column = 0;
+            let usedLines = 0;
+            let svg = '';
+            chosen.prepared.forEach(entry => {
+                if (usedLines + entry.lines.length > chosen.capacity && column < columns.length - 1) {
+                    column++;
+                    usedLines = 0;
+                }
+                entry.lines.forEach(line => {
+                    if (usedLines >= chosen.capacity && column < columns.length - 1) {
+                        column++;
+                        usedLines = 0;
+                    }
+                    if (column >= columns.length || usedLines >= chosen.capacity) return;
+                    const y = top + usedLines * chosen.lineHeight;
+                    svg += `<text x="${columns[column]}" y="${y.toFixed(1)}" font-family="Courier, monospace" font-size="${chosen.fontSize}" font-weight="bold" fill="#000000">${escapeXml(line)}</text>\n`;
+                    usedLines++;
+                });
+            });
+            return svg;
+        }
+
+        function buildHtmlTrackColumns(tracks, options = {}) {
+            const width = options.width || 480;
+            const height = options.height || 180;
+            const maxColumns = options.maxColumns || 4;
+            const gap = options.gap || 16;
+            const fontOptions = options.fontOptions || [14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4];
+            let chosen = null;
+
+            for (let columns = 1; columns <= maxColumns; columns++) {
+                const columnWidth = (width - gap * (columns - 1)) / columns;
+                for (const fontSize of fontOptions) {
+                    const lineHeight = fontSize * 1.28;
+                    const maxChars = Math.max(7, Math.floor(columnWidth / (fontSize * 0.56)));
+                    const capacity = Math.max(1, Math.floor(height / lineHeight));
+                    const prepared = tracks.map((track, index) => ({
+                        lines: wrapWords(`${String(index + 1).padStart(2, '0')}. ${track}`, maxChars)
+                    }));
+                    const required = prepared.reduce((sum, entry) => sum + entry.lines.length, 0);
+                    if (required <= capacity * columns) {
+                        chosen = { columns, fontSize, lineHeight, capacity, prepared };
+                        break;
+                    }
+                }
+                if (chosen) break;
+            }
+
+            if (!chosen) {
+                const columns = maxColumns;
+                const fontSize = 3.5;
+                const lineHeight = 4.5;
+                const columnWidth = (width - gap * (columns - 1)) / columns;
+                const maxChars = Math.max(7, Math.floor(columnWidth / (fontSize * 0.56)));
+                chosen = {
+                    columns,
+                    fontSize,
+                    lineHeight,
+                    capacity: Math.max(1, Math.floor(height / lineHeight)),
+                    prepared: tracks.map((track, index) => ({
+                        lines: wrapWords(`${String(index + 1).padStart(2, '0')}. ${track}`, maxChars)
+                    }))
+                };
+            }
+
+            const columnLines = Array.from({ length: chosen.columns }, () => []);
+            let column = 0;
+            let used = 0;
+            chosen.prepared.forEach(entry => {
+                if (used + entry.lines.length > chosen.capacity && column < chosen.columns - 1) {
+                    column++;
+                    used = 0;
+                }
+                entry.lines.forEach(line => {
+                    if (used >= chosen.capacity && column < chosen.columns - 1) {
+                        column++;
+                        used = 0;
+                    }
+                    if (column >= chosen.columns || used >= chosen.capacity) return;
+                    columnLines[column].push(line);
+                    used++;
+                });
+            });
+
+            const columnsHtml = columnLines.map(lines =>
+                `<div class="track-column">${lines.map(line => `<div class="track-line">${escapeXml(line)}</div>`).join('')}</div>`
+            ).join('');
+
+            return `<div class="track-columns" style="grid-template-columns:repeat(${chosen.columns}, minmax(0,1fr));font-size:${chosen.fontSize}px;line-height:${chosen.lineHeight}px">${columnsHtml}</div>`;
+        }
+
+        function buildTemplate9Tracklist(tracks) {
+            const count = tracks.length;
+            let fontSize = 13;
+            if (count > 18) fontSize = 11;
+            if (count > 23) fontSize = 9;
+            if (count > 30) fontSize = 7.5;
+            if (count > 40) fontSize = 6;
+            if (count > 52) fontSize = 4.8;
+            if (count > 65) fontSize = 3.4;
+            if (count > 90) fontSize = 2.6;
+
+            const lineHeight = fontSize * 1.08;
+            const padding = fontSize >= 9 ? 2.5 : fontSize >= 6 ? 1 : 0;
+            const html = tracks.map((track, index) =>
+                `<div class="track">${String(index + 1).padStart(2, '0')}. ${escapeXml(track)}</div>`
+            ).join('');
+            return { html, fontSize, lineHeight, padding };
+        }
+
+        function updateSidebarFields() {
+            const templateId = document.getElementById('templateSelect').value;
+            document.querySelectorAll('.template-field').forEach(field => {
+                const allowed = (field.dataset.templates || '').split(/\s+/).filter(Boolean);
+                field.classList.toggle('is-hidden', !allowed.includes(templateId));
+            });
+        }
+
         function updatePoster() {
             const templateId = document.getElementById('templateSelect').value;
             const artist = document.getElementById('artistName').value;
@@ -822,33 +975,33 @@ Track Eight Title</textarea>
             const producer = document.getElementById('producerName').value;
             const releaseYear = document.getElementById('releaseYear').value;
             const catalogNumber = document.getElementById('catalogNumber').value;
+            const lyrics = document.getElementById('lyrics').value;
             const artworkUrl = artworkSource || document.getElementById('artworkUrl').value.trim();
             const spotifyImage = spotifySource || document.getElementById('spotifyCodeUrl').value.trim();
             const barcodeImage = barcodeSource || document.getElementById('barcodeUrl').value.trim();
             const artistSignature = artistSignatureSource || document.getElementById('artistSignatureUrl').value.trim();
             const producerSignature = producerSignatureSource || document.getElementById('producerSignatureUrl').value.trim();
+            const logoImage = logoSource || document.getElementById('logoUrl').value.trim();
             const tracks = parseTracks(document.getElementById('tracklist').value);
 
             let code = templates[templateId];
+            if (!code) return;
 
-            let svgCol = buildSwissTracklist(tracks);
-            let svgGrid2 = buildTemplate2Tracklist(tracks);
-            let svgCenter = buildTemplate3Tracklist(tracks);
+            const svgCol = buildSwissTracklist(tracks);
+            const svgGrid2 = buildTemplate2Tracklist(tracks);
+            const svgCenter = buildTemplate3Tracklist(tracks);
             const editorialTitle = buildEditorialTitle(title, artist);
             const editorialTrackTop = editorialTitle.trackLabelY + 22;
-            let svgEditorial = buildTemplate4Tracklist(tracks, editorialTrackTop);
-            let svgBrutal = '';
-            let htmlList = '';
-            let htmlBrutal = '';
-            let inlineTracks = tracks.map(escapeXml).join(' • ');
-
-            tracks.forEach((track, i) => {
-                const safeTrack = escapeXml(track);
-                const num = (i + 1).toString().padStart(2, '0');
-                htmlList += `${num}. ${safeTrack} <br>`;
-                htmlBrutal += `<div class="track">${num}. ${safeTrack}</div>`;
-                if (i < 5) svgBrutal += `<text x="40" y="${570 + (i * 25)}" font-family="Courier, monospace" font-size="11" font-weight="bold" fill="#000000">${num}. ${safeTrack}</text>\n`;
-            });
+            const svgEditorial = buildTemplate4Tracklist(tracks, editorialTrackTop);
+            const svgBrutal = buildTemplate5Tracklist(tracks);
+            const html6 = buildHtmlTrackColumns(tracks, { width: 483, height: 290, maxColumns: 4, gap: 18, fontOptions: [14,13,12,11,10,9,8,7,6,5,4] });
+            const html8 = buildHtmlTrackColumns(tracks, { width: 395, height: 150, maxColumns: 4, gap: 16, fontOptions: [12,11,10,9,8,7,6,5,4] });
+            const t9 = buildTemplate9Tracklist(tracks);
+            const html10 = buildHtmlTrackColumns(tracks, { width: 483, height: 86, maxColumns: 5, gap: 14, fontOptions: [10,9,8,7,6,5,4,3.5] });
+            const lyricsLength = lyrics.trim().length;
+            const lyricsFontSize = lyricsLength > 1800 ? 6 : lyricsLength > 1200 ? 7 : lyricsLength > 750 ? 8 : lyricsLength > 400 ? 9 : 11;
+            const lyricsHtml = escapeXml(lyrics || '').replace(/\n/g, '<br>');
+            const t9TitleSize = title.length > 45 ? 18 : title.length > 30 ? 22 : 28;
 
             code = code
                 .replace(/{{ARTIST_NAME}}/g, escapeXml(artist))
@@ -861,6 +1014,7 @@ Track Eight Title</textarea>
                 .replace(/{{BARCODE_IMAGE}}/g, escapeXml(barcodeImage))
                 .replace(/{{ARTIST_SIGNATURE}}/g, escapeXml(artistSignature))
                 .replace(/{{PRODUCER_SIGNATURE}}/g, escapeXml(producerSignature))
+                .replace(/{{LOGO_IMAGE}}/g, escapeXml(logoImage))
                 .replace(/{{PALETTE_1}}/g, paletteColors[0])
                 .replace(/{{PALETTE_2}}/g, paletteColors[1])
                 .replace(/{{PALETTE_3}}/g, paletteColors[2])
@@ -872,13 +1026,16 @@ Track Eight Title</textarea>
                 .replace(/{{EDITORIAL_TRACK_LABEL_Y}}/g, editorialTitle.trackLabelY.toFixed(1))
                 .replace(/{{TRACKLIST_SVG_EDITORIAL}}/g, svgEditorial)
                 .replace(/{{TRACKLIST_SVG_BRUTALIST}}/g, svgBrutal)
-                .replace(/{{TRACKLIST_HTML}}/g, htmlList)
-                .replace(/{{TRACKLIST_HTML_BRUTALIST}}/g, htmlBrutal)
-                .replace(/{{TRACKLIST_INLINE}}/g, inlineTracks)
-                .replace(/{{TRACK_1}}/g, escapeXml(tracks[0] || ''))
-                .replace(/{{TRACK_2}}/g, escapeXml(tracks[1] || ''))
-                .replace(/{{TRACK_3}}/g, escapeXml(tracks[2] || ''))
-                .replace(/{{TRACK_4}}/g, escapeXml(tracks[3] || ''));
+                .replace(/{{TRACKLIST_HTML_6}}/g, html6)
+                .replace(/{{TRACKLIST_HTML_8}}/g, html8)
+                .replace(/{{TRACKLIST_HTML_9}}/g, t9.html)
+                .replace(/{{TRACKLIST_HTML_10}}/g, html10)
+                .replace(/{{T9_TRACK_SIZE}}/g, t9.fontSize)
+                .replace(/{{T9_LINE_HEIGHT}}/g, t9.lineHeight)
+                .replace(/{{T9_TRACK_PADDING}}/g, t9.padding)
+                .replace(/{{T9_TITLE_SIZE}}/g, t9TitleSize)
+                .replace(/{{LYRICS_FONT_SIZE}}/g, lyricsFontSize)
+                .replace(/{{LYRICS_HTML}}/g, lyricsHtml);
 
             const wrapper = document.getElementById('canvas-wrapper');
             if (code.includes('<svg')) {
@@ -1161,12 +1318,27 @@ Track Eight Title</textarea>
             updatePoster();
         });
 
+        document.getElementById('logoUpload').addEventListener('change', event => {
+            readImageFile(event.target.files[0], source => {
+                logoSource = source;
+                document.getElementById('logoUrl').value = '';
+                updatePoster();
+            });
+        });
+
+        document.getElementById('logoUrl').addEventListener('input', () => {
+            logoSource = '';
+            document.getElementById('logoUpload').value = '';
+            updatePoster();
+        });
+
         const clipboardImageTargets = {
             artworkUrl: { set: source => { artworkSource = source; extractPalette(source).then(updatePoster); }, upload: 'artworkUpload' },
             spotifyCodeUrl: { set: source => { spotifySource = source; updatePoster(); }, upload: 'spotifyCodeUpload' },
             barcodeUrl: { set: source => { barcodeSource = source; updatePoster(); }, upload: 'barcodeUpload' },
             artistSignatureUrl: { set: source => { artistSignatureSource = source; updatePoster(); }, upload: 'artistSignatureUpload' },
-            producerSignatureUrl: { set: source => { producerSignatureSource = source; updatePoster(); }, upload: 'producerSignatureUpload' }
+            producerSignatureUrl: { set: source => { producerSignatureSource = source; updatePoster(); }, upload: 'producerSignatureUpload' },
+            logoUrl: { set: source => { logoSource = source; updatePoster(); }, upload: 'logoUpload' }
         };
 
         Object.entries(clipboardImageTargets).forEach(([inputId, config]) => {
@@ -1184,6 +1356,7 @@ Track Eight Title</textarea>
             });
         });
 
+        document.getElementById('templateSelect').addEventListener('change', updateSidebarFields);
         document.getElementById('downloadPng').addEventListener('click', downloadPng);
         document.getElementById('downloadSvg').addEventListener('click', downloadSvg);
         window.addEventListener('resize', fitPreview);
@@ -1192,7 +1365,10 @@ Track Eight Title</textarea>
             new ResizeObserver(fitPreview).observe(document.getElementById('preview-container'));
         }
 
-        window.onload = updatePoster;
+        window.onload = () => {
+            updateSidebarFields();
+            updatePoster();
+        };
     </script>
 </body>
 </html>
