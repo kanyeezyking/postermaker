@@ -6,23 +6,132 @@
     <title>Album Poster Generator</title>
     <style>
         * { box-sizing: border-box; }
-        body { margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; display: flex; height: 100vh; background: #222; color: #fff; }
-        #sidebar { width: 380px; background: #181818; padding: 20px; overflow-y: auto; border-right: 1px solid #333; }
-        #sidebar h2 { margin-top: 0; font-size: 1.1rem; border-bottom: 1px solid #333; padding-bottom: 10px; color: #00ffcc; }
-        .input-group { margin-bottom: 15px; }
-        .input-group label { display: block; font-size: 0.8rem; margin-bottom: 5px; color: #aaa; text-transform: uppercase; letter-spacing: 1px; }
-        .input-group input, .input-group select, .input-group textarea { width: 100%; padding: 10px; background: #2a2a2a; border: 1px solid #444; color: #fff; border-radius: 4px; font-family: inherit; }
-        .input-group textarea { resize: vertical; min-height: 100px; }
-        .input-group input:focus, .input-group select:focus, .input-group textarea:focus { outline: none; border-color: #00ffcc; }
-        #preview-container { flex-grow: 1; display: flex; justify-content: center; align-items: center; padding: 30px; overflow: auto; background: #111; }
-        #canvas-wrapper { width: 595px; height: 842px; background: #fff; box-shadow: 0 10px 30px rgba(0,0,0,0.8); flex-shrink: 0; position: relative; overflow: hidden; }
-        iframe { width: 100%; height: 100%; border: none; }
+        html, body { margin: 0; min-height: 100%; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            display: flex;
+            height: 100vh;
+            height: 100dvh;
+            overflow: hidden;
+            background: #222;
+            color: #fff;
+        }
+        #sidebar {
+            width: 360px;
+            flex: 0 0 360px;
+            background: #181818;
+            padding: 20px;
+            overflow-y: auto;
+            border-right: 1px solid #333;
+        }
+        #sidebar h2 {
+            margin-top: 0;
+            font-size: 1.1rem;
+            border-bottom: 1px solid #333;
+            padding-bottom: 10px;
+            color: #00ffcc;
+        }
+        .input-group { margin-bottom: 14px; }
+        .input-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .input-group label {
+            display: block;
+            font-size: 0.75rem;
+            margin-bottom: 5px;
+            color: #aaa;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .input-group input,
+        .input-group select,
+        .input-group textarea,
+        button {
+            width: 100%;
+            padding: 10px;
+            background: #2a2a2a;
+            border: 1px solid #444;
+            color: #fff;
+            border-radius: 4px;
+            font-family: inherit;
+        }
+        .input-group textarea { resize: vertical; min-height: 150px; }
+        .input-group input:focus,
+        .input-group select:focus,
+        .input-group textarea:focus {
+            outline: none;
+            border-color: #00ffcc;
+        }
+        .checkbox-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 10px;
+            color: #ddd;
+            font-size: 0.9rem;
+        }
+        .checkbox-row input { width: auto; }
+        .button-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        button {
+            cursor: pointer;
+            border-color: #00ffcc;
+            background: #12352f;
+            font-weight: 700;
+        }
+        button:hover { background: #17483f; }
+        #preview-container {
+            flex: 1 1 auto;
+            min-width: 0;
+            min-height: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            overflow: auto;
+            background: #111;
+        }
+        #canvas-stage {
+            position: relative;
+            flex: 0 0 auto;
+        }
+        #canvas-wrapper {
+            width: 595px;
+            height: 842px;
+            background: #fff;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+            position: absolute;
+            top: 0;
+            left: 0;
+            overflow: hidden;
+            transform-origin: top left;
+        }
+        #canvas-wrapper > svg { display: block; width: 100%; height: 100%; }
+        iframe { width: 100%; height: 100%; border: none; display: block; }
+
+        @media (max-width: 820px) {
+            body {
+                flex-direction: column;
+                height: auto;
+                min-height: 100dvh;
+                overflow: auto;
+            }
+            #sidebar {
+                width: 100%;
+                flex: none;
+                max-height: none;
+                border-right: none;
+                border-bottom: 1px solid #333;
+            }
+            #preview-container {
+                width: 100%;
+                height: 75dvh;
+                min-height: 460px;
+            }
+        }
     </style>
 </head>
 <body>
     <div id="sidebar">
         <h2>Poster Generator</h2>
-        
+
         <div class="input-group">
             <label for="templateSelect">Select Template</label>
             <select id="templateSelect">
@@ -54,9 +163,40 @@
             <input type="text" id="producerName" value="[ PRODUCER ]">
         </div>
 
+        <div class="input-row">
+            <div class="input-group">
+                <label for="releaseYear">Release Year</label>
+                <input type="text" id="releaseYear" value="2026">
+            </div>
+            <div class="input-group">
+                <label for="catalogNumber">Catalog Number</label>
+                <input type="text" id="catalogNumber" value="0001">
+            </div>
+        </div>
+
         <div class="input-group">
-            <label for="artworkUrl">Artwork Image URL</label>
+            <label for="artworkUpload">Artwork Image Upload</label>
+            <input type="file" id="artworkUpload" accept="image/*">
+        </div>
+
+        <div class="input-group">
+            <label for="artworkUrl">Or Artwork Image URL</label>
             <input type="text" id="artworkUrl" placeholder="https://example.com/image.jpg">
+        </div>
+
+        <div class="input-group">
+            <label for="spotifyCodeUpload">Spotify Code Image</label>
+            <input type="file" id="spotifyCodeUpload" accept="image/*">
+        </div>
+
+        <div class="checkbox-row">
+            <input type="checkbox" id="showSides">
+            <label for="showSides">Add Side A, Side B, Side C...</label>
+        </div>
+
+        <div class="input-group" id="tracksPerSideGroup" style="display:none;">
+            <label for="tracksPerSide">Tracks Per Side</label>
+            <input type="number" id="tracksPerSide" min="1" max="99" value="5">
         </div>
 
         <div class="input-group">
@@ -66,30 +206,42 @@ Track Two Title
 Track Three Title
 Track Four Title
 Track Five Title
-Track Six Title</textarea>
+Track Six Title
+Track Seven Title
+Track Eight Title
+Track Nine Title</textarea>
+        </div>
+
+        <div class="button-row">
+            <button type="button" id="downloadPng">Save PNG</button>
+            <button type="button" id="downloadSvg">Save SVG</button>
         </div>
     </div>
 
     <div id="preview-container">
-        <div id="canvas-wrapper"></div>
+        <div id="canvas-stage">
+            <div id="canvas-wrapper"></div>
+        </div>
     </div>
 
     <script>
         const templates = {
-            1: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 595 842" width="100%" height="100%">
+            1: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 595 842" width="595" height="842">
               <rect width="595" height="842" fill="#F4F4F0"/>
               <text x="40" y="60" font-family="Helvetica, Arial, sans-serif" font-size="28" font-weight="bold" fill="#111111">{{ALBUM_TITLE}}</text>
-              <text x="40" y="85" font-family="Helvetica, Arial, sans-serif" font-size="16" fill="#666666">{{ARTIST_NAME}} • 2026</text>
+              <text x="40" y="85" font-family="Helvetica, Arial, sans-serif" font-size="16" fill="#666666">{{ARTIST_NAME}} • {{RELEASE_YEAR}}</text>
               <rect x="40" y="110" width="515" height="515" fill="#E0E0E0" stroke="#CCCCCC" stroke-width="2"/>
               <image x="40" y="110" width="515" height="515" href="{{ARTWORK_URL}}" preserveAspectRatio="xMidYMid slice" />
               <text x="40" y="650" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="bold" fill="#111111">TRACKLIST</text>
               {{TRACKLIST_SVG_COLUMN}}
-              <text x="400" y="650" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="bold" fill="#111111">PALETTE</text>
-              <circle cx="408" cy="670" r="8" fill="#333"/><circle cx="430" cy="670" r="8" fill="#666"/><circle cx="452" cy="670" r="8" fill="#999"/><circle cx="474" cy="670" r="8" fill="#CCC"/>
-              <rect x="400" y="695" width="155" height="35" rx="4" fill="#000000"/>
-              <text x="477" y="717" font-family="Helvetica, Arial, sans-serif" font-size="10" fill="#FFFFFF" text-anchor="middle">[ SPOTIFY CODE ]</text>
+              <circle cx="408" cy="649" r="8" fill="{{PALETTE_1}}"/>
+              <circle cx="430" cy="649" r="8" fill="{{PALETTE_2}}"/>
+              <circle cx="452" cy="649" r="8" fill="{{PALETTE_3}}"/>
+              <circle cx="474" cy="649" r="8" fill="{{PALETTE_4}}"/>
+              <rect x="400" y="670" width="155" height="42" rx="4" fill="#E7E7E2" stroke="#D2D2CD" stroke-width="1"/>
+              <image x="400" y="670" width="155" height="42" href="{{SPOTIFY_IMAGE}}" preserveAspectRatio="xMidYMid meet" />
               <line x1="40" y1="780" x2="555" y2="780" stroke="#CCCCCC" stroke-width="1"/>
-              <text x="40" y="800" font-family="Helvetica, Arial, sans-serif" font-size="8" fill="#888888">PRODUCED BY {{PRODUCER}} • CATALOG NO. 0001</text>
+              <text x="40" y="800" font-family="Helvetica, Arial, sans-serif" font-size="8" fill="#888888">PRODUCED BY {{PRODUCER}} • CATALOG NO. {{CATALOG_NUMBER}}</text>
             </svg>`,
 
             2: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 595 842" width="100%" height="100%">
@@ -284,45 +436,192 @@ Track Six Title</textarea>
             </body></html>`
         };
 
+        let artworkSource = '';
+        let spotifySource = '';
+        let paletteColors = ['#333333', '#666666', '#999999', '#CCCCCC'];
+
+        function escapeXml(value) {
+            return String(value ?? '')
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&apos;');
+        }
+
+        function sideName(index) {
+            let name = '';
+            let number = index + 1;
+            while (number > 0) {
+                number--;
+                name = String.fromCharCode(65 + (number % 26)) + name;
+                number = Math.floor(number / 26);
+            }
+            return name;
+        }
+
+        function wrapWords(text, maxChars) {
+            const words = String(text).trim().split(/\s+/).filter(Boolean);
+            if (!words.length) return [''];
+
+            const lines = [];
+            let line = '';
+            words.forEach(word => {
+                if (word.length > maxChars) {
+                    if (line) {
+                        lines.push(line);
+                        line = '';
+                    }
+                    for (let i = 0; i < word.length; i += maxChars) {
+                        lines.push(word.slice(i, i + maxChars));
+                    }
+                    return;
+                }
+
+                const candidate = line ? `${line} ${word}` : word;
+                if (candidate.length <= maxChars) {
+                    line = candidate;
+                } else {
+                    if (line) lines.push(line);
+                    line = word;
+                }
+            });
+            if (line) lines.push(line);
+            return lines;
+        }
+
+        function buildSwissTracklist(tracks) {
+            const showSides = document.getElementById('showSides').checked;
+            const tracksPerSide = Math.max(1, parseInt(document.getElementById('tracksPerSide').value, 10) || 5);
+            const entries = [];
+
+            tracks.forEach((track, index) => {
+                if (showSides && index % tracksPerSide === 0) {
+                    entries.push({ type: 'side', text: `SIDE ${sideName(Math.floor(index / tracksPerSide))}` });
+                }
+                entries.push({
+                    type: 'track',
+                    text: `${String(index + 1).padStart(2, '0')}. ${track}`
+                });
+            });
+
+            const columns = [40, 125, 210, 295];
+            const columnWidth = 76;
+            const top = 668;
+            const bottom = 766;
+            const fontOptions = [8.5, 8, 7.5, 7, 6.5, 6];
+            let chosen = null;
+
+            for (const fontSize of fontOptions) {
+                const lineHeight = fontSize + 2.2;
+                const maxChars = Math.max(10, Math.floor(columnWidth / (fontSize * 0.54)));
+                const capacity = Math.floor((bottom - top) / lineHeight);
+                const prepared = entries.map(entry => ({
+                    ...entry,
+                    lines: wrapWords(entry.text, maxChars)
+                }));
+                const requiredLines = prepared.reduce((sum, entry) => sum + entry.lines.length + (entry.type === 'side' ? 0.35 : 0), 0);
+                if (requiredLines <= capacity * columns.length) {
+                    chosen = { fontSize, lineHeight, capacity, prepared };
+                    break;
+                }
+            }
+
+            if (!chosen) {
+                const fontSize = 5.5;
+                const lineHeight = 7;
+                const maxChars = Math.max(10, Math.floor(columnWidth / (fontSize * 0.54)));
+                chosen = {
+                    fontSize,
+                    lineHeight,
+                    capacity: Math.floor((bottom - top) / lineHeight),
+                    prepared: entries.map(entry => ({ ...entry, lines: wrapWords(entry.text, maxChars) }))
+                };
+            }
+
+            let column = 0;
+            let usedLines = 0;
+            let svg = '';
+
+            chosen.prepared.forEach(entry => {
+                const extra = entry.type === 'side' && usedLines > 0 ? 0.35 : 0;
+                const blockSize = entry.lines.length + extra;
+
+                if (usedLines + blockSize > chosen.capacity && column < columns.length - 1) {
+                    column++;
+                    usedLines = 0;
+                }
+
+                if (entry.type === 'side' && usedLines > 0) usedLines += 0.35;
+
+                entry.lines.forEach((line, lineIndex) => {
+                    if (usedLines >= chosen.capacity && column < columns.length - 1) {
+                        column++;
+                        usedLines = 0;
+                    }
+                    if (column >= columns.length || usedLines >= chosen.capacity) return;
+
+                    const y = top + (usedLines * chosen.lineHeight);
+                    const isSide = entry.type === 'side';
+                    svg += `<text x="${columns[column]}" y="${y.toFixed(1)}" font-family="Helvetica, Arial, sans-serif" font-size="${isSide ? chosen.fontSize + 0.4 : chosen.fontSize}" font-weight="${isSide ? 'bold' : 'normal'}" letter-spacing="${isSide ? '0.8' : '0'}" fill="${isSide ? '#111111' : '#444444'}">${escapeXml(line)}</text>\n`;
+                    usedLines++;
+                });
+            });
+
+            return svg;
+        }
+
         function updatePoster() {
             const templateId = document.getElementById('templateSelect').value;
             const artist = document.getElementById('artistName').value;
             const title = document.getElementById('albumTitle').value;
             const producer = document.getElementById('producerName').value;
-            const artworkUrl = document.getElementById('artworkUrl').value;
-            const tracks = document.getElementById('tracklist').value.split('\n').filter(t => t.trim() !== '');
+            const releaseYear = document.getElementById('releaseYear').value;
+            const catalogNumber = document.getElementById('catalogNumber').value;
+            const artworkUrl = artworkSource || document.getElementById('artworkUrl').value.trim();
+            const tracks = document.getElementById('tracklist').value
+                .split('\n')
+                .map(track => track.trim())
+                .filter(Boolean);
 
             let code = templates[templateId];
 
-            let svgCol = '';
+            let svgCol = buildSwissTracklist(tracks);
             let svgGrid2 = '';
             let svgCenter = '';
             let svgEditorial = '';
             let svgBrutal = '';
             let htmlList = '';
             let htmlBrutal = '';
-            let inlineTracks = tracks.join(' • ');
+            let inlineTracks = tracks.map(escapeXml).join(' • ');
 
-            tracks.forEach((t, i) => {
-                let num = (i + 1).toString().padStart(2, '0');
-                svgCol += `<text x="40" y="${670 + (i * 18)}" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#444444">${num}. ${t}</text>\n`;
-                if(i < 6) {
-                    let x = i < 3 ? 50 : 280;
-                    let y = 675 + ((i % 3) * 20);
-                    svgGrid2 += `<text x="${x}" y="${y}" font-family="'Courier New', monospace" font-size="11" fill="#FFFFFF">${num}. ${t}</text>\n`;
+            tracks.forEach((track, i) => {
+                const safeTrack = escapeXml(track);
+                const num = (i + 1).toString().padStart(2, '0');
+                if (i < 6) {
+                    const x = i < 3 ? 50 : 280;
+                    const y = 675 + ((i % 3) * 20);
+                    svgGrid2 += `<text x="${x}" y="${y}" font-family="'Courier New', monospace" font-size="11" fill="#FFFFFF">${num}. ${safeTrack}</text>\n`;
                 }
-                htmlList += `${num}. ${t} <br>`;
-                htmlBrutal += `<div class="track">${num}. ${t}</div>`;
-                if(i < 5) svgCenter += `<text x="297" y="${615 + (i * 20)}" font-family="'Times New Roman', serif" font-size="11" fill="#2C221E" text-anchor="middle">${i+1}. ${t}</text>\n`;
-                if(i < 5) svgEditorial += `<text x="390" y="${250 + (i * 30)}" font-family="Helvetica, sans-serif" font-size="10" fill="#FF4500">0${i+1}</text><text x="415" y="${250 + (i * 30)}" font-family="Helvetica, sans-serif" font-size="10" fill="#DDDDDD">${t}</text>\n`;
-                if(i < 5) svgBrutal += `<text x="40" y="${570 + (i * 25)}" font-family="Courier, monospace" font-size="11" font-weight="bold" fill="#000000">${num}. ${t}</text>\n`;
+                htmlList += `${num}. ${safeTrack} <br>`;
+                htmlBrutal += `<div class="track">${num}. ${safeTrack}</div>`;
+                if (i < 5) svgCenter += `<text x="297" y="${615 + (i * 20)}" font-family="'Times New Roman', serif" font-size="11" fill="#2C221E" text-anchor="middle">${i + 1}. ${safeTrack}</text>\n`;
+                if (i < 5) svgEditorial += `<text x="390" y="${250 + (i * 30)}" font-family="Helvetica, sans-serif" font-size="10" fill="#FF4500">0${i + 1}</text><text x="415" y="${250 + (i * 30)}" font-family="Helvetica, sans-serif" font-size="10" fill="#DDDDDD">${safeTrack}</text>\n`;
+                if (i < 5) svgBrutal += `<text x="40" y="${570 + (i * 25)}" font-family="Courier, monospace" font-size="11" font-weight="bold" fill="#000000">${num}. ${safeTrack}</text>\n`;
             });
 
             code = code
-                .replace(/{{ARTIST_NAME}}/g, artist)
-                .replace(/{{ALBUM_TITLE}}/g, title)
-                .replace(/{{PRODUCER}}/g, producer)
-                .replace(/{{ARTWORK_URL}}/g, artworkUrl)
+                .replace(/{{ARTIST_NAME}}/g, escapeXml(artist))
+                .replace(/{{ALBUM_TITLE}}/g, escapeXml(title))
+                .replace(/{{PRODUCER}}/g, escapeXml(producer))
+                .replace(/{{RELEASE_YEAR}}/g, escapeXml(releaseYear))
+                .replace(/{{CATALOG_NUMBER}}/g, escapeXml(catalogNumber))
+                .replace(/{{ARTWORK_URL}}/g, escapeXml(artworkUrl))
+                .replace(/{{SPOTIFY_IMAGE}}/g, escapeXml(spotifySource))
+                .replace(/{{PALETTE_1}}/g, paletteColors[0])
+                .replace(/{{PALETTE_2}}/g, paletteColors[1])
+                .replace(/{{PALETTE_3}}/g, paletteColors[2])
+                .replace(/{{PALETTE_4}}/g, paletteColors[3])
                 .replace(/{{TRACKLIST_SVG_COLUMN}}/g, svgCol)
                 .replace(/{{TRACKLIST_SVG_GRID_2}}/g, svgGrid2)
                 .replace(/{{TRACKLIST_SVG_CENTER}}/g, svgCenter)
@@ -331,27 +630,240 @@ Track Six Title</textarea>
                 .replace(/{{TRACKLIST_HTML}}/g, htmlList)
                 .replace(/{{TRACKLIST_HTML_BRUTALIST}}/g, htmlBrutal)
                 .replace(/{{TRACKLIST_INLINE}}/g, inlineTracks)
-                .replace(/{{TRACK_1}}/g, tracks[0] || '')
-                .replace(/{{TRACK_2}}/g, tracks[1] || '')
-                .replace(/{{TRACK_3}}/g, tracks[2] || '')
-                .replace(/{{TRACK_4}}/g, tracks[3] || '');
+                .replace(/{{TRACK_1}}/g, escapeXml(tracks[0] || ''))
+                .replace(/{{TRACK_2}}/g, escapeXml(tracks[1] || ''))
+                .replace(/{{TRACK_3}}/g, escapeXml(tracks[2] || ''))
+                .replace(/{{TRACK_4}}/g, escapeXml(tracks[3] || ''));
 
             const wrapper = document.getElementById('canvas-wrapper');
             if (code.includes('<svg')) {
                 wrapper.innerHTML = code;
             } else {
-                wrapper.innerHTML = '<iframe></iframe>';
+                wrapper.innerHTML = '<iframe title="Poster preview"></iframe>';
                 const iframe = wrapper.querySelector('iframe');
                 iframe.contentWindow.document.open();
                 iframe.contentWindow.document.write(code);
                 iframe.contentWindow.document.close();
             }
+
+            document.getElementById('tracksPerSideGroup').style.display = document.getElementById('showSides').checked ? 'block' : 'none';
+            fitPreview();
         }
 
-        document.querySelectorAll('#sidebar input, #sidebar textarea, #sidebar select').forEach(el => {
-            el.addEventListener('input', updatePoster);
-            el.addEventListener('change', updatePoster);
+        function fitPreview() {
+            const container = document.getElementById('preview-container');
+            const stage = document.getElementById('canvas-stage');
+            const wrapper = document.getElementById('canvas-wrapper');
+            if (!container || !stage || !wrapper) return;
+
+            const availableWidth = Math.max(100, container.clientWidth - 40);
+            const availableHeight = Math.max(100, container.clientHeight - 40);
+            const scale = Math.min(availableWidth / 595, availableHeight / 842, 1);
+
+            stage.style.width = `${595 * scale}px`;
+            stage.style.height = `${842 * scale}px`;
+            wrapper.style.transform = `scale(${scale})`;
+        }
+
+        function readImageFile(file, callback) {
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = event => callback(event.target.result);
+            reader.readAsDataURL(file);
+        }
+
+        function colourDistance(a, b) {
+            return Math.sqrt(
+                Math.pow(a[0] - b[0], 2) +
+                Math.pow(a[1] - b[1], 2) +
+                Math.pow(a[2] - b[2], 2)
+            );
+        }
+
+        function rgbToHex(rgb) {
+            return '#' + rgb.map(value => value.toString(16).padStart(2, '0')).join('').toUpperCase();
+        }
+
+        function extractPalette(source) {
+            return new Promise(resolve => {
+                if (!source) {
+                    paletteColors = ['#333333', '#666666', '#999999', '#CCCCCC'];
+                    resolve();
+                    return;
+                }
+
+                const image = new Image();
+                if (/^https?:/i.test(source)) image.crossOrigin = 'anonymous';
+
+                image.onload = () => {
+                    try {
+                        const canvas = document.createElement('canvas');
+                        const size = 90;
+                        canvas.width = size;
+                        canvas.height = size;
+                        const context = canvas.getContext('2d', { willReadFrequently: true });
+                        context.drawImage(image, 0, 0, size, size);
+                        const pixels = context.getImageData(0, 0, size, size).data;
+                        const buckets = new Map();
+                        const step = 24;
+
+                        for (let i = 0; i < pixels.length; i += 16) {
+                            if (pixels[i + 3] < 180) continue;
+                            const rgb = [
+                                Math.min(255, Math.round(pixels[i] / step) * step),
+                                Math.min(255, Math.round(pixels[i + 1] / step) * step),
+                                Math.min(255, Math.round(pixels[i + 2] / step) * step)
+                            ];
+                            const key = rgb.join(',');
+                            buckets.set(key, (buckets.get(key) || 0) + 1);
+                        }
+
+                        const sorted = [...buckets.entries()]
+                            .sort((a, b) => b[1] - a[1])
+                            .map(([key]) => key.split(',').map(Number));
+
+                        const selected = [];
+                        for (const rgb of sorted) {
+                            if (selected.every(existing => colourDistance(existing, rgb) > 48)) {
+                                selected.push(rgb);
+                            }
+                            if (selected.length === 4) break;
+                        }
+
+                        while (selected.length < 4 && sorted[selected.length]) {
+                            selected.push(sorted[selected.length]);
+                        }
+
+                        if (selected.length) {
+                            paletteColors = selected.slice(0, 4).map(rgbToHex);
+                            while (paletteColors.length < 4) paletteColors.push('#CCCCCC');
+                        }
+                    } catch (error) {
+                        console.warn('Palette extraction was blocked for this image URL.', error);
+                    }
+                    resolve();
+                };
+
+                image.onerror = () => resolve();
+                image.src = source;
+            });
+        }
+
+        function safeFileName() {
+            const artist = document.getElementById('artistName').value.trim();
+            const title = document.getElementById('albumTitle').value.trim();
+            return `${artist}-${title}`
+                .replace(/[^a-z0-9-_]+/gi, '-')
+                .replace(/^-+|-+$/g, '') || 'album-poster';
+        }
+
+        function getPosterSvgString() {
+            const svg = document.querySelector('#canvas-wrapper svg');
+            if (!svg) return null;
+            const clone = svg.cloneNode(true);
+            clone.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+            clone.setAttribute('width', '595');
+            clone.setAttribute('height', '842');
+            return new XMLSerializer().serializeToString(clone);
+        }
+
+        function downloadBlob(blob, filename) {
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            link.href = url;
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+            setTimeout(() => URL.revokeObjectURL(url), 1000);
+        }
+
+        function downloadSvg() {
+            const svgString = getPosterSvgString();
+            if (!svgString) {
+                alert('SVG saving is available for poster templates 1 to 5.');
+                return;
+            }
+            downloadBlob(new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' }), `${safeFileName()}.svg`);
+        }
+
+        function downloadPng() {
+            const svgString = getPosterSvgString();
+            if (!svgString) {
+                alert('PNG saving is available for poster templates 1 to 5.');
+                return;
+            }
+
+            const svgBlob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
+            const svgUrl = URL.createObjectURL(svgBlob);
+            const image = new Image();
+
+            image.onload = () => {
+                const canvas = document.createElement('canvas');
+                canvas.width = 1190;
+                canvas.height = 1684;
+                const context = canvas.getContext('2d');
+                context.fillStyle = '#F4F4F0';
+                context.fillRect(0, 0, canvas.width, canvas.height);
+                context.drawImage(image, 0, 0, canvas.width, canvas.height);
+
+                try {
+                    canvas.toBlob(blob => {
+                        URL.revokeObjectURL(svgUrl);
+                        if (!blob) {
+                            alert('The PNG could not be created. Upload the artwork file instead of using an image URL.');
+                            return;
+                        }
+                        downloadBlob(blob, `${safeFileName()}.png`);
+                    }, 'image/png');
+                } catch (error) {
+                    URL.revokeObjectURL(svgUrl);
+                    alert('The browser blocked PNG saving for that image URL. Upload the artwork file instead.');
+                }
+            };
+
+            image.onerror = () => {
+                URL.revokeObjectURL(svgUrl);
+                alert('The PNG could not be created. Upload the artwork file instead of using an image URL.');
+            };
+
+            image.src = svgUrl;
+        }
+
+        document.querySelectorAll('#sidebar input:not([type="file"]), #sidebar textarea, #sidebar select').forEach(element => {
+            element.addEventListener('input', updatePoster);
+            element.addEventListener('change', updatePoster);
         });
+
+        document.getElementById('artworkUpload').addEventListener('change', event => {
+            readImageFile(event.target.files[0], async source => {
+                artworkSource = source;
+                document.getElementById('artworkUrl').value = '';
+                await extractPalette(source);
+                updatePoster();
+            });
+        });
+
+        document.getElementById('artworkUrl').addEventListener('change', async event => {
+            artworkSource = '';
+            await extractPalette(event.target.value.trim());
+            updatePoster();
+        });
+
+        document.getElementById('spotifyCodeUpload').addEventListener('change', event => {
+            readImageFile(event.target.files[0], source => {
+                spotifySource = source;
+                updatePoster();
+            });
+        });
+
+        document.getElementById('downloadPng').addEventListener('click', downloadPng);
+        document.getElementById('downloadSvg').addEventListener('click', downloadSvg);
+        window.addEventListener('resize', fitPreview);
+
+        if ('ResizeObserver' in window) {
+            new ResizeObserver(fitPreview).observe(document.getElementById('preview-container'));
+        }
 
         window.onload = updatePoster;
     </script>
