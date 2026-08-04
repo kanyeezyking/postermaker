@@ -130,13 +130,33 @@
         /* =========================================
            TEMPLATE 1: Grid Poster
            ========================================= */
-        .tpl-grid-poster { background-color: #f7f7f7; color: #000; padding: 35px 40px; height: 100%; display: flex; flex-direction: column; justify-content: space-between; }
-        .tpl-grid-poster .titles { margin-bottom: 10px; }
-        .tpl-grid-poster .titles h2 { font-size: 18px; text-transform: uppercase; margin-bottom: 2px; color: #555; }
-        .tpl-grid-poster .titles h1 { font-size: 38px; text-transform: uppercase; font-weight: 900; letter-spacing: -1px; line-height: 1.1; }
-        .tpl-grid-poster .hero-artwork { width: 100%; height: 320px; background-color: #121212; border: 2px solid #000; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: bold; color: #888; margin-bottom: 15px; }
-        .tpl-grid-poster .tracklist-section { flex-grow: 1; display: flex; flex-direction: column; justify-content: flex-start; }
-        .tpl-grid-poster .tracklist-header { font-size: 10px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; color: #666; border-bottom: 1px solid #ccc; padding-bottom: 4px; }
+        .tpl-grid-poster { 
+            background-color: #f7f7f7; 
+            color: #000; 
+            padding: 30px 40px; 
+            height: 100%; 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: flex-start; 
+            gap: 14px;
+        }
+        .tpl-grid-poster .titles h2 { font-size: 16px; text-transform: uppercase; margin-bottom: 2px; color: #555; }
+        .tpl-grid-poster .titles h1 { font-size: 34px; text-transform: uppercase; font-weight: 900; letter-spacing: -1px; line-height: 1.1; }
+        .tpl-grid-poster .hero-artwork { 
+            width: 100%; 
+            aspect-ratio: 1; 
+            max-height: 280px; 
+            background-color: #121212; 
+            border: 2px solid #000; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            font-size: 11px; 
+            font-weight: bold; 
+            color: #888; 
+        }
+        .tpl-grid-poster .tracklist-section { display: flex; flex-direction: column; flex-grow: 1; }
+        .tpl-grid-poster .tracklist-header { font-size: 10px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; color: #666; border-bottom: 1px solid #ccc; padding-bottom: 4px; }
         .tpl-grid-poster .tracklist { font-weight: bold; column-count: 2; column-gap: 30px; width: 100%; }
         .tpl-grid-poster .tracklist-item { break-inside: avoid; }
 
@@ -346,14 +366,15 @@
                 name: "1. Grid Poster",
                 render: (s) => {
                     const count = s.tracks.length;
-                    // Only scale text down if track count is high and space gets tight
+                    
+                    // Stay at full standard size until track count gets high enough to approach the bottom
                     let fs = 12;
-                    let lh = 1.4;
-                    let mb = 6;
-                    if (count > 10) {
+                    let lh = 1.35;
+                    let mb = 5;
+                    if (count > 9) {
                         fs = 10;
-                        lh = 1.2;
-                        mb = 3;
+                        lh = 1.15;
+                        mb = 2;
                     }
 
                     return `
@@ -363,10 +384,10 @@
                                 <h1>${s.album}</h1>
                             </div>
                             <div class="hero-artwork" style="${s.artwork ? `background-image: url('${s.artwork}'); background-size: contain; background-repeat: no-repeat; background-position: center; background-color: #121212;` : ''}">
-                                ${s.artwork ? '' : 'ALBUM ARTWORK (HERO)'}
+                                ${s.artwork ? '' : 'ALBUM ARTWORK (SQUARE)'}
                             </div>
                             <div class="tracklist-section">
-                                <div class="tracklist-header">— TRACKLIST (${count}/14) —</div>
+                                <div class="tracklist-header">— TRACKLIST (${count}) —</div>
                                 <div class="tracklist" style="font-size: ${fs}px; line-height: ${lh};">
                                     ${s.tracks.map((t, i) => `<div class="tracklist-item" style="margin-bottom: ${mb}px;">0${i+1}. ${t.toUpperCase()}</div>`).join('')}
                                 </div>
