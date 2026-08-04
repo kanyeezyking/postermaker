@@ -186,7 +186,7 @@
         </div>
 
         <div class="input-group">
-            <label for="artworkUrl">Or Artwork Image URL</label>
+            <label for="artworkUrl">Or Paste Artwork Image URL</label>
             <input type="text" id="artworkUrl" placeholder="https://example.com/image.jpg">
         </div>
 
@@ -196,7 +196,7 @@
         </div>
 
         <div class="input-group">
-            <label for="spotifyCodeUrl">Or Spotify Code Image URL</label>
+            <label for="spotifyCodeUrl">Or Paste Spotify Code Image URL</label>
             <input type="text" id="spotifyCodeUrl" placeholder="https://example.com/spotify-code.png">
         </div>
 
@@ -206,13 +206,28 @@
         </div>
 
         <div class="input-group">
+            <label for="barcodeUrl">Or Paste Barcode Image URL</label>
+            <input type="text" id="barcodeUrl" placeholder="Paste an image link or image from clipboard">
+        </div>
+
+        <div class="input-group">
             <label for="artistSignatureUpload">Artist Signature Image Upload</label>
             <input type="file" id="artistSignatureUpload" accept="image/*">
         </div>
 
         <div class="input-group">
+            <label for="artistSignatureUrl">Or Paste Artist Signature Image URL</label>
+            <input type="text" id="artistSignatureUrl" placeholder="Paste an image link or image from clipboard">
+        </div>
+
+        <div class="input-group">
             <label for="producerSignatureUpload">Producer Signature Image Upload</label>
             <input type="file" id="producerSignatureUpload" accept="image/*">
+        </div>
+
+        <div class="input-group">
+            <label for="producerSignatureUrl">Or Paste Producer Signature Image URL</label>
+            <input type="text" id="producerSignatureUrl" placeholder="Paste an image link or image from clipboard">
         </div>
 
         <div class="input-group">
@@ -294,19 +309,17 @@ Track Eight Title</textarea>
               <rect width="595" height="842" fill="#121212"/>
               <rect x="0" y="0" width="360" height="842" fill="#222222"/>
               <image x="0" y="0" width="360" height="842" href="{{ARTWORK_URL}}" preserveAspectRatio="xMidYMid slice" />
-              <text x="390" y="80" font-family="Georgia, serif" font-size="12" fill="#FF4500" letter-spacing="3">FEATURED ALBUM</text>
-              <text x="390" y="130" font-family="Helvetica, Arial, sans-serif" font-size="36" font-weight="900" fill="#FFFFFF">{{ALBUM_TITLE}}</text>
-              <text x="390" y="160" font-family="Helvetica, Arial, sans-serif" font-size="18" fill="#AAAAAA">{{ARTIST_NAME}}</text>
-              <line x1="390" y1="190" x2="555" y2="190" stroke="#333333" stroke-width="1"/>
-              <text x="390" y="220" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="bold" fill="#FFFFFF">TRACKS</text>
+              <text x="390" y="66" font-family="Georgia, serif" font-size="11" fill="{{PALETTE_1}}" letter-spacing="2.4">FEATURED ALBUM</text>
+              {{EDITORIAL_TITLE_BLOCK}}
+              <text x="390" y="{{EDITORIAL_TRACK_LABEL_Y}}" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="bold" fill="#FFFFFF">TRACKS</text>
               {{TRACKLIST_SVG_EDITORIAL}}
-              <text x="390" y="440" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="bold" fill="#FFFFFF">KEY COLORS</text>
-              <rect x="390" y="455" width="25" height="25" fill="#FF4500"/>
-              <rect x="420" y="455" width="25" height="25" fill="#FFFFFF"/>
-              <rect x="450" y="455" width="25" height="25" fill="#666666"/>
-              <rect x="480" y="455" width="25" height="25" fill="#222222"/>
-              <rect x="390" y="740" width="165" height="40" fill="#222222" rx="4"/>
-              <text x="472" y="764" font-family="sans-serif" font-size="9" fill="#888888" text-anchor="middle">[ SPOTIFY CODE ]</text>
+              <text x="390" y="700" font-family="Helvetica, Arial, sans-serif" font-size="10" font-weight="bold" fill="#FFFFFF">KEY COLORS</text>
+              <rect x="390" y="715" width="36" height="25" fill="{{PALETTE_1}}"/>
+              <rect x="431" y="715" width="36" height="25" fill="{{PALETTE_2}}"/>
+              <rect x="472" y="715" width="36" height="25" fill="{{PALETTE_3}}"/>
+              <rect x="513" y="715" width="36" height="25" fill="{{PALETTE_4}}"/>
+              <rect x="390" y="758" width="165" height="42" fill="#222222" rx="4"/>
+              <image x="390" y="758" width="165" height="42" href="{{SPOTIFY_IMAGE}}" preserveAspectRatio="xMidYMid meet" />
             </svg>`,
 
             5: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 595 842" width="100%" height="100%">
@@ -694,6 +707,114 @@ Track Eight Title</textarea>
             return svg;
         }
 
+        function buildEditorialTitle(title, artist) {
+            const maxWidth = 165;
+            const maxTitleHeight = 118;
+            const titleFonts = [34, 31, 28, 25, 22, 20, 18, 16, 14, 12, 10, 9, 8, 7, 6];
+            let chosen = null;
+
+            for (const fontSize of titleFonts) {
+                const maxChars = Math.max(7, Math.floor(maxWidth / (fontSize * 0.57)));
+                const lines = wrapWords(title || '', maxChars);
+                const lineHeight = fontSize * 1.02;
+                if (lines.length * lineHeight <= maxTitleHeight) {
+                    chosen = { fontSize, lineHeight, lines };
+                    break;
+                }
+            }
+
+            if (!chosen) {
+                const fontSize = 5;
+                chosen = {
+                    fontSize,
+                    lineHeight: 5.4,
+                    lines: wrapWords(title || '', 58)
+                };
+            }
+
+            const firstY = 96;
+            let svg = '';
+            chosen.lines.forEach((line, index) => {
+                svg += `<text x="390" y="${(firstY + index * chosen.lineHeight).toFixed(1)}" font-family="Helvetica, Arial, sans-serif" font-size="${chosen.fontSize}" font-weight="900" fill="#FFFFFF">${escapeXml(line)}</text>\n`;
+            });
+
+            const artistY = firstY + chosen.lines.length * chosen.lineHeight + 15;
+            const artistFont = artist.length > 28 ? 11 : artist.length > 22 ? 13 : artist.length > 16 ? 15 : 18;
+            const artistLines = wrapWords(artist || '', Math.max(10, Math.floor(maxWidth / (artistFont * 0.54))));
+            artistLines.forEach((line, index) => {
+                svg += `<text x="390" y="${(artistY + index * (artistFont + 2)).toFixed(1)}" font-family="Helvetica, Arial, sans-serif" font-size="${artistFont}" fill="#AAAAAA">${escapeXml(line)}</text>\n`;
+            });
+            const dividerY = artistY + artistLines.length * (artistFont + 2) + 10;
+            svg += `<line x1="390" y1="${dividerY.toFixed(1)}" x2="555" y2="${dividerY.toFixed(1)}" stroke="#333333" stroke-width="1"/>\n`;
+
+            return {
+                svg,
+                trackLabelY: dividerY + 26
+            };
+        }
+
+        function buildTemplate4Tracklist(tracks, top) {
+            const columns = [390, 475];
+            const columnWidth = 76;
+            const bottom = 675;
+            const fontOptions = [9.5, 9, 8.5, 8, 7.5, 7, 6.5, 6, 5.5, 5, 4.5, 4, 3.5, 3.2];
+            let chosen = null;
+
+            for (const fontSize of fontOptions) {
+                const lineHeight = fontSize + 2;
+                const maxChars = Math.max(8, Math.floor(columnWidth / (fontSize * 0.54)));
+                const capacity = Math.max(1, Math.floor((bottom - top) / lineHeight));
+                const prepared = tracks.map((track, index) => ({
+                    lines: wrapWords(`${String(index + 1).padStart(2, '0')}. ${track}`, maxChars)
+                }));
+                const requiredLines = prepared.reduce((sum, entry) => sum + entry.lines.length, 0);
+                if (requiredLines <= capacity * columns.length) {
+                    chosen = { fontSize, lineHeight, capacity, prepared };
+                    break;
+                }
+            }
+
+            if (!chosen) {
+                const fontSize = 3;
+                const lineHeight = 4.4;
+                const maxChars = 42;
+                chosen = {
+                    fontSize,
+                    lineHeight,
+                    capacity: Math.max(1, Math.floor((bottom - top) / lineHeight)),
+                    prepared: tracks.map((track, index) => ({
+                        lines: wrapWords(`${String(index + 1).padStart(2, '0')}. ${track}`, maxChars)
+                    }))
+                };
+            }
+
+            let column = 0;
+            let usedLines = 0;
+            let svg = '';
+
+            chosen.prepared.forEach(entry => {
+                if (usedLines + entry.lines.length > chosen.capacity && column < columns.length - 1) {
+                    column++;
+                    usedLines = 0;
+                }
+
+                entry.lines.forEach((line, lineIndex) => {
+                    if (usedLines >= chosen.capacity && column < columns.length - 1) {
+                        column++;
+                        usedLines = 0;
+                    }
+                    if (column >= columns.length || usedLines >= chosen.capacity) return;
+
+                    const y = top + usedLines * chosen.lineHeight;
+                    const fill = lineIndex === 0 ? paletteColors[0] : '#DDDDDD';
+                    svg += `<text x="${columns[column]}" y="${y.toFixed(1)}" font-family="Helvetica, Arial, sans-serif" font-size="${chosen.fontSize}" fill="${fill}">${escapeXml(line)}</text>\n`;
+                    usedLines++;
+                });
+            });
+
+            return svg;
+        }
+
         function updatePoster() {
             const templateId = document.getElementById('templateSelect').value;
             const artist = document.getElementById('artistName').value;
@@ -703,9 +824,9 @@ Track Eight Title</textarea>
             const catalogNumber = document.getElementById('catalogNumber').value;
             const artworkUrl = artworkSource || document.getElementById('artworkUrl').value.trim();
             const spotifyImage = spotifySource || document.getElementById('spotifyCodeUrl').value.trim();
-            const barcodeImage = barcodeSource;
-            const artistSignature = artistSignatureSource;
-            const producerSignature = producerSignatureSource;
+            const barcodeImage = barcodeSource || document.getElementById('barcodeUrl').value.trim();
+            const artistSignature = artistSignatureSource || document.getElementById('artistSignatureUrl').value.trim();
+            const producerSignature = producerSignatureSource || document.getElementById('producerSignatureUrl').value.trim();
             const tracks = parseTracks(document.getElementById('tracklist').value);
 
             let code = templates[templateId];
@@ -713,7 +834,9 @@ Track Eight Title</textarea>
             let svgCol = buildSwissTracklist(tracks);
             let svgGrid2 = buildTemplate2Tracklist(tracks);
             let svgCenter = buildTemplate3Tracklist(tracks);
-            let svgEditorial = '';
+            const editorialTitle = buildEditorialTitle(title, artist);
+            const editorialTrackTop = editorialTitle.trackLabelY + 22;
+            let svgEditorial = buildTemplate4Tracklist(tracks, editorialTrackTop);
             let svgBrutal = '';
             let htmlList = '';
             let htmlBrutal = '';
@@ -724,7 +847,6 @@ Track Eight Title</textarea>
                 const num = (i + 1).toString().padStart(2, '0');
                 htmlList += `${num}. ${safeTrack} <br>`;
                 htmlBrutal += `<div class="track">${num}. ${safeTrack}</div>`;
-                if (i < 5) svgEditorial += `<text x="390" y="${250 + (i * 30)}" font-family="Helvetica, sans-serif" font-size="10" fill="#FF4500">0${i + 1}</text><text x="415" y="${250 + (i * 30)}" font-family="Helvetica, sans-serif" font-size="10" fill="#DDDDDD">${safeTrack}</text>\n`;
                 if (i < 5) svgBrutal += `<text x="40" y="${570 + (i * 25)}" font-family="Courier, monospace" font-size="11" font-weight="bold" fill="#000000">${num}. ${safeTrack}</text>\n`;
             });
 
@@ -746,6 +868,8 @@ Track Eight Title</textarea>
                 .replace(/{{TRACKLIST_SVG_COLUMN}}/g, svgCol)
                 .replace(/{{TRACKLIST_SVG_GRID_2}}/g, svgGrid2)
                 .replace(/{{TRACKLIST_SVG_CENTER}}/g, svgCenter)
+                .replace(/{{EDITORIAL_TITLE_BLOCK}}/g, editorialTitle.svg)
+                .replace(/{{EDITORIAL_TRACK_LABEL_Y}}/g, editorialTitle.trackLabelY.toFixed(1))
                 .replace(/{{TRACKLIST_SVG_EDITORIAL}}/g, svgEditorial)
                 .replace(/{{TRACKLIST_SVG_BRUTALIST}}/g, svgBrutal)
                 .replace(/{{TRACKLIST_HTML}}/g, htmlList)
@@ -964,8 +1088,19 @@ Track Eight Title</textarea>
             });
         });
 
+        let artworkUrlPaletteTimer;
+        document.getElementById('artworkUrl').addEventListener('input', event => {
+            artworkSource = '';
+            clearTimeout(artworkUrlPaletteTimer);
+            artworkUrlPaletteTimer = setTimeout(async () => {
+                await extractPalette(event.target.value.trim());
+                updatePoster();
+            }, 350);
+        });
+
         document.getElementById('artworkUrl').addEventListener('change', async event => {
             artworkSource = '';
+            clearTimeout(artworkUrlPaletteTimer);
             await extractPalette(event.target.value.trim());
             updatePoster();
         });
@@ -987,21 +1122,65 @@ Track Eight Title</textarea>
         document.getElementById('barcodeUpload').addEventListener('change', event => {
             readImageFile(event.target.files[0], source => {
                 barcodeSource = source;
+                document.getElementById('barcodeUrl').value = '';
                 updatePoster();
             });
+        });
+
+        document.getElementById('barcodeUrl').addEventListener('input', () => {
+            barcodeSource = '';
+            document.getElementById('barcodeUpload').value = '';
+            updatePoster();
         });
 
         document.getElementById('artistSignatureUpload').addEventListener('change', event => {
             readImageFile(event.target.files[0], source => {
                 artistSignatureSource = source;
+                document.getElementById('artistSignatureUrl').value = '';
                 updatePoster();
             });
+        });
+
+        document.getElementById('artistSignatureUrl').addEventListener('input', () => {
+            artistSignatureSource = '';
+            document.getElementById('artistSignatureUpload').value = '';
+            updatePoster();
         });
 
         document.getElementById('producerSignatureUpload').addEventListener('change', event => {
             readImageFile(event.target.files[0], source => {
                 producerSignatureSource = source;
+                document.getElementById('producerSignatureUrl').value = '';
                 updatePoster();
+            });
+        });
+
+        document.getElementById('producerSignatureUrl').addEventListener('input', () => {
+            producerSignatureSource = '';
+            document.getElementById('producerSignatureUpload').value = '';
+            updatePoster();
+        });
+
+        const clipboardImageTargets = {
+            artworkUrl: { set: source => { artworkSource = source; extractPalette(source).then(updatePoster); }, upload: 'artworkUpload' },
+            spotifyCodeUrl: { set: source => { spotifySource = source; updatePoster(); }, upload: 'spotifyCodeUpload' },
+            barcodeUrl: { set: source => { barcodeSource = source; updatePoster(); }, upload: 'barcodeUpload' },
+            artistSignatureUrl: { set: source => { artistSignatureSource = source; updatePoster(); }, upload: 'artistSignatureUpload' },
+            producerSignatureUrl: { set: source => { producerSignatureSource = source; updatePoster(); }, upload: 'producerSignatureUpload' }
+        };
+
+        Object.entries(clipboardImageTargets).forEach(([inputId, config]) => {
+            const input = document.getElementById(inputId);
+            input.addEventListener('paste', event => {
+                const imageItem = [...(event.clipboardData?.items || [])].find(item => item.type.startsWith('image/'));
+                if (!imageItem) return;
+                event.preventDefault();
+                const file = imageItem.getAsFile();
+                readImageFile(file, source => {
+                    input.value = '';
+                    document.getElementById(config.upload).value = '';
+                    config.set(source);
+                });
             });
         });
 
