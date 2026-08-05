@@ -358,106 +358,60 @@ Track Eight Title</textarea>
               <image x="45" y="740" width="190" height="60" href="{{BARCODE_IMAGE}}" preserveAspectRatio="xMidYMid meet" />
             </svg>`,
 
-            6: `<!DOCTYPE html>
-            <html><head><style>
-            * { box-sizing: border-box; }
-            html, body { margin: 0; width: 595px; height: 842px; overflow: hidden; }
-            body { padding: 48px 56px; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; color: #111; background-color: #f8f8f8; position: relative; }
-            .artist { font-size: 30px; font-weight: bold; margin: 0 0 8px; max-height: 72px; overflow: hidden; }
-            .title { font-size: 52px; font-weight: 900; text-transform: uppercase; margin: 0; line-height: 0.95; letter-spacing: -2px; max-height: 105px; overflow: hidden; }
-            .grid { width: 100%; height: 200px; margin-top: 30px; position: relative; }
-            .pad { width: 45%; height: 45%; background: #e0e0e0; position: absolute; border: 2px solid #111; box-shadow: 4px 4px 0 #111; background-size: cover; background-position: center; }
-            .pad-1 { top: 0; left: 0; background-image: url('{{ARTWORK_URL}}'); }
-            .pad-2 { top: 0; right: 0; background: #ff4444; }
-            .pad-3 { bottom: 0; left: 0; }
-            .pad-4 { bottom: 0; right: 0; }
-            .tracklist-box { position: absolute; left: 56px; right: 56px; top: 500px; bottom: 45px; overflow: hidden; }
-            .track-columns { display: grid; width: 100%; height: 100%; gap: 18px; align-content: start; font-weight: 700; }
-            .track-column { min-width: 0; overflow: hidden; }
-            .track-line { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-            </style></head>
-            <body>
-                <div class="artist">{{ARTIST_NAME}}</div>
-                <div class="title">{{ALBUM_TITLE}}</div>
-                <div class="grid">
-                    <div class="pad pad-1"></div><div class="pad pad-2"></div><div class="pad pad-3"></div><div class="pad pad-4"></div>
-                </div>
-                <div class="tracklist-box">{{TRACKLIST_HTML_6}}</div>
-            </body></html>`,
 
-            8: `<!DOCTYPE html>
-            <html><head><style>
-            * { box-sizing: border-box; }
-            html, body { margin: 0; width: 595px; height: 842px; overflow: hidden; }
-            body { font-family: 'Georgia', serif; color: #3b2a1a; background-color: #dcb37b; position: relative; }
-            .border { border: 4px solid #3b2a1a; position: absolute; inset: 56px; padding: 30px 38px; overflow: hidden; }
-            .title { font-size: 48px; text-align: center; margin: 0; font-style: italic; line-height: 1.05; max-height: 102px; overflow: hidden; }
-            .subtitle { text-align: center; font-size: 16px; letter-spacing: 2px; margin-top: 10px; text-transform: uppercase; max-height: 42px; overflow: hidden; }
-            .art-box { width: 300px; height: 300px; border: 2px solid #3b2a1a; margin: 24px auto 0; background: #f4e3c5 url('{{ARTWORK_URL}}') center/cover; border-radius: 50%; position: relative; }
-            .hole { width: 24px; height: 24px; background: #dcb37b; border-radius: 50%; border: 2px solid #3b2a1a; position: absolute; top: 136px; left: 136px; }
-            .tracklist-box { position: absolute; left: 30px; right: 30px; bottom: 24px; height: 150px; overflow: hidden; text-transform: uppercase; font-family: sans-serif; font-weight: 700; text-align: left; }
-            .track-columns { display: grid; width: 100%; height: 100%; gap: 16px; align-content: start; }
-            .track-column { min-width: 0; overflow: hidden; }
-            .track-line { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-            </style></head>
-            <body>
-                <div class="border">
-                    <div class="title">{{ALBUM_TITLE}}</div>
-                    <div class="subtitle">{{ARTIST_NAME}}</div>
-                    <div class="art-box"><div class="hole"></div></div>
-                    <div class="tracklist-box">{{TRACKLIST_HTML_8}}</div>
-                </div>
-            </body></html>`,
+            6: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 595 842" width="595" height="842">
+              <rect width="595" height="842" fill="#F8F8F8"/>
+              {{T6_HEADER_SVG}}
+              <rect x="60" y="239" width="217" height="90" fill="#111111"/>
+              <rect x="56" y="235" width="217" height="90" fill="#E0E0E0" stroke="#111111" stroke-width="2"/>
+              <image x="56" y="235" width="217" height="90" href="{{ARTWORK_URL}}" preserveAspectRatio="xMidYMid slice"/>
+              <rect x="330" y="239" width="217" height="90" fill="#111111"/>
+              <rect x="326" y="235" width="217" height="90" fill="#FF4444" stroke="#111111" stroke-width="2"/>
+              <rect x="60" y="349" width="217" height="90" fill="#111111"/>
+              <rect x="56" y="345" width="217" height="90" fill="#E0E0E0" stroke="#111111" stroke-width="2"/>
+              <rect x="330" y="349" width="217" height="90" fill="#111111"/>
+              <rect x="326" y="345" width="217" height="90" fill="#E0E0E0" stroke="#111111" stroke-width="2"/>
+              {{TRACKLIST_SVG_6}}
+            </svg>`,
 
-            9: `<!DOCTYPE html>
-            <html><head><style>
-            * { box-sizing: border-box; }
-            html, body { margin: 0; width: 595px; height: 842px; overflow: hidden; }
-            body { font-family: 'Helvetica', sans-serif; color: #000; background-color: #fff; position: relative; }
-            .massive-text { font-size: 145px; font-weight: 900; line-height: 0.8; letter-spacing: -5px; position: absolute; top: -18px; left: -18px; width: 595px; z-index: 1; text-transform: uppercase; color: #111; max-height: 245px; overflow: hidden; }
-            .content-box { position: absolute; top: 150px; right: 38px; bottom: 38px; width: 455px; background: #ff0000; color: #fff; z-index: 2; padding: 28px 32px; border: 4px solid #000; overflow: hidden; }
-            .content-box h2 { margin: 0 0 16px; font-size: {{T9_TITLE_SIZE}}px; line-height: 1; font-weight: 900; max-height: 90px; overflow: hidden; }
-            .tracklist-list { height: calc(100% - 100px); overflow: hidden; }
-            .track { border-bottom: 1px solid rgba(255,255,255,.75); padding: {{T9_TRACK_PADDING}}px 0; font-size: {{T9_TRACK_SIZE}}px; line-height: {{T9_LINE_HEIGHT}}px; font-weight: bold; overflow-wrap: anywhere; }
-            .art-placeholder { position: absolute; bottom: 56px; left: 56px; width: 285px; height: 340px; background: #000 url('{{ARTWORK_URL}}') center/cover; border: 4px solid #000; z-index: 3; }
-            </style></head>
-            <body>
-                <div class="massive-text">{{ARTIST_NAME}}</div>
-                <div class="content-box">
-                    <h2>{{ALBUM_TITLE}}</h2>
-                    <div class="tracklist-list">{{TRACKLIST_HTML_9}}</div>
-                </div>
-                <div class="art-placeholder"></div>
-            </body></html>`,
 
-            10: `<!DOCTYPE html>
-            <html><head><style>
-            * { box-sizing: border-box; }
-            html, body { margin: 0; width: 595px; height: 842px; overflow: hidden; }
-            body { padding: 56px; font-family: 'Times New Roman', serif; color: #e6e6fa; background-color: #0d0d2b; position: relative; }
-            .lyrics-bg { position: absolute; top: 56px; left: 56px; right: 56px; bottom: 56px; font-size: {{LYRICS_FONT_SIZE}}px; line-height: 1.2; color: rgba(230,230,250,.15); z-index: 1; overflow: hidden; overflow-wrap: anywhere; white-space: normal; }
-            .center-piece { position: absolute; top: 250px; left: 50%; transform: translateX(-50%); z-index: 2; width: 370px; background: #e6e6fa; padding: 30px; text-align: center; color: #0d0d2b; }
-            .center-piece h1 { font-family: sans-serif; font-size: 30px; line-height: 1; margin: 0 0 16px; font-weight: 900; text-transform: uppercase; max-height: 70px; overflow: hidden; }
-            .center-piece p { font-size: 14px; margin: 0 0 22px; font-weight: bold; }
-            .art-square { width: 205px; height: 205px; margin: 0 auto; background: #fff url('{{ARTWORK_URL}}') center/cover; border: 1px solid #0d0d2b; }
-            .bottom-info { position: absolute; bottom: 48px; left: 56px; right: 56px; height: 118px; z-index: 3; font-family: sans-serif; border-top: 1px solid rgba(230,230,250,.3); padding-top: 12px; overflow: hidden; }
-            .track-columns { display: grid; width: 100%; height: 86px; gap: 14px; align-content: start; }
-            .track-column { min-width: 0; overflow: hidden; }
-            .track-line { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-            .producer { margin-top: 5px; font-size: 8px; opacity: .8; }
-            </style></head>
-            <body>
-                <div class="lyrics-bg">{{LYRICS_HTML}}</div>
-                <div class="center-piece">
-                    <h1>{{ALBUM_TITLE}}</h1>
-                    <p>BY {{ARTIST_NAME}}</p>
-                    <div class="art-square"></div>
-                </div>
-                <div class="bottom-info">
-                    {{TRACKLIST_HTML_10}}
-                    <div class="producer">PROD: {{PRODUCER}}</div>
-                </div>
-            </body></html>`
+            8: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 595 842" width="595" height="842">
+              <defs>
+                <clipPath id="template8DiscClip"><circle cx="297.5" cy="355" r="150"/></clipPath>
+              </defs>
+              <rect width="595" height="842" fill="#DCB37B"/>
+              <rect x="56" y="56" width="483" height="730" fill="none" stroke="#3B2A1A" stroke-width="4"/>
+              {{T8_HEADER_SVG}}
+              <circle cx="297.5" cy="355" r="150" fill="#F4E3C5" stroke="#3B2A1A" stroke-width="2"/>
+              <image x="147.5" y="205" width="300" height="300" href="{{ARTWORK_URL}}" preserveAspectRatio="xMidYMid slice" clip-path="url(#template8DiscClip)"/>
+              <circle cx="297.5" cy="355" r="12" fill="#DCB37B" stroke="#3B2A1A" stroke-width="2"/>
+              {{TRACKLIST_SVG_8}}
+            </svg>`,
+
+
+            9: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 595 842" width="595" height="842">
+              <rect width="595" height="842" fill="#FFFFFF"/>
+              {{T9_ARTIST_SVG}}
+              <rect x="102" y="150" width="455" height="654" fill="#FF0000" stroke="#000000" stroke-width="4"/>
+              {{T9_TITLE_SVG}}
+              {{TRACKLIST_SVG_9}}
+              <rect x="56" y="446" width="285" height="340" fill="#000000" stroke="#000000" stroke-width="4"/>
+              <image x="60" y="450" width="277" height="332" href="{{ARTWORK_URL}}" preserveAspectRatio="xMidYMid slice"/>
+            </svg>`,
+
+
+            10: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 595 842" width="595" height="842">
+              <rect width="595" height="842" fill="#0D0D2B"/>
+              {{LYRICS_SVG}}
+              <rect x="112.5" y="250" width="370" height="330" fill="#E6E6FA"/>
+              {{T10_TITLE_SVG}}
+              <text x="297.5" y="342" font-family="'Times New Roman', serif" font-size="14" font-weight="bold" fill="#0D0D2B" text-anchor="middle">BY {{ARTIST_NAME}}</text>
+              <rect x="195" y="365" width="205" height="205" fill="#FFFFFF" stroke="#0D0D2B" stroke-width="1"/>
+              <image x="195" y="365" width="205" height="205" href="{{ARTWORK_URL}}" preserveAspectRatio="xMidYMid slice"/>
+              <line x1="56" y1="676" x2="539" y2="676" stroke="rgba(230,230,250,.3)" stroke-width="1"/>
+              {{TRACKLIST_SVG_10}}
+              <text x="56" y="810" font-family="Helvetica, Arial, sans-serif" font-size="8" fill="#E6E6FA" opacity="0.8">PROD: {{PRODUCER}}</text>
+            </svg>`
         };
 
         let artworkSource = '';
@@ -941,6 +895,233 @@ Track Eight Title</textarea>
             return `<div class="track-columns" style="grid-template-columns:repeat(${chosen.columns}, minmax(0,1fr));font-size:${chosen.fontSize}px;line-height:${chosen.lineHeight}px">${columnsHtml}</div>`;
         }
 
+
+        function buildSvgTrackColumns(tracks, options = {}) {
+            const left = options.left || 56;
+            const top = options.top || 500;
+            const width = options.width || 483;
+            const height = options.height || 290;
+            const maxColumns = options.maxColumns || 4;
+            const gap = options.gap || 18;
+            const fontOptions = options.fontOptions || [14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4];
+            const fontFamily = options.fontFamily || 'Helvetica, Arial, sans-serif';
+            const fill = options.fill || '#111111';
+            const fontWeight = options.fontWeight || '700';
+            const uppercase = Boolean(options.uppercase);
+            const anchor = options.anchor || 'start';
+            let chosen = null;
+
+            for (let columns = 1; columns <= maxColumns; columns++) {
+                const columnWidth = (width - gap * (columns - 1)) / columns;
+                for (const fontSize of fontOptions) {
+                    const lineHeight = fontSize * 1.28;
+                    const maxChars = Math.max(7, Math.floor(columnWidth / (fontSize * 0.56)));
+                    const capacity = Math.max(1, Math.floor(height / lineHeight));
+                    const prepared = tracks.map((track, index) => ({
+                        lines: wrapWords(`${String(index + 1).padStart(2, '0')}. ${uppercase ? track.toUpperCase() : track}`, maxChars)
+                    }));
+                    const required = prepared.reduce((sum, entry) => sum + entry.lines.length, 0);
+                    if (required <= capacity * columns) {
+                        chosen = { columns, fontSize, lineHeight, capacity, columnWidth, prepared };
+                        break;
+                    }
+                }
+                if (chosen) break;
+            }
+
+            if (!chosen) {
+                const columns = maxColumns;
+                const fontSize = 3.2;
+                const lineHeight = 4.1;
+                const columnWidth = (width - gap * (columns - 1)) / columns;
+                const maxChars = Math.max(7, Math.floor(columnWidth / (fontSize * 0.56)));
+                chosen = {
+                    columns,
+                    fontSize,
+                    lineHeight,
+                    capacity: Math.max(1, Math.floor(height / lineHeight)),
+                    columnWidth,
+                    prepared: tracks.map((track, index) => ({
+                        lines: wrapWords(`${String(index + 1).padStart(2, '0')}. ${uppercase ? track.toUpperCase() : track}`, maxChars)
+                    }))
+                };
+            }
+
+            let column = 0;
+            let used = 0;
+            let svg = '';
+            chosen.prepared.forEach(entry => {
+                if (used + entry.lines.length > chosen.capacity && column < chosen.columns - 1) {
+                    column++;
+                    used = 0;
+                }
+                entry.lines.forEach(line => {
+                    if (used >= chosen.capacity && column < chosen.columns - 1) {
+                        column++;
+                        used = 0;
+                    }
+                    if (column >= chosen.columns || used >= chosen.capacity) return;
+                    const columnLeft = left + column * (chosen.columnWidth + gap);
+                    const x = anchor === 'middle' ? columnLeft + chosen.columnWidth / 2 : columnLeft;
+                    const y = top + used * chosen.lineHeight;
+                    svg += `<text x="${x.toFixed(1)}" y="${y.toFixed(1)}" font-family="${fontFamily}" font-size="${chosen.fontSize}" font-weight="${fontWeight}" fill="${fill}" text-anchor="${anchor}">${escapeXml(line)}</text>\n`;
+                    used++;
+                });
+            });
+            return svg;
+        }
+
+        function buildWrappedSvgText(text, options = {}) {
+            const x = options.x || 0;
+            const firstY = options.firstY || 0;
+            const maxWidth = options.maxWidth || 400;
+            const maxHeight = options.maxHeight || 100;
+            const fontOptions = options.fontOptions || [48, 44, 40, 36, 32, 28, 24, 20, 18, 16, 14, 12, 10, 8, 6];
+            const fontFamily = options.fontFamily || 'Helvetica, Arial, sans-serif';
+            const fill = options.fill || '#111111';
+            const fontWeight = options.fontWeight || '700';
+            const anchor = options.anchor || 'start';
+            const uppercase = Boolean(options.uppercase);
+            const fontStyle = options.fontStyle || 'normal';
+            const letterSpacing = options.letterSpacing || 0;
+            let chosen = null;
+            const displayText = uppercase ? (text || '').toUpperCase() : (text || '');
+
+            for (const fontSize of fontOptions) {
+                const lineHeight = fontSize * (options.lineHeightRatio || 1.05);
+                const maxChars = Math.max(4, Math.floor(maxWidth / (fontSize * 0.56)));
+                const lines = wrapWords(displayText, maxChars);
+                if (lines.length * lineHeight <= maxHeight) {
+                    chosen = { fontSize, lineHeight, lines };
+                    break;
+                }
+            }
+            if (!chosen) {
+                chosen = { fontSize: 5, lineHeight: 5.5, lines: wrapWords(displayText, Math.max(20, Math.floor(maxWidth / 3))) };
+            }
+
+            let svg = '';
+            chosen.lines.forEach((line, index) => {
+                svg += `<text x="${x}" y="${(firstY + index * chosen.lineHeight).toFixed(1)}" font-family="${fontFamily}" font-size="${chosen.fontSize}" font-weight="${fontWeight}" font-style="${fontStyle}" letter-spacing="${letterSpacing}" fill="${fill}" text-anchor="${anchor}">${escapeXml(line)}</text>\n`;
+            });
+            return { svg, fontSize: chosen.fontSize, lineHeight: chosen.lineHeight, lines: chosen.lines };
+        }
+
+        function buildTemplate6Header(artist, title) {
+            const artistBlock = buildWrappedSvgText(artist, {
+                x: 56, firstY: 73, maxWidth: 483, maxHeight: 62,
+                fontOptions: [30, 27, 24, 21, 18, 16, 14, 12, 10],
+                fontFamily: 'Helvetica Neue, Helvetica, Arial, sans-serif', fontWeight: '700'
+            });
+            const titleBlock = buildWrappedSvgText(title, {
+                x: 56, firstY: 130, maxWidth: 483, maxHeight: 92,
+                fontOptions: [52, 48, 44, 40, 36, 32, 28, 24, 20, 18, 16, 14, 12, 10],
+                fontFamily: 'Helvetica Neue, Helvetica, Arial, sans-serif', fontWeight: '900',
+                uppercase: true, lineHeightRatio: 0.95, letterSpacing: -2
+            });
+            return artistBlock.svg + titleBlock.svg;
+        }
+
+        function buildTemplate8Header(title, artist) {
+            const titleBlock = buildWrappedSvgText(title, {
+                x: 297.5, firstY: 105, maxWidth: 405, maxHeight: 86,
+                fontOptions: [48, 44, 40, 36, 32, 28, 24, 20, 18, 16, 14, 12, 10],
+                fontFamily: 'Georgia, serif', fill: '#3B2A1A', fontWeight: '400',
+                fontStyle: 'italic', anchor: 'middle'
+            });
+            const artistY = 122 + titleBlock.lines.length * titleBlock.lineHeight;
+            const artistBlock = buildWrappedSvgText(artist, {
+                x: 297.5, firstY: Math.min(artistY, 180), maxWidth: 400, maxHeight: 38,
+                fontOptions: [16, 15, 14, 13, 12, 11, 10, 9, 8],
+                fontFamily: 'Georgia, serif', fill: '#3B2A1A', fontWeight: '400',
+                anchor: 'middle', uppercase: true, letterSpacing: 2
+            });
+            return titleBlock.svg + artistBlock.svg;
+        }
+
+        function buildTemplate9Artist(artist) {
+            const length = (artist || '').length;
+            const size = length > 22 ? 62 : length > 16 ? 78 : length > 11 ? 100 : 145;
+            return `<text x="-18" y="108" font-family="Helvetica, Arial, sans-serif" font-size="${size}" font-weight="900" letter-spacing="-5" fill="#111111">${escapeXml((artist || '').toUpperCase())}</text>`;
+        }
+
+        function buildTemplate9Title(title) {
+            return buildWrappedSvgText(title, {
+                x: 134, firstY: 205, maxWidth: 385, maxHeight: 82,
+                fontOptions: [28, 26, 24, 22, 20, 18, 16, 14, 12, 10, 8, 6],
+                fontFamily: 'Helvetica, Arial, sans-serif', fill: '#FFFFFF', fontWeight: '900'
+            }).svg;
+        }
+
+        function buildTemplate9SvgTracklist(tracks) {
+            const left = 134;
+            const top = 290;
+            const width = 385;
+            const height = 486;
+            const fontOptions = [13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3.4, 3, 2.6];
+            let chosen = null;
+            for (const fontSize of fontOptions) {
+                const lineHeight = fontSize * 1.2;
+                const maxChars = Math.max(12, Math.floor(width / (fontSize * 0.56)));
+                const prepared = tracks.map((track, index) => wrapWords(`${String(index + 1).padStart(2, '0')}. ${track}`, maxChars));
+                const totalLines = prepared.reduce((sum, lines) => sum + lines.length, 0);
+                const rowSpacing = fontSize >= 8 ? 3 : 1;
+                if (totalLines * lineHeight + tracks.length * rowSpacing <= height) {
+                    chosen = { fontSize, lineHeight, prepared, rowSpacing };
+                    break;
+                }
+            }
+            if (!chosen) {
+                chosen = {
+                    fontSize: 2.2, lineHeight: 2.7, rowSpacing: 0.4,
+                    prepared: tracks.map((track, index) => wrapWords(`${String(index + 1).padStart(2, '0')}. ${track}`, 300))
+                };
+            }
+            let y = top;
+            let svg = '';
+            chosen.prepared.forEach(lines => {
+                lines.forEach(line => {
+                    svg += `<text x="${left}" y="${y.toFixed(1)}" font-family="Helvetica, Arial, sans-serif" font-size="${chosen.fontSize}" font-weight="700" fill="#FFFFFF">${escapeXml(line)}</text>\n`;
+                    y += chosen.lineHeight;
+                });
+                svg += `<line x1="${left}" y1="${(y + chosen.rowSpacing * 0.25).toFixed(1)}" x2="${left + width}" y2="${(y + chosen.rowSpacing * 0.25).toFixed(1)}" stroke="#FFFFFF" stroke-opacity="0.75" stroke-width="0.7"/>\n`;
+                y += chosen.rowSpacing;
+            });
+            return svg;
+        }
+
+        function buildLyricsSvg(lyrics) {
+            const left = 56;
+            const top = 66;
+            const width = 483;
+            const height = 585;
+            const rawLines = (lyrics || '').split(/\r?\n/);
+            const length = (lyrics || '').trim().length;
+            const fontSize = length > 1800 ? 6 : length > 1200 ? 7 : length > 750 ? 8 : length > 400 ? 9 : 11;
+            const lineHeight = fontSize * 1.2;
+            const maxChars = Math.max(20, Math.floor(width / (fontSize * 0.52)));
+            const lines = [];
+            rawLines.forEach(line => {
+                const wrapped = wrapWords(line || ' ', maxChars);
+                lines.push(...wrapped);
+            });
+            const capacity = Math.floor(height / lineHeight);
+            let svg = '';
+            lines.slice(0, capacity).forEach((line, index) => {
+                svg += `<text x="${left}" y="${(top + index * lineHeight).toFixed(1)}" font-family="Times New Roman, serif" font-size="${fontSize}" fill="#E6E6FA" opacity="0.15">${escapeXml(line)}</text>\n`;
+            });
+            return svg;
+        }
+
+        function buildTemplate10Title(title) {
+            return buildWrappedSvgText(title, {
+                x: 297.5, firstY: 298, maxWidth: 310, maxHeight: 62,
+                fontOptions: [30, 28, 26, 24, 22, 20, 18, 16, 14, 12, 10, 8],
+                fontFamily: 'Helvetica, Arial, sans-serif', fill: '#0D0D2B', fontWeight: '900',
+                anchor: 'middle', uppercase: true
+            }).svg;
+        }
+
         function buildTemplate9Tracklist(tracks) {
             const count = tracks.length;
             let fontSize = 13;
@@ -998,6 +1179,16 @@ Track Eight Title</textarea>
             const html8 = buildHtmlTrackColumns(tracks, { width: 395, height: 150, maxColumns: 4, gap: 16, fontOptions: [12,11,10,9,8,7,6,5,4] });
             const t9 = buildTemplate9Tracklist(tracks);
             const html10 = buildHtmlTrackColumns(tracks, { width: 483, height: 86, maxColumns: 5, gap: 14, fontOptions: [10,9,8,7,6,5,4,3.5] });
+            const svg6Header = buildTemplate6Header(artist, title);
+            const svg6Tracks = buildSvgTrackColumns(tracks, { left: 56, top: 500, width: 483, height: 290, maxColumns: 4, gap: 18, fontOptions: [14,13,12,11,10,9,8,7,6,5,4], fontFamily: 'Helvetica Neue, Helvetica, Arial, sans-serif', fill: '#111111', fontWeight: '700' });
+            const svg8Header = buildTemplate8Header(title, artist);
+            const svg8Tracks = buildSvgTrackColumns(tracks, { left: 86, top: 626, width: 423, height: 132, maxColumns: 4, gap: 16, fontOptions: [12,11,10,9,8,7,6,5,4,3.5], fontFamily: 'Helvetica, Arial, sans-serif', fill: '#3B2A1A', fontWeight: '700', uppercase: true });
+            const svg9Artist = buildTemplate9Artist(artist);
+            const svg9Title = buildTemplate9Title(title);
+            const svg9Tracks = buildTemplate9SvgTracklist(tracks);
+            const svg10Lyrics = buildLyricsSvg(lyrics);
+            const svg10Title = buildTemplate10Title(title);
+            const svg10Tracks = buildSvgTrackColumns(tracks, { left: 56, top: 700, width: 483, height: 92, maxColumns: 5, gap: 14, fontOptions: [10,9,8,7,6,5,4,3.5,3], fontFamily: 'Helvetica, Arial, sans-serif', fill: '#E6E6FA', fontWeight: '400' });
             const lyricsLength = lyrics.trim().length;
             const lyricsFontSize = lyricsLength > 1800 ? 6 : lyricsLength > 1200 ? 7 : lyricsLength > 750 ? 8 : lyricsLength > 400 ? 9 : 11;
             const lyricsHtml = escapeXml(lyrics || '').replace(/\n/g, '<br>');
@@ -1035,7 +1226,17 @@ Track Eight Title</textarea>
                 .replace(/{{T9_TRACK_PADDING}}/g, t9.padding)
                 .replace(/{{T9_TITLE_SIZE}}/g, t9TitleSize)
                 .replace(/{{LYRICS_FONT_SIZE}}/g, lyricsFontSize)
-                .replace(/{{LYRICS_HTML}}/g, lyricsHtml);
+                .replace(/{{LYRICS_HTML}}/g, lyricsHtml)
+                .replace(/{{T6_HEADER_SVG}}/g, svg6Header)
+                .replace(/{{TRACKLIST_SVG_6}}/g, svg6Tracks)
+                .replace(/{{T8_HEADER_SVG}}/g, svg8Header)
+                .replace(/{{TRACKLIST_SVG_8}}/g, svg8Tracks)
+                .replace(/{{T9_ARTIST_SVG}}/g, svg9Artist)
+                .replace(/{{T9_TITLE_SVG}}/g, svg9Title)
+                .replace(/{{TRACKLIST_SVG_9}}/g, svg9Tracks)
+                .replace(/{{LYRICS_SVG}}/g, svg10Lyrics)
+                .replace(/{{T10_TITLE_SVG}}/g, svg10Title)
+                .replace(/{{TRACKLIST_SVG_10}}/g, svg10Tracks);
 
             const wrapper = document.getElementById('canvas-wrapper');
             if (code.includes('<svg')) {
